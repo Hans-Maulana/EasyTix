@@ -8,7 +8,8 @@
                 src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png')}}"
                 alt="navbar brand"
                 class="navbar-brand"
-                height="130"
+                height="100"
+                width="180"
               />
             </a>
             <div class="nav-toggle">
@@ -28,254 +29,137 @@
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
-              <li class="nav-item active">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#dashboard"
-                  class="collapsed"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-home"></i>
-                  <p>Dashboard</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="dashboard">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="../demo1/index.html">
-                        <span class="sub-item">Dashboard 1</span>
+              @if(Auth::check() && Auth::user()->role == 'admin')
+                  {{-- MENU ADMIN --}}
+                  <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                      <a href="{{ route('admin.dashboard') ?? '#' }}">
+                          <i class="fas fa-home"></i>
+                          <p>Dashboard</p>
                       </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-section">
-                <span class="sidebar-mini-icon">
-                  <i class="fas fa-ellipsis-h"></i>
-                </span>
-                <h4 class="text-section">Components</h4>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#base">
-                  <i class="fas fa-layer-group"></i>
-                  <p>Base</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="base">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="components/avatars.html">
-                        <span class="sub-item">Avatars</span>
+                  </li>
+                  <li class="nav-section">
+                      <span class="sidebar-mini-icon">
+                          <i class="fas fa-ellipsis-h"></i>
+                      </span>
+                      <h4 class="text-section">Sistem & Manajemen</h4>
+                  </li>
+                  
+                  <!-- 1. Manajemen User -->
+                  <li class="nav-item {{ request()->routeIs('admin.manageUsers') ? 'active' : '' }}">
+                      <a href="{{ route('admin.manageUsers') }}">
+                          <i class="fas fa-users"></i>
+                          <p>Manajemen User</p>
                       </a>
-                    </li>
-                    <li>
-                      <a href="components/buttons.html">
-                        <span class="sub-item">Buttons</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/gridsystem.html">
-                        <span class="sub-item">Grid System</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/panels.html">
-                        <span class="sub-item">Panels</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/notifications.html">
-                        <span class="sub-item">Notifications</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/sweetalert.html">
-                        <span class="sub-item">Sweet Alert</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/font-awesome-icons.html">
-                        <span class="sub-item">Font Awesome Icons</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/simple-line-icons.html">
-                        <span class="sub-item">Simple Line Icons</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="components/typography.html">
-                        <span class="sub-item">Typography</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                  <i class="fas fa-th-list"></i>
-                  <p>Sidebar Layouts</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="sidebarLayouts">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="sidebar-style-2.html">
-                        <span class="sub-item">Sidebar Style 2</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="icon-menu.html">
-                        <span class="sub-item">Icon Menu</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#forms">
-                  <i class="fas fa-pen-square"></i>
-                  <p>Forms</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="forms">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="forms/forms.html">
-                        <span class="sub-item">Basic Form</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#tables">
-                  <i class="fas fa-table"></i>
-                  <p>Tables</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="tables">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="tables/tables.html">
-                        <span class="sub-item">Basic Table</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="tables/datatables.html">
-                        <span class="sub-item">Datatables</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#maps">
-                  <i class="fas fa-map-marker-alt"></i>
-                  <p>Maps</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="maps">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="maps/googlemaps.html">
-                        <span class="sub-item">Google Maps</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="maps/jsvectormap.html">
-                        <span class="sub-item">Jsvectormap</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
-                  <i class="far fa-chart-bar"></i>
-                  <p>Charts</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="charts">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="charts/charts.html">
-                        <span class="sub-item">Chart Js</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="charts/sparkline.html">
-                        <span class="sub-item">Sparkline</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="nav-item">
-                <a href="widgets.html">
-                  <i class="fas fa-desktop"></i>
-                  <p>Widgets</p>
-                  <span class="badge badge-success">4</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="../../documentation/index.html">
-                  <i class="fas fa-file"></i>
-                  <p>Documentation</p>
-                  <span class="badge badge-secondary">1</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#submenu">
-                  <i class="fas fa-bars"></i>
-                  <p>Menu Levels</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="submenu">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav1">
-                        <span class="sub-item">Level 1</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav1">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav2">
-                        <span class="sub-item">Level 1</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav2">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li>
+                  </li>
+                  
+                  <!-- 2. Manajemen Event -->
+                  <li class="nav-item {{ request()->routeIs('admin.manageEvents') ? 'active' : '' }}">
                       <a href="#">
-                        <span class="sub-item">Level 1</span>
+                          <i class="fas fa-calendar-check"></i>
+                          <p>Manajemen Event</p>
                       </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
+                  </li>
+                  
+                  <!-- 3. Manajemen Tiket -->
+                  <li class="nav-item {{ request()->routeIs('admin.manageTickets') ? 'active' : '' }}">
+                      <a href="#">
+                          <i class="fas fa-ticket-alt"></i>
+                          <p>Manajemen Tiket</p>
+                      </a>
+                  </li>
+
+                  <!-- 4. Fitur Laporan -->
+                  <li class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
+                      <a href="#">
+                          <i class="fas fa-chart-bar"></i>
+                          <p>Fitur Laporan</p>
+                      </a>
+                  </li>
+                  
+                  <!-- 5. Manajemen Banner -->
+                  <li class="nav-item {{ request()->routeIs('admin.ManageBanners') ? 'active' : '' }}">
+                      <a href="#">
+                          <i class="fas fa-images"></i>
+                          <p>Manajemen Banner</p>
+                      </a>
+                  </li>
+
+                  <!-- 6. Atur Hak Organizer -->
+                  <li class="nav-item {{ request()->routeIs('admin.ManageOrganiers') ? 'active' : '' }}">
+                      <a href="#">
+                          <i class="fas fa-user-shield"></i>
+                          <p>Hak Akses Organizer</p>
+                      </a>
+                  </li>
+
+                  <!-- 7. Logout (biasanya di header, tapi ditambahkan sesuai request) -->
+                  <li class="nav-item mt-4">
+                      <a href="#" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" class="text-danger">
+                          <i class="fas fa-sign-out-alt text-danger"></i>
+                          <p>Logout</p>
+                      </a>
+                      <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                          @csrf
+                      </form>
+                  </li>
+
+              @elseif(Auth::check() && Auth::user()->role == 'organizer')
+                  {{-- MENU ORGANIZER --}}
+                  <li class="nav-item {{ request()->routeIs('organizer.dashboard') ? 'active' : '' }}">
+                      <a href="{{ route('organizer.dashboard') ?? '#' }}">
+                          <i class="fas fa-home"></i>
+                          <p>Dashboard</p>
+                      </a>
+                  </li>
+                  <li class="nav-section">
+                      <span class="sidebar-mini-icon">
+                          <i class="fas fa-ellipsis-h"></i>
+                      </span>
+                      <h4 class="text-section">Manajemen Event</h4>
+                  </li>
+                  <li class="nav-item">
+                      <a data-bs-toggle="collapse" href="#events">
+                          <i class="fas fa-calendar-alt"></i>
+                          <p>Event Saya</p>
+                          <span class="caret"></span>
+                      </a>
+                      <div class="collapse" id="events">
+                          <ul class="nav nav-collapse">
+                              <li>
+                                  <a href="#">
+                                      <span class="sub-item">Semua Event</span>
+                                  </a>
+                              </li>
+                              <li>
+                                  <a href="#">
+                                      <span class="sub-item">Buat Event Baru</span>
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+                  </li>
+                  <li class="nav-item">
+                      <a href="#">
+                          <i class="fas fa-ticket-alt"></i>
+                          <p>Manajemen Tiket</p>
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="#">
+                          <i class="fas fa-chart-line"></i>
+                          <p>Laporan Penjualan</p>
+                      </a>
+                  </li>
+
+              @else
+                  {{-- DEFAULT MENU JIKA BELUM LOGIN ATAU BUKAN ADMIN/ORGANIZER --}}
+                  <li class="nav-item active">
+                      <a href="#">
+                          <i class="fas fa-home"></i>
+                          <p>Dashboard</p>
+                      </a>
+                  </li>
+              @endif
             </ul>
           </div>
         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -12,8 +13,51 @@ class AdminController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.dashboard');
     }
+
+    public function manageUsers()
+    {   
+        $users = User::all();
+        return view('admin.manage-users', compact('users'));
+    }
+
+    public function createUser()
+    {
+        return view('admin.create-user');
+    }   
+
+    public function storeUser(Request $request)
+    {
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->role = $request->role;
+        $user->save();
+        return redirect()->route('admin.manageUsers');
+    }
+
+    public function editUser(User $user)
+    {
+        return view('admin.edit-user', compact('user'));
+    }   
+
+    public function updateUser(Request $request, User $user)
+    {
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->role = $request->role;   
+        $user->save();
+        return redirect()->route('admin.manageUsers');
+    }   
+
+    public function deleteUser(User $user)
+    {
+        $user->delete();
+        return redirect()->route('admin.manageUsers');
+    }   
 
     /**
      * Show the form for creating a new resource.

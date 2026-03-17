@@ -336,7 +336,7 @@
                     </div>
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Hizrian</span>
+                      <span class="fw-bold">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
                     </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -351,10 +351,10 @@
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Hizrian</h4>
-                            <p class="text-muted">hello@example.com</p>
+                            <h4>{{ Auth::check() ? Auth::user()->name : 'Guest' }}</h4>
+                            <p class="text-muted">{{ Auth::check() ? Auth::user()->email : '-' }}</p>
                             <a
-                              href="profile.html"
+                              href="#"
                               class="btn btn-xs btn-secondary btn-sm"
                               >View Profile</a
                             >
@@ -369,7 +369,12 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Account Setting</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        
+                        <!-- Form Logout Laravel -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
                       </li>
                     </div>
                   </ul>
