@@ -35,30 +35,56 @@
                         <form action="{{ route('admin.updateUser', $user->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}">
+                             <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="role">Role</label>
+                                        <input type="text" class="form-control" id="role" value='{{ $user->role }}' name="role" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="name">Nama Lengkap</label>
+                                        <input type="text" class="form-control" id="name" value='{{ $user->name }}' name="name" placeholder="Masukkan nama lengkap" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="text" class="form-control" id="email" value='{{ $user->email }}' name="email" placeholder="Masukkan email" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="phone_number">Nomor Telepon</label>
+                                        <input type="text" class="form-control" id="phone_number" value='{{ $user->phone_number }}' name="phone_number" placeholder="Masukkan nomor telepon" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="password">Password Baru</label>
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password baru" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="password_confirmation">Konfirmasi Password Baru</label>
+                                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password baru" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="role">Role</label>
-                                <select class="form-control" id="role" name="role">
-                                    <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
-                                    <option value="organizer" {{ $user->role == 'organizer' ? 'selected' : '' }}>Organizer</option>
-                                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                </select>
-                            </div>
+                        </div>
+                            
                             <button type="submit" class="btn btn-primary">Update</button>
+                            <a href="{{ route('admin.manageUsers') }}" class="btn btn-danger">Kembali</a>
                         </form>
                     </div>
-                </div>
+                </div> 
             </div>
         </div>
     </div>

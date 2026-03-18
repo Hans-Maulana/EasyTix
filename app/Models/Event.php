@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Event extends Model
+{
+    protected $fillable = [
+        'name',
+        'location',
+        'status',
+        'users_id',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'id');
+    }
+
+    public function event_schedule()
+    {
+        return $this->hasMany(EventSchedule::class);
+    }
+
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+    
+    protected static function booted()
+    {
+        static::creating(function ($event) {
+            $year = date('Y');
+            $lastEvent = Event::whereYear('created_at', $year)
+                            ->orderBy('id', 'desc')
+                            ->first();
+
+            if ($lastEvent) {
+                // ambil nomor terakhir
+                $lastNumber = (int) substr($lastEvent->id, -3);
+                $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '001';
+            }
+
+            $event->id = "EVT-{$year}-{$newNumber}";
+        });
+    }
+    public $incrementing = false;
+    protected $keyType = 'string';  
+
+
+}

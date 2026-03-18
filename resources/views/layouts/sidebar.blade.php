@@ -54,7 +54,7 @@
                   
                   <!-- 2. Manajemen Event -->
                   <li class="nav-item {{ request()->routeIs('admin.manageEvents') ? 'active' : '' }}">
-                      <a href="#">
+                      <a href="{{ route('admin.manageEvents') }}">
                           <i class="fas fa-calendar-check"></i>
                           <p>Manajemen Event</p>
                       </a>
