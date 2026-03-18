@@ -20,6 +20,11 @@ class EventSchedule extends Model
         return $this->belongsTo(Event::class);
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'event_schedules_id');
+    }
+
     public $incrementing = false;
     protected $keyType = 'string';
 

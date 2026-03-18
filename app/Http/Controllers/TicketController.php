@@ -4,84 +4,62 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ticket;
+use App\Models\TicketType;
+use App\Models\EventSchedule;
 use Illuminate\Support\Facades\DB;
 
 class TicketController extends Controller
 {
     public function manageTickets()
     {
-        $tickets = Ticket::all();
+        $tickets = Ticket::with(['ticket_type', 'event_schedule.event'])->get();
         return view('admin.manage-tickets', compact('tickets'));
     }
 
     public function createTicket()
     {
-        return view('admin.create-ticket');
+        $ticketTypes = TicketType::all();
+        $schedules = EventSchedule::with('event')->get();
+        return view('admin.create-ticket', compact('ticketTypes', 'schedules'));
     }
 
     public function storeTicket(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'location' => 'required',
-            'status' => 'required',
-            'genre_ids' => 'required|array',
-            'schedules.*.start_time' => 'required',
-            'schedules.*.end_time' => 'required',
-            'schedules.*.event_date' => 'required|date',
+            'event_schedules_id' => 'required|exists:event_schedules,id',
+            'ticket_types_id'    => 'required|exists:ticket_types,id',
+            'capacity'           => 'required|integer|min:1',
+            'price'              => 'required|numeric|min:0',
         ]);
 
         try {
-            DB::beginTransaction();
-
-            $ticket = Ticket::create([
-                'name' => $request->name,
-                'location' => $request->location,
-                'status' => $request->status,
-                'genre_ids' => $request->genre_ids,
-            ]);
-
-            DB::commit();
+            Ticket::create($request->all());
             return redirect()->route('admin.manageTickets')->with('success', 'Ticket berhasil ditambahkan!');
-            
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withInput()->with('error', 'Gagal menambahkan ticket: ' . $e->getMessage());
         }
     }
 
     public function editTicket(Ticket $ticket)
     {
-        return view('admin.edit-ticket', compact('ticket'));
+        $ticketTypes = TicketType::all();
+        $schedules = EventSchedule::with('event')->get();
+        return view('admin.edit-ticket', compact('ticket', 'ticketTypes', 'schedules'));
     }
 
     public function updateTicket(Request $request, Ticket $ticket)
     {
         $request->validate([
-            'name' => 'required',
-            'location' => 'required',
-            'status' => 'required',
-            'genre_ids' => 'required|array',
-            'schedules.*.start_time' => 'required',
-            'schedules.*.end_time' => 'required',
-            'schedules.*.event_date' => 'required|date',
+            'event_schedules_id' => 'required|exists:event_schedules,id',
+            'ticket_types_id'    => 'required|exists:ticket_types,id',
+            'capacity'           => 'required|integer|min:1',
+            'price'              => 'required|numeric|min:0',
         ]);
 
         try {
-            DB::beginTransaction();
-
-            $ticket->update([
-                'name' => $request->name,
-                'location' => $request->location,
-                'status' => $request->status,
-                'genre_ids' => $request->genre_ids,
-            ]);
-
-            DB::commit();
+            $ticket->update($request->all());
             return redirect()->route('admin.manageTickets')->with('success', 'Ticket berhasil diupdate!');
-            
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withInput()->with('error', 'Gagal mengupdate ticket: ' . $e->getMessage());
         }
     }

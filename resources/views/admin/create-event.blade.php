@@ -120,7 +120,7 @@
                             @csrf
                             <div class="card-body">
                                 <div class="form-section-title">
-                                    <span>Informasi Dasar Event</span>
+                                    <span class="text-primary">Informasi Dasar Event</span>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -151,7 +151,7 @@
                                 </div>
 
                                 <div class="form-section-title mt-4">
-                                    <span>Kategori Genre Musik</span>
+                                    <span class="text-primary">Kategori Genre Musik</span>
                                 </div>
                                 <div class="genre-container p-2 mb-4 rounded border shadow-sm">
                                     <div class="row g-1">
@@ -170,7 +170,7 @@
                                 </div>
 
                                 <div class="form-section-title mt-4">
-                                    <span>Jadwal Event</span>
+                                    <span class="text-primary">Jadwal Event</span>
                                     <button type="button" class="btn btn-sm btn-dark add-schedule-btn" id="add-schedule">
                                         <i class="fa fa-plus-circle me-1"></i> Tambah Jadwal
                                     </button>
@@ -204,80 +204,74 @@
                                                         required>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12">
+                                            <div class="col-md-8">
                                                 <div class="form-group p-0">
                                                     <label class="fw-bold text-muted">Deskripsi Jadwal (Opsional)</label>
                                                     <textarea name="schedules[0][description]" class="form-control" rows="2"
                                                         placeholder="Detail singkat untuk jadwal ini..."></textarea>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group p-0 mb-3">
+                                                    <label class="fw-bold text-muted">Status Sesi</label>
+                                                    <select name="schedules[0][status]" class="form-select" required>
+                                                        <option value="scheduled" selected>Scheduled</option>
+                                                        <option value="ongoing">Ongoing</option>
+                                                        <option value="completed">Completed</option>
+                                                        <option value="postponed">Postponed</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="form-section-title mt-4">
-                                                <span>Jadwal Event</span>
-                                                <button type="button" class="btn btn-sm btn-dark add-schedule-btn"
-                                                    id="add-schedule">
-                                                    <i class="fa fa-plus-circle me-1"></i> Tambah Jadwal
+
+                                        <!-- Nested Tickets -->
+                                        <div class="mt-3">
+                                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                                <h6 class="fw-bold mb-0 text-primary">Daftar Tiket untuk Jadwal Ini</h6>
+                                                <button type="button" class="btn btn-xs btn-outline-primary" onclick="addTicket(0)">
+                                                    <i class="fa fa-plus"></i> Tambah Tiket
                                                 </button>
                                             </div>
-                                            <div id="ticket-wrapper">
-                                                <div class="schedule-card" id="schedule-0">
-                                                    <button type="button" class="btn btn-link text-danger remove-schedule"
-                                                        onclick="removeSchedule(0)">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group p-0 mb-3">
-                                                                <label class="fw-bold text-muted">Tanggal Event</label>
-                                                                <input type="date" name="schedules[0][event_date]"
-                                                                    class="form-control" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group p-0 mb-3">
-                                                                <label class="fw-bold text-muted">Waktu Mulai</label>
-                                                                <input type="time" name="schedules[0][start_time]"
-                                                                    class="form-control" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group p-0 mb-3">
-                                                                <label class="fw-bold text-muted">Waktu Selesai</label>
-                                                                <input type="time" name="schedules[0][end_time]"
-                                                                    class="form-control" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <div class="form-group p-0">
-                                                                <label class="fw-bold text-muted">Deskripsi Jadwal
-                                                                    (Opsional)</label>
-                                                                <textarea name="schedules[0][description]"
-                                                                    class="form-control" rows="2"
-                                                                    placeholder="Detail singkat untuk jadwal ini..."></textarea>
-                                                            </div>
-                                                        </div>
+                                            <div id="ticket-wrapper-0">
+                                                <!-- Ticket Row 0 of Schedule 0 -->
+                                                <div class="row g-2 mb-2 ticket-row" id="s0-t0">
+                                                    <div class="col-md-4">
+                                                        <select name="schedules[0][tickets][0][ticket_types_id]" class="form-select form-select-sm" required>
+                                                            <option value="" disabled selected>Pilih Tipe</option>
+                                                            @foreach($ticketTypes as $type)
+                                                                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
-
+                                                    <div class="col-md-3">
+                                                        <input type="number" name="schedules[0][tickets][0][capacity]" class="form-control form-control-sm" placeholder="Kapasitas" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input type="number" name="schedules[0][tickets][0][price]" class="form-control form-control-sm" placeholder="Harga" required>
+                                                    </div>
+                                                    <div class="col-md-1 text-end">
+                                                        <button type="button" class="btn btn-link text-danger p-0" onclick="removeTicket('s0-t0')">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
-
                                             </div>
-
-
-
                                         </div>
+
                                     </div>
                                 </div>
-                                <div class="card-action bg-light">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <a href="{{ route('admin.manageEvents') }}" class="btn btn-outline-danger">
-                                            <i class="fa fa-times"></i> Batal
-                                        </a>
-                                        <button type="submit" class="btn btn-primary px-4">
-                                            <i class="fa fa-save"></i> Simpan Event
-                                        </button>
-                                    </div>
+                            </div>
+                            <div class="card-action bg-light">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ route('admin.manageEvents') }}" class="btn btn-outline-danger">
+                                        <i class="fa fa-times"></i> Batal
+                                    </a>
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="fa fa-save"></i> Simpan Event
+                                    </button>
                                 </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -288,46 +282,90 @@
 
 @section('ExtraJS')
     <script>
-        let index = 1;
+        let scheduleIndex = 1;
+        let ticketTypeOptions = `@foreach($ticketTypes as $type)<option value="{{ $type->id }}">{{ $type->name }}</option>@endforeach`;
 
         document.getElementById('add-schedule').addEventListener('click', function () {
             const wrapper = document.getElementById('schedule-wrapper');
             const newItem = document.createElement('div');
             newItem.className = 'schedule-card';
-            newItem.id = `schedule-${index}`;
+            newItem.id = `schedule-${scheduleIndex}`;
             newItem.innerHTML = `
-                        <button type="button" class="btn btn-link text-danger remove-schedule" onclick="removeSchedule(${index})">
-                            <i class="fa fa-trash"></i>
+                <button type="button" class="btn btn-link text-danger remove-schedule" onclick="removeSchedule(${scheduleIndex})">
+                    <i class="fa fa-trash"></i>
+                </button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group p-0 mb-3">
+                            <label class="fw-bold text-muted">Tanggal Event</label>
+                            <input type="date" name="schedules[${scheduleIndex}][event_date]" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group p-0 mb-3">
+                            <label class="fw-bold text-muted">Waktu Mulai</label>
+                            <input type="time" name="schedules[${scheduleIndex}][start_time]" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group p-0 mb-3">
+                            <label class="fw-bold text-muted">Waktu Selesai</label>
+                            <input type="time" name="schedules[${scheduleIndex}][end_time]" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group p-0">
+                            <label class="fw-bold text-muted">Deskripsi Jadwal (Opsional)</label>
+                            <textarea name="schedules[${scheduleIndex}][description]" class="form-control" rows="2" placeholder="Detail singkat untuk jadwal ini..."></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group p-0 mb-3">
+                            <label class="fw-bold text-muted">Status Sesi</label>
+                            <select name="schedules[${scheduleIndex}][status]" class="form-select" required>
+                                <option value="scheduled" selected>Scheduled</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="completed">Completed</option>
+                                <option value="postponed">Postponed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nested Tickets -->
+                <div class="mt-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold mb-0 text-primary">Daftar Tiket untuk Jadwal Ini</h6>
+                        <button type="button" class="btn btn-xs btn-outline-primary" onclick="addTicket(${scheduleIndex})">
+                            <i class="fa fa-plus"></i> Tambah Tiket
                         </button>
-                        <div class="row">
+                    </div>
+                    <div id="ticket-wrapper-${scheduleIndex}">
+                        <div class="row g-2 mb-2 ticket-row" id="s${scheduleIndex}-t0">
                             <div class="col-md-4">
-                                <div class="form-group p-0 mb-3">
-                                    <label class="fw-bold text-muted">Tanggal Event</label>
-                                    <input type="date" name="schedules[${index}][event_date]" class="form-control" required>
-                                </div>
+                                <select name="schedules[${scheduleIndex}][tickets][0][ticket_types_id]" class="form-select form-select-sm" required>
+                                    <option value="" disabled selected>Pilih Tipe</option>
+                                    ${ticketTypeOptions}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" name="schedules[${scheduleIndex}][tickets][0][capacity]" class="form-control form-control-sm" placeholder="Kapasitas" required>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group p-0 mb-3">
-                                    <label class="fw-bold text-muted">Waktu Mulai</label>
-                                    <input type="time" name="schedules[${index}][start_time]" class="form-control" required>
-                                </div>
+                                <input type="number" name="schedules[${scheduleIndex}][tickets][0][price]" class="form-control form-control-sm" placeholder="Harga" required>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group p-0 mb-3">
-                                    <label class="fw-bold text-muted">Waktu Selesai</label>
-                                    <input type="time" name="schedules[${index}][end_time]" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group p-0">
-                                    <label class="fw-bold text-muted">Deskripsi Jadwal (Opsional)</label>
-                                    <textarea name="schedules[${index}][description]" class="form-control" rows="2" placeholder="Detail singkat untuk jadwal ini..."></textarea>
-                                </div>
+                            <div class="col-md-1 text-end">
+                                <button type="button" class="btn btn-link text-danger p-0" onclick="removeTicket('s${scheduleIndex}-t0')">
+                                    <i class="fa fa-times"></i>
+                                </button>
                             </div>
                         </div>
-                    `;
+                    </div>
+                </div>
+            `;
             wrapper.appendChild(newItem);
-            index++;
+            scheduleIndex++;
         });
 
         function removeSchedule(id) {
@@ -338,6 +376,43 @@
                 setTimeout(() => {
                     item.remove();
                 }, 300);
+            }
+        }
+
+        function addTicket(sIdx) {
+            const wrapper = document.getElementById(`ticket-wrapper-${sIdx}`);
+            const tIdx = wrapper.querySelectorAll('.ticket-row').length;
+            const rowId = `s${sIdx}-t${tIdx}`;
+
+            const newRow = document.createElement('div');
+            newRow.className = 'row g-2 mb-2 ticket-row';
+            newRow.id = rowId;
+            newRow.innerHTML = `
+                <div class="col-md-4">
+                    <select name="schedules[${sIdx}][tickets][${tIdx}][ticket_types_id]" class="form-select form-select-sm" required>
+                        <option value="" disabled selected>Pilih Tipe</option>
+                        ${ticketTypeOptions}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="schedules[${sIdx}][tickets][${tIdx}][capacity]" class="form-control form-control-sm" placeholder="Kapasitas" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" name="schedules[${sIdx}][tickets][${tIdx}][price]" class="form-control form-control-sm" placeholder="Harga" required>
+                </div>
+                <div class="col-md-1 text-end">
+                    <button type="button" class="btn btn-link text-danger p-0" onclick="removeTicket('${rowId}')">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            `;
+            wrapper.appendChild(newRow);
+        }
+
+        function removeTicket(id) {
+            const item = document.getElementById(id);
+            if (item) {
+                item.remove();
             }
         }
     </script>

@@ -7,20 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     protected $fillable = [
+        'id',
         'capacity',
         'price',
+        'ticket_types_id',
+        'event_schedules_id',
     ];
 
-    public function event()
+    public function ticket_type()
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(TicketType::class, 'ticket_types_id');
+    }
+
+    public function event_schedule()
+    {
+        return $this->belongsTo(EventSchedule::class, 'event_schedules_id');
     }
 
     protected static function booted()
     {
         static::creating(function ($ticket) {
             $year = date('Y');
-            $lastTicket = Event::whereYear('created_at', $year)
+            $lastTicket = Ticket::whereYear('created_at', $year)
                             ->orderBy('id', 'desc')
                             ->first();
 
@@ -32,9 +40,10 @@ class Ticket extends Model
                 $newNumber = '001';
             }
 
-            $ticket->id = "-{$year}-{$newNumber}";
+            $ticket->id = "TKT-{$year}-{$newNumber}";
         });
     }
+
     public $incrementing = false;
     protected $keyType = 'string'; 
 }
