@@ -123,45 +123,38 @@
                           <p>Dashboard</p>
                       </a>
                   </li>
-                  <li class="nav-section">
-                      <span class="sidebar-mini-icon">
-                          <i class="fas fa-ellipsis-h"></i>
-                      </span>
-                      <h4 class="text-section">Manajemen Event</h4>
-                  </li>
-                  <li class="nav-item">
-                      <a data-bs-toggle="collapse" href="#events">
-                          <i class="fas fa-calendar-alt"></i>
-                          <p>Event Saya</p>
-                          <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="events">
-                          <ul class="nav nav-collapse">
-                              <li>
-                                  <a href="#">
-                                      <span class="sub-item">Semua Event</span>
-                                  </a>
-                              </li>
-                              <li>
-                                  <a href="#">
-                                      <span class="sub-item">Buat Event Baru</span>
-                                  </a>
-                              </li>
-                          </ul>
-                      </div>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#">
-                          <i class="fas fa-ticket-alt"></i>
-                          <p>Manajemen Tiket</p>
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="#">
-                          <i class="fas fa-chart-line"></i>
-                          <p>Laporan Penjualan</p>
-                      </a>
-                  </li>
+                    <li class="nav-item {{ request()->routeIs('organizer.myEvents') || request()->routeIs('organizer.myEventsDetail') || request()->routeIs('organizer.events') || request()->routeIs('organizer.selectEventVerification') || request()->routeIs('organizer.verifyTicketDetail') || request()->routeIs('organizer.verifySchedule') || request()->routeIs('organizer.attendees') ? 'active' : '' }}">
+                        <a data-bs-toggle="collapse" href="#manageEvents">
+                            <i class="fas fa-calendar-alt"></i>
+                            <p>Kelola Event</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse {{ request()->routeIs('organizer.myEvents') || request()->routeIs('organizer.myEventsDetail') || request()->routeIs('organizer.events') || request()->routeIs('organizer.selectEventVerification') || request()->routeIs('organizer.verifyTicketDetail') || request()->routeIs('organizer.verifySchedule') || request()->routeIs('organizer.attendees') ? 'show' : '' }}" id="manageEvents">
+                            <ul class="nav nav-collapse">
+                                <li class="{{ request()->routeIs('organizer.myEvents') ? 'active' : '' }}">
+                                    <a href="{{ route('organizer.myEvents') }}">
+                                        <span class="sub-item">Event Saya</span>
+                                    </a>
+                                </li>
+                                <li class="{{ request()->routeIs('organizer.selectEventVerification') ? 'active' : '' }}">
+                                    <a href="{{ route('organizer.selectEventVerification') }}">
+                                        <span class="sub-item">Verifikasi Tiket</span>
+                                    </a>
+                                </li>
+                                <li class="{{ request()->routeIs('organizer.events') ? 'active' : '' }}">
+                                    <a href="{{ route('organizer.events') }}">
+                                        <span class="sub-item">Request Event</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Laporan Penjualan</p>
+                        </a>
+                    </li>
 
               @else
                   {{-- DEFAULT MENU JIKA BELUM LOGIN ATAU BUKAN ADMIN/ORGANIZER --}}

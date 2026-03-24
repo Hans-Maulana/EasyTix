@@ -9,6 +9,8 @@ use App\Models\Ticket;
 use App\Models\TicketType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\EventRequest;
+use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
@@ -295,5 +297,96 @@ class EventController extends Controller
     {
         $schedule->delete();
         return redirect()->route('admin.scheduleEvent', $event->id)->with('success', 'Jadwal berhasil dihapus!');
+    }
+
+    // --- ORGANIZER METHODS ---
+
+    public function organizerEvents()
+    {
+        // Menampilkan semua event yang aktif untuk di-request access-nya
+        $events = Event::where('status', 'active')->get();
+        return view('organizer.events', compact('events'));
+    }
+
+    public function myEvents()
+    {
+        // Menampilkan event yang sudah disetujui (access granted)
+        $approvedRequests = EventRequest::where('users_id', auth()->id())
+                            ->where('status', 'approved')
+                            ->with('event')
+                            ->get();
+        return view('organizer.my-events', compact('approvedRequests'));
+    }
+
+    public function requestAccess(Event $event)
+    {
+        EventRequest::updateOrCreate(
+            [
+                'event_id' => $event->id,
+                'users_id' => auth()->id(),
+            ],
+            [
+                'status' => 'pending',
+            ]
+        );
+        return back()->with('success', 'Permintaan akses ke event ' . $event->name . ' telah dikirim!');
+    }
+
+    public function approveRequest(EventRequest $request)
+    {
+        $request->update(['status' => 'approved']);
+        return back()->with('success', 'Permintaan akses disetujui!');
+    }
+
+    public function rejectRequest(EventRequest $request)
+    {
+        $request->update(['status' => 'rejected']);
+        return back()->with('success', 'Permintaan akses ditolak!');
+    }
+
+    public function verifyTicketDetail(Event $event)
+    {
+        // View yang menampilkan daftar jadwal dari event tertentu
+        $event->load('event_schedule');
+        return view('organizer.verify-ticket-detail', compact('event'));
+    }
+
+    public function verifySchedule(EventSchedule $schedule)
+    {
+        // View yang berisi form input kode tiket untuk jadwal tertentu
+        $schedule->load('event');
+        return view('organizer.verify-ticket-input', compact('schedule'));
+    }
+
+    public function selectEventVerification()
+    {
+        // View yang menampilkan daftar event untuk dipilih mana yang mau diverifikasi
+        $approvedRequests = EventRequest::where('users_id', auth()->id())
+                            ->where('status', 'approved')
+                            ->with('event')
+                            ->get();
+        return view('organizer.verify-ticket', compact('approvedRequests'));
+    }
+
+    public function myEventsDetail(Event $event)
+    {
+        // View yang menampilkan daftar jadwal dari event tertentu untuk daftar peserta
+        $event->load('event_schedule');
+        return view('organizer.my-events-detail', compact('event'));
+    }
+
+    public function attendees(EventSchedule $schedule)
+    {
+        // Tampilkan daftar peserta untuk jadwal tertentu (diambil dari order_details)
+        $schedule->load('event');
+        
+        // Ambil data dari table order_details yang memiliki tickets_id merujuk ke tickets yang memiliki event_schedules_id ini
+        $attendees = DB::table('order_details')
+            ->join('tickets', 'order_details.tickets_id', '=', 'tickets.id')
+            ->where('tickets.event_schedules_id', $schedule->id)
+            ->select('order_details.*')
+            ->get();
+
+        return view('organizer.attendees', compact('schedule', 'attendees'));
     }
 }

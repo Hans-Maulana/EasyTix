@@ -39,6 +39,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/events/{event}', [EventController::class, 'updateEvent'])->name('admin.updateEvent');
     Route::delete('/admin/events/{event}', [EventController::class, 'deleteEvent'])->name('admin.deleteEvent');
 
+    // Manage Request Access
+    Route::post('/admin/requests/{request}/approve', [EventController::class, 'approveRequest'])->name('admin.approveRequest');
+    Route::post('/admin/requests/{request}/reject', [EventController::class, 'rejectRequest'])->name('admin.rejectRequest');
+
     // Manage Schedule
     Route::get('/admin/events/{event}/schedule', [EventController::class, 'scheduleEvent'])->name('admin.scheduleEvent');
     Route::get('/admin/events/{event}/schedule/create', [EventController::class, 'createSchedule'])->name('admin.createSchedule');
@@ -78,10 +82,20 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware(['auth', 'organizer'])->group(function () {
+    Route::get('/organizer/dashboard', [UserController::class, 'index'])->name('organizer.dashboard');
+    Route::get('/organizer/my-events', [EventController::class, 'myEvents'])->name('organizer.myEvents');
+    Route::get('/organizer/events', [EventController::class, 'organizerEvents'])->name('organizer.events');
+    Route::post('/organizer/events/{event}/request', [EventController::class, 'requestAccess'])->name('organizer.requestAccess');
+    
+    // Ticket Verification
+    Route::get('/organizer/verify-ticket', [EventController::class, 'selectEventVerification'])->name('organizer.selectEventVerification');
+    Route::get('/organizer/verify-ticket/{event}', [EventController::class, 'verifyTicketDetail'])->name('organizer.verifyTicketDetail');
+    Route::get('/organizer/verify-ticket/schedule/{schedule}', [EventController::class, 'verifySchedule'])->name('organizer.verifySchedule');
+    
+    // Attendees
+    Route::get('/organizer/my-events/{event}', [EventController::class, 'myEventsDetail'])->name('organizer.myEventsDetail');
+    Route::get('/organizer/schedule/{schedule}/attendees', [EventController::class, 'attendees'])->name('organizer.attendees');
 });
 
 require __DIR__.'/auth.php';

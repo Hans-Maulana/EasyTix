@@ -85,7 +85,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category">Menunggu Verifikasi</p>
-                                    <h4 class="card-title">5</h4>
+                                    <h4 class="card-title">{{ $totalPendingRequests }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -100,14 +100,12 @@
                 <div class="card card-round">
                     <div class="card-header">
                         <div class="card-head-row card-tools-still-right">
-                            <h4 class="card-title">Event Terbaru Menunggu Verifikasi</h4>
+                            <h4 class="card-title">Permintaan Akses Event</h4>
                             <div class="card-tools">
-                                <button class="btn btn-icon btn-link btn-primary btn-xs"><span class="fa fa-angle-down"></span></button>
                                 <button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"><span class="fa fa-sync-alt"></span></button>
-                                <button class="btn btn-icon btn-link btn-primary btn-xs"><span class="fa fa-times"></span></button>
                             </div>
                         </div>
-                        <p class="card-category">Daftar event yang diajukan oleh organizer yang membutuhkan persetujuan.</p>
+                        <p class="card-category">Daftar organizer yang meminta akses untuk mengelola event.</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -117,42 +115,50 @@
                                         <th scope="col">#</th>
                                         <th scope="col">Nama Event</th>
                                         <th scope="col">Organizer</th>
-                                        <th scope="col">Tanggal Event</th>
+                                        <th scope="col">Tanggal Request</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach($requests as $request)
                                     <tr>
-                                        <td>1</td>
-                                        <td>Konser Coldplay Jakarta</td>
-                                        <td>PK Entertainment</td>
-                                        <td>15 Nov 2026</td>
-                                        <td><span class="badge badge-warning">Pending</span></td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $request->event->name }}</td>
+                                        <td>{{ $request->user->name }}</td>
+                                        <td>{{ $request->created_at->format('d M Y') }}</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-primary">Lihat Detail</a>
+                                            @if($request->status == 'pending')
+                                                <span class="badge badge-warning">Pending</span>
+                                            @elseif($request->status == 'approved')
+                                                <span class="badge badge-success">Approved</span>
+                                            @else
+                                                <span class="badge badge-danger">Rejected</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($request->status == 'pending')
+                                            <div class="d-flex gap-2">
+                                                <form action="{{ route('admin.approveRequest', $request->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-success">Setujui</button>
+                                                </form>
+                                                <form action="{{ route('admin.rejectRequest', $request->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-danger">Tolak</button>
+                                                </form>
+                                            </div>
+                                            @else
+                                                <button class="btn btn-sm btn-secondary" disabled>-</button>
+                                            @endif
                                         </td>
                                     </tr>
+                                    @endforeach
+                                    @if($requests->isEmpty())
                                     <tr>
-                                        <td>2</td>
-                                        <td>Festival Musik Indie Raya</td>
-                                        <td>Ruang Gembira</td>
-                                        <td>20 Okt 2026</td>
-                                        <td><span class="badge badge-success">Approved</span></td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-primary">Lihat Detail</a>
-                                        </td>
+                                        <td colspan="6" class="text-center">Tidak ada permintaan akses.</td>
                                     </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Pentas Teater Bawang Merah</td>
-                                        <td>Teater Koma</td>
-                                        <td>02 Sep 2026</td>
-                                        <td><span class="badge badge-warning">Pending</span></td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-primary">Lihat Detail</a>
-                                        </td>
-                                    </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

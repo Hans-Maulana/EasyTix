@@ -11,6 +11,8 @@ use App\Models\EventSchedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
 
+use App\Models\EventRequest;
+
 class UserController extends Controller
 {
     /**
@@ -21,7 +23,17 @@ class UserController extends Controller
         if (auth()->user()->role === 'admin') {
             $totalUsers = User::count();
             $totalEvents = Event::count();
-            return view('admin.dashboard', compact('totalUsers', 'totalEvents'));
+            $totalPendingRequests = EventRequest::where('status', 'pending')->count();
+            $requests = EventRequest::latest()->get();
+            return view('admin.dashboard', compact('totalUsers', 'totalEvents', 'totalPendingRequests', 'requests'));
+        } elseif (auth()->user()->role === 'organizer') {
+            // Dashboard Organizer
+            $approvedRequests = EventRequest::where('users_id', auth()->id())
+                                ->where('status', 'approved')
+                                ->with('event')
+                                ->get();
+            $totalMyEvents = $approvedRequests->count();
+            return view('organizer.dashboard', compact('totalMyEvents', 'approvedRequests'));
         } else {
             // Dashboard User
             $mainBanners = Banner::where('status', 'active')->where('type', 'main')->get();
@@ -95,6 +107,9 @@ class UserController extends Controller
 
     public function deleteUser(User $user)
     {
+        if(auth()->user()->id == $user->id){
+            return redirect()->route('admin.manageUsers')->with('error', 'Anda tidak bisa menghapus diri sendiri!');
+        }
         try {
             $user->delete();
             return redirect()->route('admin.manageUsers')->with('success', 'User berhasil dihapus!');
