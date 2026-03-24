@@ -41,19 +41,28 @@
 
         <!-- Banner Card (Promo) -->
         @if($cardBanners->count() > 0)
-        <div class="row mb-4">
-            <div class="col-md-12 mb-3">
-                <h4 class="fw-bold"><i class="fas fa-fire text-danger me-2"></i> Penawaran Spesial</h4>
+        <div class="row mb-5 mt-4">
+            <div class="col-md-12 mb-4 d-flex align-items-center justify-content-between">
+                <h3 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">
+                    <i class="fas fa-gem text-warning me-2"></i> Penawaran Spesial
+                </h3>
             </div>
             @foreach($cardBanners as $banner)
             <div class="col-md-4 mb-4">
-                <div class="card card-post card-round shadow-sm h-100 border-0 overflow-hidden banner-card">
-                    <img class="card-img-top" src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body p-3">
-                        <h5 class="card-title fw-bold mb-3 text-truncate">{{ $banner->title }}</h5>
-                        <a href="{{ $banner->link ?? '#' }}" class="btn btn-outline-primary btn-sm btn-round w-100">
-                            Beli Tiket Sekarang
-                        </a>
+                <div class="card premium-promo-card h-100 border-0">
+                    <div class="promo-img-container">
+                        <img class="card-img-top" src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}">
+                        <div class="promo-overlay">
+                            <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase shadow-sm" style="letter-spacing: 1px;"><i class="fas fa-tag me-1"></i> Promo</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="card-title fw-bold mb-3 text-dark" style="font-family: 'Outfit', sans-serif;">{{ $banner->title }}</h4>
+                        <div class="mt-auto pt-3 text-center">
+                            <a href="{{ $banner->link ?? '#' }}" class="btn premium-btn w-100 fw-bold">
+                                Beli Tiketnya Sekarang <i class="fas fa-arrow-right ms-2 transition-icon"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,8 +76,61 @@
 
 
 <style>
-    .banner-card { transition: transform 0.3s ease; }
-    .banner-card:hover { transform: translateY(-10px); }
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
+
+    .premium-promo-card {
+        border-radius: 20px !important;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden;
+    }
+    .premium-promo-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    }
+    .promo-img-container {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+    .promo-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+    .premium-promo-card:hover .promo-img-container img {
+        transform: scale(1.08); /* Efek zoom tipis */
+    }
+    .promo-overlay {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 2;
+    }
+    
+    .premium-btn {
+        background: linear-gradient(135deg, #142E5E 0%, #071120 100%);
+        color: #fff !important;
+        border-radius: 50px;
+        padding: 12px 20px;
+        border: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .premium-btn:hover {
+        background: linear-gradient(135deg, #F4D03F 0%, #E67E22 100%);
+        color: #000 !important;
+        box-shadow: 0 8px 20px rgba(244, 208, 63, 0.4);
+    }
+    .premium-btn .transition-icon {
+        transition: transform 0.3s ease;
+    }
+    .premium-btn:hover .transition-icon {
+        transform: translateX(5px);
+    }
+
     .carousel-item img { max-height: 450px; }
 </style>
 @endsection

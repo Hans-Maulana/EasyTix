@@ -43,6 +43,22 @@ class UserController extends Controller
         }
     }
 
+    public function schedule(Request $request)
+    {
+        $query = Event::with('event_schedule')->where('status', 'active');
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('location', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $events = $query->orderBy('created_at', 'desc')->get();
+        return view('user.schedule', compact('events'));
+    }
+
     public function manageUsers()
     {   
         $users = User::all();

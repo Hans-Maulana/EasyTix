@@ -156,12 +156,30 @@
                         </a>
                     </li>
 
-              @else
-                  {{-- DEFAULT MENU JIKA BELUM LOGIN ATAU BUKAN ADMIN/ORGANIZER --}}
-                  <li class="nav-item active">
-                      <a href="#">
+              @else(Auth::check() && Auth::user()->role == 'user')
+                  {{-- MENU user --}}
+                  <li class="nav-item {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">
+                      <a href="{{ route('user.dashboard') }}">
                           <i class="fas fa-home"></i>
                           <p>Dashboard</p>
+                      </a>
+                  </li>
+                  <li class="nav-item {{ request()->routeIs('user.schedule') ? 'active' : '' }}">
+                      <a href="{{ route('user.schedule') }}">
+                          <i class="fas fa-calendar-alt"></i>
+                          <p>Lihat Jadwal</p>
+                      </a>
+                  </li>
+                  <li class="nav-item {{ request()->routeIs('user.buyTickets') ? 'active' : '' }}">
+                      <a href="{{ route('user.buyTickets') }}">
+                          <i class="fas fa-ticket-alt"></i>
+                          <p>Beli Tiket</p>
+                      </a>
+                  </li>
+                  <li class="nav-item {{ request()->routeIs('user.myTickets') ? 'active' : '' }}">
+                      <a href="{{ route('user.myTickets') }}">
+                          <i class="fas fa-ticket-alt"></i>
+                          <p>Tiket Saya</p>
                       </a>
                   </li>
               @endif
