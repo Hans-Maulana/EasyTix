@@ -81,6 +81,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
     Route::get('/user/schedule', [UserController::class, 'schedule'])->name('user.schedule');
+
+    // Profile Management
+    Route::get('/profile/view', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Order & Booking System
     Route::get('/user/buy-tickets', [OrderController::class, 'index'])->name('user.buyTickets');

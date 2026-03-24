@@ -90,11 +90,7 @@
                             @endforeach
                         @endforeach
 
-                        @if(!$hasTickets)
-                            <div class="text-center py-3">
-                                <p class="text-muted mb-0 italic">Tiket belum tersedia untuk event ini.</p>
-                            </div>
-                        @endif
+
                     </div>
                 </div>
             </div>

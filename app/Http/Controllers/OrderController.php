@@ -13,7 +13,8 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $events = Event::with(['event_schedule.tickets.ticket_type'])
+        $events = Event::whereHas('event_schedule.tickets')
+            ->with(['event_schedule.tickets.ticket_type'])
             ->where('status', 'active')
             ->get();
         return view('user.buy-tickets', compact('events'));
