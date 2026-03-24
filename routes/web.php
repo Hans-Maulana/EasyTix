@@ -8,6 +8,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\TicketTypeController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('landing-page');
@@ -75,6 +76,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
+    Route::get('/user/schedule', [UserController::class, 'schedule'])->name('user.schedule');
+    
+    // Order & Booking System
+    Route::get('/user/buy-tickets', [OrderController::class, 'index'])->name('user.buyTickets');
+    Route::post('/cart/add', [OrderController::class, 'addToCart'])->name('cart.add');
+    Route::get('/user/cart', [OrderController::class, 'viewCart'])->name('cart.view');
+    Route::patch('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
+    Route::delete('/cart/remove', [OrderController::class, 'removeFromCart'])->name('cart.remove');
+    Route::get('/user/checkout', [OrderController::class, 'checkout'])->name('user.checkout');
+    Route::post('/user/process-order', [OrderController::class, 'processOrder'])->name('user.processOrder');
+    Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
 });
 
 
