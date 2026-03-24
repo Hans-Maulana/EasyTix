@@ -3,15 +3,18 @@
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
+            <a href="{{ url('/') }}" class="logo">
               <img
-                src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png')}}"
-                alt="navbar brand"
+                src="{{ asset('assets/img/kaiadmin/logo_EasyTix_white.png')}}"
+                alt="EasyTix Logo"
                 class="navbar-brand"
-                height="100"
-                width="180"
+                height="35"
+                style="margin-left: 20px;"
               />
             </a>
+
+
+
             <div class="nav-toggle">
               <button class="btn btn-toggle toggle-sidebar">
                 <i class="gg-menu-right"></i>
@@ -75,6 +78,15 @@
                         <p>Manajemen Banner</p>
                     </a>
                 </li>
+
+                <!-- 5. Manajemen Genre -->
+                <li class="nav-item {{ request()->routeIs('admin.manageGenres') ? 'active' : '' }}">
+                    <a href="{{ route('admin.manageGenres') }}">
+                        <i class="fas fa-tags"></i>
+                        <p>Manajemen Genre</p>
+                    </a>
+                </li>
+
 
                   <!-- 4. Fitur Laporan -->
                   <li class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">

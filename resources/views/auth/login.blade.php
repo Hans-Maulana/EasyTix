@@ -1,47 +1,72 @@
-<x-guest-layout>
+<x-auth-modern-layout>
+    <div class="auth-logo" style="display: flex; justify-content: center; margin-bottom: 24px;">
+        <a href="/">
+            <img src="{{ asset('assets/img/kaiadmin/logo_EasyTix_white.png') }}" alt="EasyTix Logo" style="height: 60px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));">
+        </a>
+    </div>
+
+
+
+
+    <div class="auth-header">
+        <h1 class="auth-title">Selamat Datang!</h1>
+        <p class="auth-subtitle">Masuk untuk mengelola tiket dan temukan pengalaman seru bersama kami.</p>
+    </div>
+
     <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="mb-4">
+        <x-auth-session-status :status="session('status')" />
+    </div>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
         <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="form-group">
+            <label for="email" class="form-label">Alamat Email</label>
+            <input id="email" class="form-input" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="Masukkan email Anda" />
+            @if ($errors->has('email'))
+                <div class="form-error">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    {{ $errors->first('email') }}
+                </div>
+            @endif
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
+        <div class="form-group">
+            <label for="password" class="form-label">Kata Sandi</label>
+            <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+            @if ($errors->has('password'))
+                <div class="form-error">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    {{ $errors->first('password') }}
+                </div>
             @endif
+        </div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <!-- Remember & Forgot -->
+        <div class="auth-footer-links">
+            <label for="remember_me" class="auth-checkbox">
+                <input id="remember_me" type="checkbox" name="remember">
+                <span>Ingat saya</span>
+            </label>
+
+            @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" class="auth-link">Lupa sandi?</a>
+            @endif
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Masuk Sekarang
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+
+        <div class="register-text">
+            Belum punya akun? <a href="{{ route('register') }}" class="auth-link">Daftar di sini</a>
         </div>
     </form>
-</x-guest-layout>
+</x-auth-modern-layout>
+
+
+

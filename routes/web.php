@@ -62,7 +62,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/banners/{banner}/edit', [BannerController::class, 'editBanner'])->name('admin.editBanner');
     Route::put('/admin/banners/{banner}', [BannerController::class, 'updateBanner'])->name('admin.updateBanner');
     Route::delete('/admin/banners/{banner}', [BannerController::class, 'deleteBanner'])->name('admin.deleteBanner');
+
+    // Manage Genres
+    Route::get('/admin/genres', [GenreController::class, 'manageGenres'])->name('admin.manageGenres');
+    Route::get('/admin/genres/create', [GenreController::class, 'createGenre'])->name('admin.createGenre');
+    Route::post('/admin/genres', [GenreController::class, 'storeGenre'])->name('admin.storeGenre');
+    Route::get('/admin/genres/{genre}/edit', [GenreController::class, 'editGenre'])->name('admin.editGenre');
+    Route::put('/admin/genres/{genre}', [GenreController::class, 'updateGenre'])->name('admin.updateGenre');
+    Route::delete('/admin/genres/{genre}', [GenreController::class, 'deleteGenre'])->name('admin.deleteGenre');
 });
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
