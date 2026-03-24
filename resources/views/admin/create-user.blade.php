@@ -103,9 +103,20 @@
 @section('ExtraJS')
     <script>
         $(document).ready(function() {
-            $('#users-table').DataTable({
-                "pageLength": 10,
-            });
+            // SweetAlert Flash Notifications
+            @if(session('error'))
+                swal("Gagal!", "{{ session('error') }}", "error");
+            @endif
+
+            @if($errors->any())
+                swal({
+                    title: 'Validasi Gagal!',
+                    text: '@foreach($errors->all() as $error)• {{ $error }} @endforeach',
+                    type: 'error',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'OK',
+                });
+            @endif
         });
     </script>
 @endsection

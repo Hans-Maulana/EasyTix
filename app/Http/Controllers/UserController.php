@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\Genre;
 use Illuminate\Http\Request;
+use App\Models\Banner;
 use App\Models\EventSchedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
@@ -17,7 +18,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard');
+        if (auth()->user()->role === 'admin') {
+            $totalUsers = User::count();
+            $totalEvents = Event::count();
+            return view('admin.dashboard', compact('totalUsers', 'totalEvents'));
+        } else {
+            // Dashboard User
+            $mainBanners = Banner::where('status', 'active')->where('type', 'main')->get();
+            $cardBanners = Banner::where('status', 'active')->where('type', 'card')->get();
+            $events = Event::where('status', 'active')->latest()->limit(3)->get();
+            return view('user.dashboard', compact('mainBanners', 'cardBanners', 'events'));
+        }
     }
 
     public function manageUsers()
@@ -41,15 +52,18 @@ class UserController extends Controller
             'role' => 'required',
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone_number' => $request->phone_number,
-            'role' => $request->role,
-        ]);
-
-        return redirect()->route('admin.manageUsers');
+        try {
+            User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone_number' => $request->phone_number,
+                'role' => $request->role,
+            ]);
+            return redirect()->route('admin.manageUsers')->with('success', 'User berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Gagal menambahkan user: ' . $e->getMessage());
+        }
     }
 
     public function editUser(User $user)
@@ -61,72 +75,31 @@ class UserController extends Controller
     {   
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'password' => 'required|min:8|confirmed',
             'phone_number' => 'required',
 
         ]); 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone_number' => $request->phone_number,
-        ]);
-
-        return redirect()->route('admin.manageUsers');
+        try {
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone_number' => $request->phone_number,
+            ]);
+            return redirect()->route('admin.manageUsers')->with('success', 'User berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Gagal memperbarui user: ' . $e->getMessage());
+        }
     }   
 
     public function deleteUser(User $user)
     {
-        $user->delete();
-        return redirect()->route('admin.manageUsers');
+        try {
+            $user->delete();
+            return redirect()->route('admin.manageUsers')->with('success', 'User berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.manageUsers')->with('error', 'Gagal menghapus user: ' . $e->getMessage());
+        }
     }   
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Admin $admin)
-    {
-        //
-    }
 }

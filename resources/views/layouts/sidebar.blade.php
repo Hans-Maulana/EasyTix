@@ -60,27 +60,27 @@
                       </a>
                   </li>
                   
-                  <!-- 3. Manajemen Tiket -->
-                  <li class="nav-item {{ request()->routeIs('admin.manageTickets') ? 'active' : '' }}">
-                      <a href="#">
+                  <!-- 3. Manajemen Tipe Tiket -->
+                  <li class="nav-item {{ request()->routeIs('admin.manageTicketTypes') ? 'active' : '' }}">
+                      <a href="{{ route('admin.manageTicketTypes') }}">
                           <i class="fas fa-ticket-alt"></i>
-                          <p>Manajemen Tiket</p>
+                          <p>Manajemen Tipe Tiket</p>
                       </a>
                   </li>
+
+                  <!-- 4. Manajemen Banner -->
+                  <li class="nav-item {{ request()->routeIs('admin.manageBanners') ? 'active' : '' }}">
+                    <a href="{{ route('admin.manageBanners') }}">
+                        <i class="fas fa-image"></i>
+                        <p>Manajemen Banner</p>
+                    </a>
+                </li>
 
                   <!-- 4. Fitur Laporan -->
                   <li class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
                       <a href="#">
                           <i class="fas fa-chart-bar"></i>
                           <p>Fitur Laporan</p>
-                      </a>
-                  </li>
-                  
-                  <!-- 5. Manajemen Banner -->
-                  <li class="nav-item {{ request()->routeIs('admin.ManageBanners') ? 'active' : '' }}">
-                      <a href="#">
-                          <i class="fas fa-images"></i>
-                          <p>Manajemen Banner</p>
                       </a>
                   </li>
 

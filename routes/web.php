@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\TicketTypeController;
+use App\Http\Controllers\BannerController;
 
 Route::get('/', function () {
     return view('landing-page');
@@ -44,6 +46,26 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/events/{event}/schedule/{schedule}/edit', [EventController::class, 'editSchedule'])->name('admin.editSchedule');
     Route::put('/admin/events/{event}/schedule/{schedule}', [EventController::class, 'updateSchedule'])->name('admin.updateSchedule');
     Route::delete('/admin/events/{event}/schedule/{schedule}', [EventController::class, 'deleteSchedule'])->name('admin.deleteSchedule');
+
+    // Manage Ticket Types
+    Route::get('/admin/ticket-types', [TicketTypeController::class, 'manageTicketTypes'])->name('admin.manageTicketTypes');
+    Route::get('/admin/ticket-types/create', [TicketTypeController::class, 'createTicketType'])->name('admin.createTicketType');
+    Route::post('/admin/ticket-types', [TicketTypeController::class, 'storeTicketType'])->name('admin.storeTicketType');
+    Route::get('/admin/ticket-types/{ticketType}/edit', [TicketTypeController::class, 'editTicketType'])->name('admin.editTicketType');
+    Route::put('/admin/ticket-types/{ticketType}', [TicketTypeController::class, 'updateTicketType'])->name('admin.updateTicketType');
+    Route::delete('/admin/ticket-types/{ticketType}', [TicketTypeController::class, 'deleteTicketType'])->name('admin.deleteTicketType');
+
+    // Manage Banners
+    Route::get('/admin/banners', [BannerController::class, 'manageBanners'])->name('admin.manageBanners');
+    Route::get('/admin/banners/create', [BannerController::class, 'createBanner'])->name('admin.createBanner');
+    Route::post('/admin/banners', [BannerController::class, 'storeBanner'])->name('admin.storeBanner');
+    Route::get('/admin/banners/{banner}/edit', [BannerController::class, 'editBanner'])->name('admin.editBanner');
+    Route::put('/admin/banners/{banner}', [BannerController::class, 'updateBanner'])->name('admin.updateBanner');
+    Route::delete('/admin/banners/{banner}', [BannerController::class, 'deleteBanner'])->name('admin.deleteBanner');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 });
 
 

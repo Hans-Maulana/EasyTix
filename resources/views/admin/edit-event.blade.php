@@ -264,6 +264,23 @@
         let scheduleIndex = {{ $event->event_schedule->count() }};
         let ticketTypeOptions = `@foreach($ticketTypes as $type)<option value="{{ $type->id }}">{{ $type->name }}</option>@endforeach`;
 
+        // SweetAlert Flash Notifications
+        $(document).ready(function () {
+            @if(session('error'))
+                swal("Gagal!", "{{ session('error') }}", "error");
+            @endif
+
+            @if($errors->any())
+                swal({
+                    title: 'Validasi Gagal!',
+                    text: '@foreach($errors->all() as $error)• {{ $error }} @endforeach',
+                    type: 'error',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'OK',
+                });
+            @endif
+        });
+
         document.getElementById('add-schedule').addEventListener('click', function () {
             const wrapper = document.getElementById('schedule-wrapper');
             const newItem = document.createElement('div');
@@ -380,7 +397,7 @@
                     <input type="number" name="schedules[${sIdx}][tickets][${tIdx}][price]" class="form-control form-control-sm" placeholder="Harga" required>
                 </div>
                 <div class="col-md-1 text-end">
-                    <button type="button" class="btn btn-link text-danger p-0" onclick="removeTicket('${rowId}')">
+                    <button type="button" class="btn btn-link text-danger btn-delete-confirm p-0" onclick="removeTicket('${rowId}')">
                         <i class="fa fa-times"></i>
                     </button>
                 </div>
@@ -388,12 +405,23 @@
             wrapper.appendChild(newRow);
         }
 
-        function removeTicket(id) {
+       function removeTicket(id) {
             const item = document.getElementById(id);
+
             if (item) {
-                item.remove();
+                swal({
+                    title: 'Yakin hapus tiket ini?',
+                    text: 'Data akan hilang permanen!',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus',
+                    cancelButtonText: 'Batal',
+                    closeOnConfirm: true
+                }, function() {
+                    item.remove(); // hapus baris tabel
+                });
             }
         }
     </script>
 @endsection
-

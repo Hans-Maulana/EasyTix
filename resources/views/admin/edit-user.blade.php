@@ -95,13 +95,20 @@
 @section('ExtraJS')
 <script>
     $(document).ready(function() {
-        $('#basic-datatables').DataTable({
-            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            "iDisplayLength": 10,
-            "oLanguage": {
-                "sSearch": "Search: "
-            }
-        });
+        // SweetAlert Flash Notifications
+        @if(session('error'))
+            swal("Gagal!", "{{ session('error') }}", "error");
+        @endif
+
+        @if($errors->any())
+            swal({
+                title: 'Validasi Gagal!',
+                text: '@foreach($errors->all() as $error)• {{ $error }} @endforeach',
+                type: 'error',
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'OK',
+            });
+        @endif
     });
 </script>
 @endsection

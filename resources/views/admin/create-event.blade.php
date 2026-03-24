@@ -285,6 +285,23 @@
         let scheduleIndex = 1;
         let ticketTypeOptions = `@foreach($ticketTypes as $type)<option value="{{ $type->id }}">{{ $type->name }}</option>@endforeach`;
 
+        // SweetAlert Flash Notifications
+        $(document).ready(function () {
+            @if(session('error'))
+                swal("Gagal!", "{{ session('error') }}", "error");
+            @endif
+
+            @if($errors->any())
+                swal({
+                    title: 'Validasi Gagal!',
+                    text: '@foreach($errors->all() as $error)• {{ $error }} @endforeach',
+                    type: 'error',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'OK',
+                });
+            @endif
+        });
+
         document.getElementById('add-schedule').addEventListener('click', function () {
             const wrapper = document.getElementById('schedule-wrapper');
             const newItem = document.createElement('div');
@@ -415,5 +432,6 @@
                 item.remove();
             }
         }
+
     </script>
 @endsection

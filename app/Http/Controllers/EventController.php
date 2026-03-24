@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use App\Models\TicketType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -114,7 +115,11 @@ class EventController extends Controller
         try {
             DB::beginTransaction();
 
-            $event->update($request->only('name', 'location', 'status'));
+            $event->update([
+                'name' => $request->name,
+                'location' => $request->location,
+                'status' => $request->status,
+            ]);
 
             // Sinkronisasi genre
             $event->genres()->sync($request->genre_ids);
@@ -175,8 +180,12 @@ class EventController extends Controller
 
     public function deleteEvent(Event $event)
     {
-        $event->delete();
-        return redirect()->route('admin.manageEvents');
+        try {
+            $event->delete();
+            return redirect()->route('admin.manageEvents')->with('success', 'Event berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.manageEvents')->with('error', 'Gagal menghapus event: ' . $e->getMessage());
+        }
     }
 
     public function scheduleEvent(Event $event)

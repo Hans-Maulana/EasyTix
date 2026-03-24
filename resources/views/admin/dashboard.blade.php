@@ -28,7 +28,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category">Total Users</p>
-                                    <h4 class="card-title">1,294</h4>
+                                    <h4 class="card-title">{{ $totalUsers }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category">Event Aktif</p>
-                                    <h4 class="card-title">25</h4>
+                                    <h4 class="card-title">{{ $totalEvents }}</h4>
                                 </div>
                             </div>
                         </div>
