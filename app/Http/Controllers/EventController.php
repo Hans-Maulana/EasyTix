@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\EventRequest;
 use App\Models\OrderDetail;
+use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
@@ -355,7 +356,18 @@ class EventController extends Controller
     {
         // View yang berisi form input kode tiket untuk jadwal tertentu
         $schedule->load('event');
-        return view('organizer.verify-ticket-input', compact('schedule'));
+        
+        // Fetch verifikasi hari ini untuk jadwal ini
+        $todayVerifications = OrderDetail::where('status', 'used')
+            ->whereDate('updated_at', now()->toDateString())
+            ->whereHas('ticket', function($q) use ($schedule) {
+                $q->where('event_schedules_id', $schedule->id);
+            })
+            ->with(['ticket.ticket_type'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('organizer.verify-ticket-input', compact('schedule', 'todayVerifications'));
     }
 
     public function processVerification(Request $request, EventSchedule $schedule)
@@ -419,5 +431,55 @@ class EventController extends Controller
             ->get();
 
         return view('organizer.attendees', compact('schedule', 'attendees'));
+    }
+
+    public function salesReport()
+    {
+        $organizerId = auth()->id();
+        
+        $eventIds = EventRequest::where('users_id', $organizerId)
+                    ->where('status', 'approved')
+                    ->pluck('event_id');
+        
+        $orders = Order::whereIn('events_id', $eventIds)
+                    ->with(['event', 'user'])
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+        
+        $totalRevenue = $orders->sum('total_amount');
+        $totalTickets = OrderDetail::whereIn('orders_id', $orders->pluck('id'))->count();
+        
+        $eventStats = [];
+        foreach($eventIds as $id) {
+            $event = Event::find($id);
+            if(!$event) continue;
+            
+            $eventOrders = $orders->where('events_id', $id);
+            $revenue = $eventOrders->sum('total_amount');
+            $tickets = OrderDetail::whereIn('orders_id', $eventOrders->pluck('id'))->count();
+            
+            $eventStats[] = [
+                'name'         => $event->name,
+                'revenue'      => $revenue,
+                'tickets'      => $tickets,
+                'orders_count' => $eventOrders->count()
+            ];
+        }
+
+        // Data untuk Chart (Penjualan 7 Hari Terakhir)
+        $chartLabels = [];
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $label = now()->subDays($i)->format('d M');
+            $revenue = $orders->filter(function($order) use ($date) {
+                return $order->created_at->format('Y-m-d') == $date;
+            })->sum('total_amount');
+            
+            $chartLabels[] = $label;
+            $chartData[] = (float)$revenue;
+        }
+
+        return view('organizer.sales-report', compact('orders', 'totalRevenue', 'totalTickets', 'eventStats', 'chartLabels', 'chartData'));
     }
 }

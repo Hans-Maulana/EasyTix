@@ -2,12 +2,12 @@
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
+              <a href="{{ url('/') }}" class="logo">
                 <img
-                  src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png')}}"
+                  src="{{ asset('assets/img/kaiadmin/logo_EasyTix_white.png')}}"
                   alt="navbar brand"
                   class="navbar-brand"
-                  height="20"
+                  height="30"
                 />
               </a>
               <div class="nav-toggle">
@@ -102,9 +102,10 @@
                   >
                     <div class="avatar-sm">
                       <img
-                        src="{{ asset('assets/img/profile.jpg') }}"
-                        alt="..."
+                        src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('assets/img/profile.jpg') }}"
+                        alt="avatar"
                         class="avatar-img rounded-circle"
+                        style="width: 100%; height: 100%; object-fit: cover;"
                       />
                     </div>
                     <span class="profile-username">
@@ -118,9 +119,10 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="{{ asset('assets/img/profile.jpg') }}"
+                              src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('assets/img/profile.jpg') }}"
                               alt="image profile"
                               class="avatar-img rounded"
+                              style="width: 100%; height: 100%; object-fit: cover;"
                             />
                           </div>
                           <div class="u-text">

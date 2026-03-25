@@ -9,7 +9,7 @@
                 alt="EasyTix Logo"
                 class="navbar-brand"
                 height="35"
-                style="margin-left: 20px;"
+                style="margin-left: 20px; filter: drop-shadow(0 0 5px rgba(244, 208, 63, 0.4));"
               />
             </a>
 
@@ -149,8 +149,8 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <a href="#">
+                    <li class="nav-item {{ request()->routeIs('organizer.salesReport') ? 'active' : '' }}">
+                        <a href="{{ route('organizer.salesReport') }}">
                             <i class="fas fa-chart-line"></i>
                             <p>Laporan Penjualan</p>
                         </a>

@@ -84,7 +84,7 @@
                 </div>
                 <div class="text-center">
                     <div class="profile-avatar-container">
-                        <img src="{{ asset('assets/img/profile.jpg') }}" alt="User Avatar" class="profile-avatar">
+                        <img src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('assets/img/profile.jpg') }}" alt="User Avatar" class="profile-avatar">
                     </div>
                 </div>
                 

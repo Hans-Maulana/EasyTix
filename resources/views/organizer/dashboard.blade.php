@@ -1,126 +1,198 @@
 @extends('layouts.master')
 
+@section('ExtraCSS')
+<style>
+    .welcome-card {
+        background: var(--premium-gold-grad);
+        border-radius: 2rem !important;
+        padding: 2.5rem;
+        color: #000;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    .welcome-card::after {
+        content: '\f3ff';
+        font-family: 'Font Awesome 5 Solid';
+        position: absolute;
+        right: -30px;
+        bottom: -30px;
+        font-size: 15rem;
+        opacity: 0.1;
+        transform: rotate(-15deg);
+    }
+    .stat-card-premium {
+        border-radius: 1.5rem !important;
+        border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+    .icon-wrapper-premium {
+        width: 60px;
+        height: 60px;
+        border-radius: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .bg-soft-primary { background: rgba(20, 46, 94, 0.1); color: var(--premium-accent); }
+    .bg-soft-success { background: rgba(67, 233, 123, 0.1); color: #2ecc71; }
+    .bg-soft-warning { background: rgba(244, 208, 63, 0.1); color: #f39c12; }
+    
+    .table-premium thead th {
+        background: transparent !important;
+        color: #888 !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        border-bottom: 1px solid #eee !important;
+    }
+    .table-premium tbody td {
+        padding: 1.2rem 0.75rem !important;
+        vertical-align: middle !important;
+    }
+    .badge-pill {
+        padding: 0.4rem 1rem !important;
+        border-radius: 50px !important;
+        font-weight: 600 !important;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="page-inner">
-        <!-- Judul Header Halaman -->
-        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
-            <div>
-                <h3 class="fw-bold mb-3">Dashboard Organizer</h3>
-                <h6 class="op-7 mb-2">Kelola Event Anda dengan Efisien di EasyTix</h6>
-            </div>
-            <div class="ms-md-auto py-2 py-md-0">
-                <a href="{{ route('organizer.events') }}" class="btn btn-primary btn-round">Cari Event Baru</a>
+        <!-- Welcome Hero -->
+        <div class="welcome-card fade-in-up" style="animation-delay: 0.1s;">
+            <div class="row align-items-center">
+                <div class="col-md-8 position-relative z-index-1">
+                    <h2 class="fw-bold mb-2">Halo, {{ Auth::user()->name }}! 👋</h2>
+                    <p class="fs-5 opacity-75 mb-4">Senang melihat Anda kembali. Semua event dan penjualan tiket Anda terpantau aman hari ini.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ route('organizer.events') }}" class="btn btn-dark btn-round px-4 py-2 fw-bold">
+                            Tamba Event Baru <i class="fas fa-plus ms-2"></i>
+                        </a>
+                        <a href="{{ route('organizer.salesReport') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm">
+                            Lihat Laporan
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Bagian Card Info Cepat -->
+        <!-- Quick Stats -->
         <div class="row">
-            <div class="col-sm-6 col-md-4">
-                <div class="card card-stats card-round">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                    <i class="fas fa-calendar-alt"></i>
-                                </div>
+            <div class="col-md-4 fade-in-up" style="animation-delay: 0.2s;">
+                <div class="card stat-card-premium">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-wrapper-premium bg-soft-primary me-3">
+                                <i class="fas fa-calendar-check"></i>
                             </div>
-                            <div class="col col-stats ms-3 ms-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">Event yang Dipegang</p>
-                                    <h4 class="card-title">{{ $totalMyEvents }}</h4>
-                                </div>
+                            <div>
+                                <p class="text-muted mb-0 small fw-bold text-uppercase">Event Aktif</p>
+                                <h3 class="fw-bold mb-0">{{ $totalMyEvents }}</h3>
                             </div>
                         </div>
+                        <div class="progress mb-2" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 75%"></div>
+                        </div>
+                        <small class="text-muted">Meningkat 12% dari bulan lalu</small>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-4">
-                <div class="card card-stats card-round">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-success bubble-shadow-small">
-                                    <i class="fas fa-ticket-alt"></i>
-                                </div>
+            <div class="col-md-4 fade-in-up" style="animation-delay: 0.3s;">
+                <div class="card stat-card-premium">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-wrapper-premium bg-soft-success me-3">
+                                <i class="fas fa-ticket-alt"></i>
                             </div>
-                            <div class="col col-stats ms-3 ms-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">Tiket Terverifikasi</p>
-                                    <h4 class="card-title">0</h4>
-                                </div>
+                            <div>
+                                <p class="text-muted mb-0 small fw-bold text-uppercase">Tiket Valid</p>
+                                <h3 class="fw-bold mb-0">{{ number_format($totalTicketsValid, 0, ',', '.') }}</h3>
                             </div>
                         </div>
+                        <div class="progress mb-2" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 60%"></div>
+                        </div>
+                        <small class="text-muted">Siap untuk diverifikasi</small>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-4">
-                <div class="card card-stats card-round">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-icon">
-                                <div class="icon-big text-center icon-info bubble-shadow-small">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
+            <div class="col-md-4 fade-in-up" style="animation-delay: 0.4s;">
+                <div class="card stat-card-premium">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-wrapper-premium bg-soft-warning me-3">
+                                <i class="fas fa-dollar-sign"></i>
                             </div>
-                            <div class="col col-stats ms-3 ms-sm-0">
-                                <div class="numbers">
-                                    <p class="card-category">Total Penjualan</p>
-                                    <h4 class="card-title">Rp 0</h4>
-                                </div>
+                            <div>
+                                <p class="text-muted mb-0 small fw-bold text-uppercase">Estimasi Revenue</p>
+                                <h3 class="fw-bold mb-0">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
                             </div>
                         </div>
+                        <div class="progress mb-2" style="height: 6px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">Target tercapai 85%</small>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Info Section -->
+        <!-- Recent Events Table -->
         <div class="row pt-4">
-            <div class="col-md-12">
-                <div class="card card-round">
-                    <div class="card-header">
-                        <div class="card-head-row">
-                            <h4 class="card-title">Event Terbaru Anda</h4>
-                        </div>
-                        <p class="card-category">Daftar event yang Anda kelola saat ini.</p>
+            <div class="col-md-12 fade-in-up" style="animation-delay: 0.5s;">
+                <div class="card shadow-none">
+                    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pt-4">
+                        <h4 class="fw-bold mb-0">Event Yang Anda Kelola</h4>
+                        <a href="{{ route('organizer.myEvents') }}" class="text-primary fw-bold text-decoration-none">Lihat Semua <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-head-bg-primary mt-4 align-middle">
+                            <table class="table table-premium">
                                 <thead>
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nama Event</th>
-                                        <th scope="col">Lokasi</th>
-                                        <th scope="col">Status Request</th>
-                                        <th scope="col">Aksi</th>
+                                        <th>Nama Event</th>
+                                        <th>Lokasi</th>
+                                        <th>Tipe Event</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($approvedRequests as $request)
+                                    @forelse($approvedRequests as $req)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $request->event->name }}</td>
-                                        <td>{{ $request->event->location }}</td>
-                                        <td><span class="badge badge-success">Selesai</span></td>
                                         <td>
-                                            <a href="{{ route('organizer.myEventsDetail', $request->event->id) }}" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-eye me-1"></i> Lihat Detail
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3">
+                                                    <span class="avatar-title rounded-circle bg-light text-dark fw-bold">{{ substr($req->event->name, 0, 1) }}</span>
+                                                </div>
+                                                <span class="fw-bold text-dark">{{ $req->event->name }}</span>
+                                            </div>
+                                        </td>
+                                        <td><i class="fas fa-map-marker-alt text-muted me-1"></i> {{ $req->event->location }}</td>
+                                        <td>
+                                            @foreach($req->event->genres as $genre)
+                                                <span class="badge bg-light text-dark border me-1">{{ $genre->name }}</span>
+                                            @endforeach
+                                        </td>
+                                        <td><span class="badge badge-pill bg-success text-white">ACTIVE</span></td>
+                                        <td class="text-end">
+                                            <a href="{{ route('organizer.myEventsDetail', $req->event->id) }}" class="btn btn-light btn-round border shadow-sm btn-sm px-3">
+                                                Manage <i class="fas fa-cog ms-1 text-muted"></i>
                                             </a>
                                         </td>
                                     </tr>
-                                    @endforeach
-                                    @if($approvedRequests->isEmpty())
-                                    <tr class="text-center">
-                                        <td colspan="5">
-                                            <div class="py-5">
-                                                <i class="fas fa-calendar-times mb-3" style="font-size: 3rem; color: #ccc;"></i>
-                                                <p class="text-muted">Anda belum memegang event apapun. Silakan <a href="{{ route('organizer.events') }}">request akses</a> ke event yang tersedia.</p>
-                                            </div>
+                                    @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <img src="https://img.icons8.com/bubbles/200/calendar.png" alt="Empty" style="width: 150px;">
+                                            <p class="text-muted mt-3">Belum ada event. Mulai kolaborasi sekarang!</p>
+                                            <a href="{{ route('organizer.events') }}" class="btn btn-primary btn-round">Request Event</a>
                                         </td>
                                     </tr>
-                                    @endif
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -128,7 +200,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 @endsection

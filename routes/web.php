@@ -117,6 +117,9 @@ Route::middleware(['auth', 'organizer'])->group(function () {
     // Attendees
     Route::get('/organizer/my-events/{event}', [EventController::class, 'myEventsDetail'])->name('organizer.myEventsDetail');
     Route::get('/organizer/schedule/{schedule}/attendees', [EventController::class, 'attendees'])->name('organizer.attendees');
+    
+    // Sales Report
+    Route::get('/organizer/sales-report', [EventController::class, 'salesReport'])->name('organizer.salesReport');
 });
 
 require __DIR__.'/auth.php';

@@ -1,84 +1,66 @@
 @extends('layouts.master')
 
+@section('ExtraCSS')
+<style>
+    .verify-card-p {
+        border-radius: 1.5rem !important;
+        background: #fff;
+        border: none !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
+        margin-bottom: 25px;
+        transition: all 0.3s;
+    }
+    .verify-card-p:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.06) !important;
+    }
+    .btn-action-p {
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="container">
+<div class="container pb-5">
     <div class="page-inner">
-        <div class="page-header">
-            <h3 class="fw-bold mb-3">Pilih Event untuk Verifikasi</h3>
-            <ul class="breadcrumbs mb-3">
-                <li class="nav-home">
-                    <a href="{{ route('organizer.dashboard') }}">
-                        <i class="icon-home"></i>
-                    </a>
-                </li>
-                <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('organizer.dashboard') }}">Organizer</a>
-                </li>
-                <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                    <a href="#">Tabel Pilih Event</a>
-                </li>
-            </ul>
+        <div class="page-header mb-5">
+            <div>
+                <h3 class="fw-bold display-6 mb-2">Pilih Event Verifikasi</h3>
+                <p class="text-muted">Pilih acara yang ingin Anda lakukan pengecekan dan verifikasi tiket hari ini.</p>
+            </div>
         </div>
+
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
+            @forelse ($approvedRequests as $request)
+                <div class="col-md-6 fade-in-up" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                    <div class="card verify-card-p p-4 border-0">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title">Event yang Tersedia untuk Verifikasi</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="verify-select-table" class="display table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nama Event</th>
-                                        <th>Lokasi</th>
-                                        <th style="width: 15%">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($approvedRequests as $request)
-                                        <tr>
-                                            <td>{{ $request->event->id }}</td>
-                                            <td>{{ $request->event->name }}</td>
-                                            <td>{{ $request->event->location }}</td>
-                                            <td>
-                                                <a href="{{ route('organizer.verifyTicketDetail', $request->event->id) }}" class="btn btn-info btn-sm w-100">
-                                                    <i class="fas fa-eye me-1"></i> Lihat Detail
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    @if($approvedRequests->isEmpty())
-                                    <tr>
-                                        <td colspan="4" class="text-center py-4">Belum ada event yang dipegang.</td>
-                                    </tr>
-                                    @endif
-                                </tbody>
-                            </table>
+                            <div class="avatar avatar-lg me-4">
+                                <span class="avatar-title rounded-circle bg-premium-blue text-white fw-bold shadow-sm">{{ substr($request->event->name, 0, 1) }}</span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h4 class="fw-bold text-dark mb-1">{{ $request->event->name }}</h4>
+                                <p class="text-muted small mb-0"><i class="fas fa-map-marker-alt me-1 text-warning"></i> {{ $request->event->location }}</p>
+                            </div>
+                            <div class="ms-auto">
+                                <a href="{{ route('organizer.verifyTicketDetail', $request->event->id) }}" class="btn btn-dark btn-action-p shadow-sm">
+                                    Buka Panel <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <img src="https://img.icons8.com/bubbles/200/delete-shield.png" alt="No data" style="width: 150px;">
+                    <h3 class="fw-bold mt-4">Belum Ada Event Terdaftar</h3>
+                    <p class="text-muted fs-5">Lakukan request akses ke event terlebih dahulu.</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>
-@endsection
-
-@section('ExtraJS')
-    <script>
-        $(document).ready(function() {
-            $('#verify-select-table').DataTable({
-                "pageLength": 10,
-            });
-        });
-    </script>
 @endsection

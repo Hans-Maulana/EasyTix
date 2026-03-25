@@ -1,75 +1,86 @@
 @extends('layouts.master')
 
+@section('ExtraCSS')
+<style>
+    .request-card-premium {
+        border-radius: 2rem !important;
+        background: #fff;
+        border: 1px solid #eee !important;
+        margin-bottom: 30px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .request-card-premium:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05) !important;
+        border-color: var(--premium-gold) !important;
+    }
+    .request-icon-box {
+        width: 60px;
+        height: 60px;
+        background: var(--premium-gold-grad);
+        color: #000;
+        border-radius: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .btn-request-p {
+        border-radius: 50px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 800 !important;
+        box-shadow: 0 4px 15px rgba(244, 208, 63, 0.3);
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="container">
+<div class="container pb-5">
     <div class="page-inner">
-        <div class="page-header">
-            <h3 class="fw-bold mb-3">Request Akses Event</h3>
-            <ul class="breadcrumbs mb-3">
-                <li class="nav-home">
-                    <a href="{{ route('organizer.dashboard') }}">
-                        <i class="icon-home"></i>
-                    </a>
-                </li>
-                <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                    <a href="#">Organizer</a>
-                </li>
-                <li class="separator">
-                    <i class="icon-arrow-right"></i>
-                </li>
-                <li class="nav-item">
-                    <a href="#">Request Akses</a>
-                </li>
-            </ul>
+        <div class="page-header mb-5">
+            <div>
+                <h3 class="fw-bold display-6 mb-2">Jelajahi Event</h3>
+                <p class="text-muted">Cari dan ajukan permintaan akses untuk mengelola event yang tersedia di platform.</p>
+            </div>
         </div>
+
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
+            @forelse($events as $event)
+                <div class="col-md-6 fade-in-up" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                    <div class="card request-card-premium p-4">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title">Event yang Tersedia</h4>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="events-table" class="display table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nama</th>
-                                        <th>Lokasi</th>
-                                        <th>Status</th>
-                                        <th style="width: 10%">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($events as $event)
-                                        <tr>
-                                            <td>{{ $event->id }}</td>
-                                            <td>{{ $event->name }}</td>
-                                            <td>{{ $event->location }}</td>
-                                            <td>
-                                                <span class="badge badge-primary">Active</span>
-                                            </td>
-                                            <td>
-                                                <form action="{{ route('organizer.requestAccess', $event->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-primary btn-sm">
-                                                        <i class="fas fa-key me-1"></i> Request Access
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
+                            <div class="request-icon-box me-4 shadow-sm">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex gap-2 mb-2">
+                                    @foreach($event->genres as $genre)
+                                        <span class="badge bg-light text-muted border px-2 py-1 rounded-pill small" style="font-size: 0.65rem;">{{ $genre->name }}</span>
                                     @endforeach
-                                </tbody>
-                            </table>
+                                </div>
+                                <h4 class="fw-bold mb-1 text-dark">{{ $event->name }}</h4>
+                                <div class="small text-muted mb-0">
+                                    <i class="fas fa-map-marker-alt me-1 text-warning"></i> {{ $event->location }}
+                                </div>
+                            </div>
+                            <div class="ms-auto">
+                                <form action="{{ route('organizer.requestAccess', $event->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary btn-request-p">
+                                        Request Access
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <img src="https://img.icons8.com/bubbles/200/broken-link.png" alt="No data" style="width: 150px;">
+                    <h3 class="fw-bold mt-4">Tidak Ada Event Baru</h3>
+                    <p class="text-muted fs-5">Semua event saat ini sudah Anda kelola atau belum ada event baru yang aktif.</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>
@@ -78,44 +89,30 @@
 @section('ExtraJS')
     <script>
         $(document).ready(function() {
-            $('#events-table').DataTable({
-                "pageLength": 10,
-            });
-
-            // SweetAlert Flash Notifications
             @if(session('success'))
-                swal("Berhasil!", "{{ session('success') }}", "success");
-            @endif
-            @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
-            @endif
-
-            // SweetAlert Delete Confirmation
-            $('.btn-delete-confirm').on('click', function (e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                
                 swal({
-                    title: 'Hapus Event?',
-                    text: 'Data event yang dihapus tidak bisa dikembalikan!',
-                    type: 'warning',
+                    title: "Berhasil!",
+                    text: "{{ session('success') }}",
+                    icon: "success",
                     buttons: {
                         confirm: {
-                            text: "Ya, Hapus!",
-                            className: "btn btn-danger",
-                        },
-                        cancel: {
-                            visible: true,
-                            text: "Batal",
-                            className: "btn btn-secondary",
-                        },
-                    },
-                }).then((Delete) => {
-                    if (Delete) {
-                        form.submit();
+                            className: 'btn btn-success'
+                        }
                     }
                 });
-            });
+            @endif
+            @if(session('error'))
+                swal({
+                    title: "Gagal!",
+                    text: "{{ session('error') }}",
+                    icon: "error",
+                    buttons: {
+                        confirm: {
+                            className: 'btn btn-danger'
+                        }
+                    }
+                });
+            @endif
         });
     </script>
 @endsection

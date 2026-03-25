@@ -17,7 +17,7 @@
     <script src="{{ asset('assets/js/plugin/webfont/webfont.min.js')}}"></script>
     <script>
       WebFont.load({
-        google: { families: ["Public Sans:300,400,500,600,700"] },
+        google: { families: ["Public Sans:300,400,500,600,700", "Outfit:100,200,300,400,500,600,700,800,900"] },
         custom: {
           families: [
             "Font Awesome 5 Solid",
@@ -41,6 +41,147 @@
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css')}}" />
     
+    <style>
+        :root {
+            --premium-blue: #071120;
+            --premium-accent: #142E5E;
+            --premium-gold: #F4D03F;
+            --premium-gold-grad: linear-gradient(135deg, #F4D03F 0%, #E67E22 100%);
+            --premium-glass: rgba(255, 255, 255, 0.05);
+            --premium-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', 'Public Sans', sans-serif !important;
+            scroll-behavior: smooth;
+        }
+
+        @if(Auth::check() && Auth::user()->role == 'organizer')
+        .main-panel {
+            background: #f4f7fa !important;
+        }
+
+        .card {
+            border: none !important;
+            border-radius: 1.5rem !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03) !important;
+            transition: all 0.3s ease !important;
+            overflow: hidden !important;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        .btn-primary {
+            background: var(--premium-gold-grad) !important;
+            border: none !important;
+            color: #000 !important;
+            font-weight: 700 !important;
+            border-radius: 1rem !important;
+            padding: 0.6rem 1.5rem !important;
+            box-shadow: 0 4px 15px rgba(244, 208, 63, 0.2) !important;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(244, 208, 63, 0.3) !important;
+        }
+
+        .sidebar {
+            background: var(--premium-blue) !important;
+            border-right: 1px solid rgba(255,255,255,0.05) !important;
+        }
+
+        .sidebar .sidebar-logo {
+            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+            padding: 1.5rem 1rem !important;
+        }
+
+        .sidebar[data-background-color="dark"] .nav > .nav-item > a {
+            margin: 8px 20px !important;
+            border-radius: 12px !important;
+            padding: 12px 15px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .sidebar[data-background-color="dark"] .nav > .nav-item > a:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+            transform: translateX(5px);
+        }
+
+        .sidebar[data-background-color="dark"] .nav > .nav-item > a p,
+        .sidebar[data-background-color="dark"] .nav > .nav-item > a i {
+            color: rgba(255, 255, 255, 0.5) !important;
+            font-size: 1rem !important;
+        }
+
+        .sidebar[data-background-color="dark"] .nav > .nav-item.active > a {
+            background: var(--premium-gold-grad) !important;
+            box-shadow: 0 8px 20px rgba(244, 208, 63, 0.2) !important;
+        }
+
+        .sidebar[data-background-color="dark"] .nav > .nav-item.active > a i,
+        .sidebar[data-background-color="dark"] .nav > .nav-item.active > a p {
+            color: #000 !important;
+            font-weight: 800 !important;
+        }
+
+        .main-header {
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
+            border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.03) !important;
+        }
+
+        .navbar-header {
+            background: transparent !important;
+        }
+
+        .topbar-user .profile-pic {
+            padding: 5px 15px !important;
+            background: #fff;
+            border-radius: 50px;
+            border: 1px solid #eee;
+            transition: all 0.3s;
+        }
+        .topbar-user .profile-pic:hover {
+            border-color: var(--premium-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .avatar-sm {
+            width: 35px !important;
+            height: 35px !important;
+        }
+
+        .avatar-img {
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-section .text-section {
+            color: rgba(255, 255, 255, 0.3) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
+            font-weight: 800 !important;
+            font-size: 0.7rem !important;
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @endif
+    </style>
   </head>
   <body>
     <div class="wrapper">

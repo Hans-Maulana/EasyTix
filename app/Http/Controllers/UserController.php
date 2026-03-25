@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
 
 use App\Models\EventRequest;
+use App\Models\Order;
+use App\Models\OrderDetail;
 
 class UserController extends Controller
 {
@@ -33,7 +35,18 @@ class UserController extends Controller
                                 ->with('event')
                                 ->get();
             $totalMyEvents = $approvedRequests->count();
-            return view('organizer.dashboard', compact('totalMyEvents', 'approvedRequests'));
+            
+            $myEventIds = $approvedRequests->pluck('events_id');
+            
+            // Hitung Tiket Valid (yang statusnya valid/belum digunakan)
+            $totalTicketsValid = OrderDetail::whereHas('ticket.event_schedule.event', function($q) use ($myEventIds) {
+                $q->whereIn('id', $myEventIds);
+            })->where('status', 'valid')->count();
+
+            // Hitung Total Pendapatan
+            $totalRevenue = Order::whereIn('events_id', $myEventIds)->sum('total_amount');
+
+            return view('organizer.dashboard', compact('totalMyEvents', 'approvedRequests', 'totalTicketsValid', 'totalRevenue'));
         } else {
             // Dashboard User
             $mainBanners = Banner::where('status', 'active')->where('type', 'main')->get();
