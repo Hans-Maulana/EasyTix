@@ -97,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/checkout', [OrderController::class, 'checkout'])->name('user.checkout');
     Route::post('/user/process-order', [OrderController::class, 'processOrder'])->name('user.processOrder');
     Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
+    Route::get('/user/notifications', [UserController::class, 'notifications'])->name('user.notifications');
     Route::get('/cart/clear', [OrderController::class, 'clearCart'])->name('cart.clear');
 });
 
@@ -111,6 +112,7 @@ Route::middleware(['auth', 'organizer'])->group(function () {
     Route::get('/organizer/verify-ticket', [EventController::class, 'selectEventVerification'])->name('organizer.selectEventVerification');
     Route::get('/organizer/verify-ticket/{event}', [EventController::class, 'verifyTicketDetail'])->name('organizer.verifyTicketDetail');
     Route::get('/organizer/verify-ticket/schedule/{schedule}', [EventController::class, 'verifySchedule'])->name('organizer.verifySchedule');
+    Route::post('/organizer/verify-ticket/schedule/{schedule}', [EventController::class, 'processVerification'])->name('organizer.processVerification');
     
     // Attendees
     Route::get('/organizer/my-events/{event}', [EventController::class, 'myEventsDetail'])->name('organizer.myEventsDetail');

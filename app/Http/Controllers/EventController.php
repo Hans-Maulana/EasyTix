@@ -358,6 +358,37 @@ class EventController extends Controller
         return view('organizer.verify-ticket-input', compact('schedule'));
     }
 
+    public function processVerification(Request $request, EventSchedule $schedule)
+    {
+        $request->validate([
+            'ticket_code' => 'required|string',
+        ]);
+
+        $code = $request->ticket_code;
+        
+        $detail = OrderDetail::with('ticket')->where('ticket_code', $code)->first();
+
+        if(!$detail || !$detail->ticket) {
+            return back()->with('error', 'Tiket tidak ditemukan atau data tiket tidak valid!');
+        }
+
+        if($detail->ticket->event_schedules_id != $schedule->id) {
+            return back()->with('error', 'Tiket ini bukan untuk jadwal ini!');
+        }
+
+        if($detail->status === 'used') {
+            return back()->with('error', 'Tiket sudah digunakan sebelumnya!');
+        }
+
+        if($detail->status !== 'valid') {
+            return back()->with('error', 'Status tiket tidak valid!');
+        }
+
+        $detail->update(['status' => 'used']);
+
+        return back()->with('success', 'Verifikasi Berhasil! Tiket milik ' . $detail->owner_name . ' valid.');
+    }
+
     public function selectEventVerification()
     {
         // View yang menampilkan daftar event untuk dipilih mana yang mau diverifikasi
@@ -380,11 +411,11 @@ class EventController extends Controller
         // Tampilkan daftar peserta untuk jadwal tertentu (diambil dari order_details)
         $schedule->load('event');
         
-        // Ambil data dari table order_details yang memiliki tickets_id merujuk ke tickets yang memiliki event_schedules_id ini
-        $attendees = DB::table('order_details')
-            ->join('tickets', 'order_details.tickets_id', '=', 'tickets.id')
-            ->where('tickets.event_schedules_id', $schedule->id)
-            ->select('order_details.*')
+        $attendees = OrderDetail::whereIn('status', ['valid', 'used'])
+            ->whereHas('ticket', function($q) use ($schedule) {
+                $q->where('event_schedules_id', $schedule->id);
+            })
+            ->with(['ticket.ticket_type'])
             ->get();
 
         return view('organizer.attendees', compact('schedule', 'attendees'));

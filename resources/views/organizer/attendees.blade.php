@@ -51,7 +51,8 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Owner Name</th>
+                                        <th>Nama Peserta</th>
+                                        <th>Tipe Tiket</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -60,6 +61,9 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $attendee->owner_name }}</td>
+                                        <td>
+                                            <span class="badge badge-primary">{{ $attendee->ticket->ticket_type->name ?? '-' }}</span>
+                                        </td>
                                         <td>
                                             @php
                                                 $badgeClass = match($attendee->status) {

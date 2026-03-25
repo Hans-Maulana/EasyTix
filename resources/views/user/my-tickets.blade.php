@@ -27,7 +27,7 @@
 <div class="container tickets-wrapper py-4">
     <div class="page-inner">
         <div class="mb-5 d-flex align-items-center" data-aos="fade-down">
-            <h2 class="fw-bold mb-0"><i class="fas fa-ticket-alt text-warning me-2"></i> Tiket <span class="text-warning">Kamu</span></h2>
+            <h2 class="fw-bold mb-0"><i class="fas fa-ticket-alt text-warning me-2"></i> Tiket <span class="text-warning">Saya</span></h2>
             @if(session('success'))
                 <div class="alert alert-success ms-auto mb-0 py-2 px-4 rounded-pill">
                     {{ session('success') }}
@@ -82,11 +82,11 @@
                     <div class="col-md-4 p-0">
                         <div class="qr-container h-100 d-flex flex-column justify-content-center">
                             <div class="qr-code mt-3 p-2">
-                                <img src="{{ asset($item['qr_code']) }}" width="130" height="130" alt="QR Code">
+                                <img src="{{ asset('storage/' . $item['qr_code']) }}" width="130" height="130" alt="QR Code">
                             </div>
                             <h6 class="fw-bold text-dark mb-1">Kode Tiket</h6>
                             <p class="text-muted small mb-2">{{ $item['qr_string'] ?? $item['qr_code'] }}</p>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ $item['qr_code'] }}">
+                            <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ md5($item['qr_code']) }}">
                                 Lihat Detail
                             </button>
                             <p class="small text-danger italic">*Tunjukkan kodenya saat masuk gate</p>
@@ -95,7 +95,7 @@
                 </div>
 
                 <!-- Modal Detail Tiket -->
-                <div class="modal fade" id="detailModal{{ $item['qr_code'] }}" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="detailModal{{ md5($item['qr_code']) }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content border-0" style="border-radius: 20px;">
                             <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0;">
@@ -107,7 +107,7 @@
                                 <p class="text-muted mb-4">{{ $item['type'] }} - Tiket {{ $item['ticket_index'] ?? 1 }} / {{ $item['total_qty'] ?? 1 }}</p>
                                 
                                 <div class="bg-light p-4 rounded-3 mb-4 d-inline-block border">
-                                    <img src="{{ asset($item['qr_code']) }}" width="200" height="200" alt="QR Code">
+                                    <img src="{{ asset('storage/' . $item['qr_code']) }}" width="200" height="200" alt="QR Code">
                                 </div>
                                 
                                 <h3 class="fw-bold text-dark" style="letter-spacing: 2px;">{{ $item['qr_string'] ?? $item['qr_code'] }}</h3>

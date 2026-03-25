@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('event_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('event_id');
-            $table->unsignedBigInteger('users_id');
+            $table->string('event_id', 35);
+            $table->integer('users_id');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
 

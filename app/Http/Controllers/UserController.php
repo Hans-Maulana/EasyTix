@@ -134,5 +134,15 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('admin.manageUsers')->with('error', 'Gagal menghapus user: ' . $e->getMessage());
         }
-    }   
+    }
+
+    public function notifications()
+    {
+        $notifications = auth()->user()->notifications()->latest()->get();
+        
+        // Tandai semua sebagai sudah dibaca
+        auth()->user()->notifications()->where('is_read', false)->update(['is_read' => true]);
+
+        return view('user.notifications', compact('notifications'));
+    }
 }

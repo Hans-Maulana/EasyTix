@@ -1,0 +1,12 @@
+﻿--- START TEST ---
+Using User: Admin Utama (ID: 1)
+Using Ticket for Event: [alwdpawldpawld (Price: 999999)
+Order Created: TEST-ORD-2026-S9WO0
+OrderDetail ID: TEST-DET-2026-QT28B5
+Ticket Code (Encoded in QR): VERIFY-TEST-DET-2026-QT28B5
+--- SIMULATING VERIFICATION ---
+Scanning code: VERIFY-TEST-DET-2026-QT28B5
+VERIFICATION SUCCESS: Tiket valid milik Admin Utama. Status updated to 'used'.
+--- SECOND VERIFICATION ATTEMPT ---
+VERIFICATION FAILED AS EXPECTED: Tiket sudah digunakan!
+--- TEST COMPLETE ---

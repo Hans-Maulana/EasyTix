@@ -14,6 +14,7 @@ class OrderDetail extends Model
         'owner_name',
         'status',
         'qr_code',
+        'ticket_code',
         'tickets_id',
         'orders_id',
     ];

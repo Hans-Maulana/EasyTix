@@ -28,13 +28,14 @@ class Ticket extends Model
     {
         static::creating(function ($ticket) {
             $year = date('Y');
-            $lastTicket = Ticket::whereYear('created_at', $year)
+            $lastTicket = Ticket::where('id', 'like', "TKT-{$year}-%")
                             ->orderBy('id', 'desc')
                             ->first();
 
             if ($lastTicket) {
-                // ambil nomor terakhir
-                $lastNumber = (int) substr($lastTicket->id, -3);
+                // Trim to handle CHAR columns with trailing spaces
+                $lastId = trim($lastTicket->id);
+                $lastNumber = (int) substr($lastId, -3);
                 $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
             } else {
                 $newNumber = '001';

@@ -37,13 +37,14 @@ class Event extends Model
     {
         static::creating(function ($event) {
             $year = date('Y');
-            $lastEvent = Event::whereYear('created_at', $year)
+            $lastEvent = Event::where('id', 'like', "EVT-{$year}-%")
                             ->orderBy('id', 'desc')
                             ->first();
 
             if ($lastEvent) {
-                // ambil nomor terakhir
-                $lastNumber = (int) substr($lastEvent->id, -3);
+                // Trim to handle CHAR columns with trailing spaces
+                $lastId = trim($lastEvent->id);
+                $lastNumber = (int) substr($lastId, -3);
                 $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
             } else {
                 $newNumber = '001';

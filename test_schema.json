@@ -1,0 +1,1 @@
+[{"TABLE_NAME":"payments","COLUMN_NAME":"orders_id","CONSTRAINT_NAME":"fk_payments_orders1","REFERENCED_TABLE_NAME":"orders","REFERENCED_COLUMN_NAME":"id"}]

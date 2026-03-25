@@ -45,7 +45,7 @@
                         <h4 class="card-title">Scan / Input Kode Tiket ({{ $schedule->id }})</h4>
                     </div>
                     <div class="card-body">
-                        <form action="#" method="POST">
+                        <form action="{{ route('organizer.processVerification', $schedule->id) }}" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label for="ticket_code">Kode Tiket</label>
@@ -97,4 +97,30 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('ExtraJS')
+@if(session('success'))
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    Swal.fire({
+        title: 'Berhasil!',
+        text: '{!! session('success') !!}',
+        icon: 'success',
+        confirmButtonText: 'OK'
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    Swal.fire({
+        title: 'Gagal!',
+        text: '{!! session('error') !!}',
+        icon: 'error',
+        confirmButtonText: 'OK'
+    });
+</script>
+@endif
 @endsection

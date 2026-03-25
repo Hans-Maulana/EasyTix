@@ -32,21 +32,66 @@
               <nav
                 class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex"
               >
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <button type="submit" class="btn btn-search pe-1">
-                      <i class="fas fa-search search-icon"></i>
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search ..."
-                    class="form-control"
-                  />
-                </div>
               </nav>
 
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                @auth
+                @php
+                    $unreadCount = Auth::user()->notifications()->where('is_read', false)->count();
+                    $notifications = Auth::user()->notifications()->latest()->take(5)->get();
+                @endphp
+                <li class="nav-item topbar-icon dropdown hidden-caret">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="notifDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i class="fa fa-bell"></i>
+                    @if($unreadCount > 0)
+                    <span class="notification">{{ $unreadCount }}</span>
+                    @endif
+                  </a>
+                  <ul
+                    class="dropdown-menu notif-box animated fadeIn"
+                    aria-labelledby="notifDropdown"
+                  >
+                    <li>
+                      <div class="dropdown-title">
+                        Anda memiliki {{ $unreadCount }} notifikasi baru
+                      </div>
+                    </li>
+                    <li>
+                      <div class="notif-scroll scrollbar-outer">
+                        <div class="notif-center">
+                          @forelse($notifications as $notif)
+                          <a href="{{ $notif->link ?? '#' }}">
+                            <div class="notif-icon notif-{{ $notif->type }}">
+                              <i class="fa fa-{{ $notif->type === 'success' ? 'check' : ($notif->type === 'offer' ? 'tag' : 'info') }}"></i>
+                            </div>
+                            <div class="notif-content">
+                              <span class="block text-dark fw-bold"> {{ $notif->title }} </span>
+                              <span class="time small">{{ $notif->created_at->diffForHumans() }}</span>
+                              <div class="message text-muted small">{{ Str::limit($notif->message, 40) }}</div>
+                            </div>
+                          </a>
+                          @empty
+                          <div class="p-3 text-center text-muted small">Tidak ada notifikasi</div>
+                          @endforelse
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <a class="see-all" href="{{ route('user.notifications') }}">
+                        Lihat semua notifikasi <i class="fa fa-angle-right"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                @endauth
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
@@ -91,7 +136,7 @@
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Inbox</a>
+                        <a class="dropdown-item" href="{{ route('user.notifications') }}">Inbox</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('profile.edit') }}">Pengaturan Akun</a>
                         <div class="dropdown-divider"></div>

@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -112,9 +113,14 @@ class OrderController extends Controller
 
         // Generate ID manual karena kolom id adalah varchar(35), bukan auto-increment
         $year = date('Y');
-        $lastOrder = Order::whereYear('created_at', $year)->orderBy('id', 'desc')->first();
+        $lastOrder = Order::where('id', 'like', "ORD-{$year}-%")
+            ->orderBy('id', 'desc')
+            ->first();
+
         if ($lastOrder) {
-            $lastNum = (int) substr($lastOrder->id, -3);
+            // Trim to handle CHAR columns with trailing spaces
+            $lastId = trim($lastOrder->id);
+            $lastNum = (int) substr($lastId, -3);
             $newNum = str_pad($lastNum + 1, 3, '0', STR_PAD_LEFT);
         } else {
             $newNum = '001';
@@ -146,11 +152,11 @@ class OrderController extends Controller
                 $fileName = 'qr_' . time() . '_' . $orderDetailId . '.svg';
                 $qrPath = 'qrcodes/' . $fileName;
 
-                if(!file_exists(public_path('qrcodes'))) {
-                    mkdir(public_path('qrcodes'), 0777, true);
+                if(!file_exists(storage_path('app/public/qrcodes'))) {
+                    mkdir(storage_path('app/public/qrcodes'), 0777, true);
                 }
                 
-                QrCode::size(200)->generate($qrString, public_path('qrcodes/'.$fileName));
+                QrCode::size(200)->generate($qrString, storage_path('app/public/qrcodes/'.$fileName));
 
                 $orderDetail = OrderDetail::create([
                     'id'          => $orderDetailId,
@@ -159,6 +165,7 @@ class OrderController extends Controller
                     'tickets_id'  => $ticketId,
                     'orders_id'   => $order->id,
                     'qr_code'     => $qrPath,
+                    'ticket_code' => $qrString, // Store the verification string
                 ]);
 
                 $orderSnapshot['items'][] = [
@@ -176,10 +183,16 @@ class OrderController extends Controller
             }
         }
 
-        // Tambahkan ke histori pesanan di session
-        $orderHistory = session()->get('order_history', []);
-        $orderHistory[] = $orderSnapshot;
-        session()->put('order_history', $orderHistory);
+        // Tambahkan Notifikasi ke Inbox
+        Notification::create([
+            'user_id' => auth()->id(),
+            'type'    => 'success',
+            'title'   => 'Pembayaran Berhasil! 🎫',
+            'message' => "Tiket untuk pesanan #{$order->id} telah diterbitkan. Silakan cek di menu Tiket Saya.",
+            'link'    => route('user.myTickets'),
+        ]);
+
+        // Session order_history is removed, relying strictly on DB now.
 
         session()->forget('cart');
 
@@ -190,7 +203,50 @@ class OrderController extends Controller
 
     public function myTickets()
     {
-        $orderHistory = session()->get('order_history', []);
+        $orders = Order::where('users_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        $orderHistory = [];
+
+        foreach ($orders as $order) {
+            $orderDetails = OrderDetail::where('orders_id', $order->id)->get();
+            if ($orderDetails->isEmpty()) continue;
+
+            $items = [];
+            $groupedDetails = $orderDetails->groupBy('tickets_id');
+
+            foreach ($groupedDetails as $ticketId => $detailsGroup) {
+                // Fetch ticket to get event name and ticket type
+                $ticket = Ticket::with(['ticket_type', 'event_schedule.event'])->find($ticketId);
+                if (!$ticket) continue;
+                
+                $totalQty = $detailsGroup->count();
+                $index = 1;
+                foreach ($detailsGroup as $detail) {
+                    $items[] = [
+                        'ticket_id'    => $ticketId,
+                        'name'         => $ticket->event_schedule->event->name ?? 'Unknown Event',
+                        'type'         => $ticket->ticket_type->name ?? 'Ticket',
+                        'quantity'     => 1,
+                        'price'        => $ticket->price,
+                        'subtotal'     => $ticket->price,
+                        'qr_code'      => $detail->qr_code,
+                        'qr_string'    => $detail->ticket_code,
+                        'ticket_index' => $index++,
+                        'total_qty'    => $totalQty
+                    ];
+                }
+            }
+
+            if (empty($items)) continue;
+
+            $orderHistory[] = [
+                'id'             => $order->id,
+                'payment_method' => 'QRIS',
+                'total_amount'   => $order->total_amount,
+                'created_at'     => $order->created_at->format('d M Y, H:i'),
+                'items'          => $items,
+            ];
+        }
+
         return view('user.my-tickets', compact('orderHistory'));
     }
 
