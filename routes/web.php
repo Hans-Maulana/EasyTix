@@ -97,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/checkout', [OrderController::class, 'checkout'])->name('user.checkout');
     Route::post('/user/process-order', [OrderController::class, 'processOrder'])->name('user.processOrder');
     Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
+    Route::get('/cart/clear', [OrderController::class, 'clearCart'])->name('cart.clear');
 });
 
 

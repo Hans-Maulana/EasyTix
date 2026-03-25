@@ -137,7 +137,9 @@
             @forelse($events as $event)
                 @php
                     // Try to get dynamic schedule data if available
-                    $eventDate = $event->event_schedule && $event->event_schedule->isNotEmpty() ? $event->event_schedule->first()->date : null;
+                    $firstSchedule = $event->event_schedule && $event->event_schedule->isNotEmpty() ? $event->event_schedule->first() : null;
+                    $eventDate = $firstSchedule ? ($firstSchedule->event_date ?? $firstSchedule->date) : null;
+                    
                     if($eventDate) {
                         try {
                             $parsedDate = \Carbon\Carbon::parse($eventDate);
@@ -154,6 +156,9 @@
                         $day = "--";
                         $fullDateText = "Tanggal & Waktu Belum Ditentukan";
                     }
+
+                    // Get minimum ticket price
+                    $minPrice = $event->event_schedule->flatMap->tickets->min('price');
 
                     // Check if an existing banner matches this event's name
                     $matchingBanner = \App\Models\Banner::where('title', 'LIKE', '%' . $event->name . '%')
@@ -188,9 +193,9 @@
                             <div class="mt-auto pt-3 border-top border-light d-flex justify-content-between align-items-center">
                                 <div>
                                     <small class="text-muted d-block">Mulai dari</small>
-                                    <span class="fw-bold text-dark fs-5">Rp {{ number_format(150000 + ($loop->index % 4 * 50000), 0, ',', '.') }}</span>
+                                    <span class="fw-bold text-dark fs-5">Rp {{ number_format($minPrice ?? 0, 0, ',', '.') }}</span>
                                 </div>
-                                <a href="#" class="btn btn-premium btn-sm px-4 py-2"><i class="fas fa-shopping-cart me-2"></i>Beli</a>
+                                <a href="{{ route('user.buyTickets') }}" class="btn btn-premium btn-sm px-4 py-2"><i class="fas fa-ticket-alt me-2"></i>Beli Sekarang</a>
                             </div>
                         </div>
                     </div>

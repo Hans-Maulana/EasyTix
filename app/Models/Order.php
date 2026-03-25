@@ -6,15 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id', 'total_amount', 'status', 'payment_method'];
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $fillable = ['id', 'users_id', 'events_id', 'total_amount'];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'users_id');
     }
 
-    public function orderItems()
+    public function event()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->belongsTo(Event::class, 'events_id');
     }
 }
+
