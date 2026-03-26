@@ -46,11 +46,17 @@ class EventController extends Controller
         try {
             DB::beginTransaction();
 
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('events', 'public');
+            }
+
             $event = Event::create([
-                'name' => $request->name,
+                'name'     => $request->name,
                 'location' => $request->location,
-                'status' => $request->status,
+                'status'   => $request->status,
                 'users_id' => auth()->id(),
+                'image'    => $imagePath,
             ]);
 
             // Lampirkan genre
@@ -118,11 +124,19 @@ class EventController extends Controller
         try {
             DB::beginTransaction();
 
-            $event->update([
-                'name' => $request->name,
+            $updateData = [
+                'name'     => $request->name,
                 'location' => $request->location,
-                'status' => $request->status,
-            ]);
+                'status'   => $request->status,
+            ];
+            if ($request->hasFile('image')) {
+                // Hapus gambar lama jika ada
+                if ($event->image) {
+                    Storage::disk('public')->delete($event->image);
+                }
+                $updateData['image'] = $request->file('image')->store('events', 'public');
+            }
+            $event->update($updateData);
 
             // Sinkronisasi genre
             $event->genres()->sync($request->genre_ids);

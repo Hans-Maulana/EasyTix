@@ -144,9 +144,6 @@
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar avatar-xs me-2">
-                                                    <span class="avatar-title rounded-circle bg-light text-muted small">{{ substr($request->user->name, 0, 1) }}</span>
-                                                </div>
                                                 <span>{{ $request->user->name }}</span>
                                             </div>
                                         </td>

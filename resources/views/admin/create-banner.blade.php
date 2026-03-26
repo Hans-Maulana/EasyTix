@@ -54,7 +54,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="image" class="fw-bold">Upload Gambar</label>
-                                        <input type="file" name="image" id="image" class="form-control" accept="image/*" required>
+                                        <input type="file" name="image" id="image" class="form-control" accept="image/*">
                                         <small class="text-muted">Rekomendasi ukuran: 1200x400 (Maks 5MB)</small>
                                         <div id="preview-container" class="mt-3 d-none">
                                             <img id="image-preview" src="#" alt="Preview" style="max-width: 100%; border-radius: 8px;">

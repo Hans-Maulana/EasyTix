@@ -116,7 +116,7 @@
                         <div class="card-header bg-primary text-white">
                             <h4 class="card-title text-white mb-0">Form Tambah Event</h4>
                         </div>
-                        <form action="{{ route('admin.storeEvent') }}" method="POST">
+                        <form action="{{ route('admin.storeEvent') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
                                 <div class="form-section-title">
@@ -146,6 +146,13 @@
                                                 <option value="nonactive">Non Active</option>
                                                 <option value="pending">Pending</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group p-0">
+                                            <label for="image" class="fw-bold">Banner / Gambar Event</label>
+                                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                            <small class="text-muted">Upload gambar banner untuk event ini (JPG, PNG, dll).</small>
                                         </div>
                                     </div>
                                 </div>

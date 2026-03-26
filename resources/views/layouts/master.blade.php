@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Kaiadmin - Bootstrap 5 Admin Dashboard</title>
+    <title>EasyTix</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
     />
     <link
       rel="icon"
-      href="{{ asset('assets/img/kaiadmin/favicon.ico')}}"
+      href="{{ asset('assets/img/logo_easytix_new.png')}}"
       type="image/x-icon"
     />
 
@@ -75,16 +75,30 @@
         }
 
         .btn-primary {
-            background: var(--premium-gold-grad) !important;
             border: none !important;
-            color: #000 !important;
+            color: #ffffff !important;
             font-weight: 700 !important;
             border-radius: 1rem !important;
             padding: 0.6rem 1.5rem !important;
             box-shadow: 0 4px 15px rgba(244, 208, 63, 0.2) !important;
         }
 
+        .btn-danger {
+            border: none !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            border-radius: 1rem !important;
+            padding: 0.6rem 1.5rem !important;
+            box-shadow: 0 4px 15px rgba(244, 208, 63, 0.2) !important;  
+            
+        }
+
         .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(244, 208, 63, 0.3) !important;
+        }
+
+        .btn-danger:hover {
             transform: scale(1.05);
             box-shadow: 0 8px 25px rgba(244, 208, 63, 0.3) !important;
         }

@@ -90,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Order & Booking System
     Route::get('/user/buy-tickets', [OrderController::class, 'index'])->name('user.buyTickets');
+    Route::get('/user/event/{id}/tickets', [OrderController::class, 'showEventTickets'])->name('user.eventTickets');
     Route::post('/cart/add', [OrderController::class, 'addToCart'])->name('cart.add');
     Route::get('/user/cart', [OrderController::class, 'viewCart'])->name('cart.view');
     Route::patch('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
@@ -97,6 +98,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/checkout', [OrderController::class, 'checkout'])->name('user.checkout');
     Route::post('/user/payment', [OrderController::class, 'saveDetails'])->name('user.saveDetails');
     Route::get('/user/payment', [OrderController::class, 'showPayment'])->name('user.payment');
+    Route::get('/user/va-payment', [OrderController::class, 'vaPayment'])->name('user.vaPayment');
     Route::post('/user/process-order', [OrderController::class, 'processOrder'])->name('user.processOrder');
     Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
     Route::get('/user/notifications', [UserController::class, 'notifications'])->name('user.notifications');

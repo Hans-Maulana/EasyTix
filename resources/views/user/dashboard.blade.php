@@ -109,8 +109,8 @@
                             </div>
                             <div class="carousel-caption d-none d-md-block text-start p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8)); left:0; right:0; bottom:0;">
                                 <h2 class="fw-bold">{{ $banner->title }}</h2>
-                                <a href="{{ $banner->link ?? '#' }}" class="btn btn-primary btn-lg btn-round mt-2">
-                                    <i class="fas fa-ticket-alt me-2"></i> Beli Tiket Sekarang
+                                <a href="{{ route('user.buyTickets') }}" class="btn premium-btn btn-lg btn-round mt-2">
+                                   <i class="fas fa-ticket-alt ms-2 transition-icon"></i> &nbsp; Beli Tiket Sekarang 
                                 </a>
                             </div>
                         </div>
@@ -147,7 +147,7 @@
                     <div class="card-body p-4 d-flex flex-column">
                         <h4 class="card-title fw-bold mb-3 text-dark" style="font-family: 'Outfit', sans-serif;">{{ $banner->title }}</h4>
                         <div class="mt-auto pt-3 text-center">
-                            <a href="{{ $banner->link ?? '#' }}" class="btn premium-btn w-100 fw-bold">
+                            <a href="{{ route('user.buyTickets') }}" class="btn premium-btn w-100 fw-bold">
                                 Beli Tiketnya Sekarang <i class="fas fa-arrow-right ms-2 transition-icon"></i>
                             </a>
                         </div>

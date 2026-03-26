@@ -20,6 +20,11 @@
         align-items: center; justify-content: center; border: 1px solid #eee;
     }
     .ticket-info { padding: 25px; }
+    
+    /* Status Styles */
+    .ticket-item.status-used { opacity: 0.75; filter: grayscale(50%); }
+    .ticket-item.status-used .qr-code img { filter: blur(5px); pointer-events: none; }
+    .badge-status { font-weight: 700; letter-spacing: 0.5px; }
 </style>
 @endsection
 
@@ -38,17 +43,28 @@
         @if(count($orderHistory) > 0)
             @foreach(array_reverse($orderHistory) as $order)
                 @foreach($order['items'] as $item)
-                <div class="row ticket-item bg-white mx-0" data-aos="fade-up">
+                @php $isUsed = ($item['status'] ?? 'valid') != 'valid'; @endphp
+                <div class="row ticket-item bg-white mx-0 {{ $isUsed ? 'status-used' : '' }}" data-aos="fade-up">
                     <div class="col-md-8 p-0">
                         <div class="ticket-info">
                             <div class="d-flex justify-content-between mb-4 align-items-center">
                                 <div>
                                     <span class="badge bg-dark-blue text-white px-3 py-2 rounded-pill shadow-sm me-2">
-                                        <i class="fas fa-star me-2 text-warning"></i> #{{ $order['id'] }}
+                                        <i class="fas fa-star me-2 text-warning "></i> <span class="text-black">{{ $order['id'] }}</span>
                                     </span>
                                     <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm">
                                         <i class="fas fa-check-circle me-1"></i> PAID
                                     </span>
+
+                                    @if(($item['status'] ?? 'valid') == 'valid')
+                                        <span class="badge bg-info text-white px-3 py-2 rounded-pill shadow-sm badge-status">
+                                            <i class="fas fa-ticket-alt me-1"></i> TERSEDIA
+                                        </span>
+                                    @else
+                                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm badge-status">
+                                            <i class="fas fa-times-circle me-1"></i> TELAH DIGUNAKAN
+                                        </span>
+                                    @endif
                                 </div>
                                 <span class="text-muted small fw-bold">
                                     <i class="far fa-calendar-alt me-1"></i> {{ $order['created_at'] }}
@@ -89,7 +105,11 @@
                             <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ md5($item['qr_code']) }}">
                                 Lihat Detail
                             </button>
-                            <p class="small text-danger italic">*Tunjukkan kodenya saat masuk gate</p>
+                            @if($isUsed)
+                                <p class="small text-muted fw-bold italic"><i class="fas fa-info-circle me-1"></i> Tiket sudah discan oleh petugas</p>
+                            @else
+                                <p class="small text-danger italic">*Tunjukkan kodenya saat masuk gate</p>
+                            @endif
                         </div>
                     </div>
                 </div>
