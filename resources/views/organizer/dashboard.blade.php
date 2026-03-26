@@ -2,15 +2,6 @@
 
 @section('ExtraCSS')
 <style>
-    .welcome-card {
-        background: var(--premium-gold-grad);
-        border-radius: 2rem !important;
-        padding: 2.5rem;
-        color: #000;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 2rem;
-    }
     .welcome-card::after {
         content: '\f3ff';
         font-family: 'Font Awesome 5 Solid';
@@ -20,40 +11,6 @@
         font-size: 15rem;
         opacity: 0.1;
         transform: rotate(-15deg);
-    }
-    .stat-card-premium {
-        border-radius: 1.5rem !important;
-        border: 1px solid rgba(0,0,0,0.05) !important;
-    }
-    .icon-wrapper-premium {
-        width: 60px;
-        height: 60px;
-        border-radius: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-    }
-    .bg-soft-primary { background: rgba(20, 46, 94, 0.1); color: var(--premium-accent); }
-    .bg-soft-success { background: rgba(67, 233, 123, 0.1); color: #2ecc71; }
-    .bg-soft-warning { background: rgba(244, 208, 63, 0.1); color: #f39c12; }
-    
-    .table-premium thead th {
-        background: transparent !important;
-        color: #888 !important;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-        border-bottom: 1px solid #eee !important;
-    }
-    .table-premium tbody td {
-        padding: 1.2rem 0.75rem !important;
-        vertical-align: middle !important;
-    }
-    .badge-pill {
-        padding: 0.4rem 1rem !important;
-        border-radius: 50px !important;
-        font-weight: 600 !important;
     }
 </style>
 @endsection

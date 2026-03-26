@@ -96,13 +96,6 @@
                       </a>
                   </li>
 
-                  <!-- 6. Atur Hak Organizer -->
-                  <li class="nav-item {{ request()->routeIs('admin.ManageOrganiers') ? 'active' : '' }}">
-                      <a href="#">
-                          <i class="fas fa-user-shield"></i>
-                          <p>Hak Akses Organizer</p>
-                      </a>
-                  </li>
 
                   <!-- 7. Logout (biasanya di header, tapi ditambahkan sesuai request) -->
                   <li class="nav-item mt-4">

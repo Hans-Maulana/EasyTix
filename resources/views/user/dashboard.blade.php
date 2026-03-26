@@ -1,11 +1,99 @@
 @extends('layouts.master')
 
+@section('ExtraCSS')
+<style>
+    .welcome-card::after {
+        content: '\f005';
+        font-family: 'Font Awesome 5 Solid';
+        position: absolute;
+        right: -30px;
+        bottom: -30px;
+        font-size: 15rem;
+        opacity: 0.1;
+        transform: rotate(-15deg);
+    }
+    
+    .premium-promo-card {
+        border-radius: 20px !important;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden;
+    }
+    .premium-promo-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    }
+    .promo-img-container {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+    .promo-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+    .premium-promo-card:hover .promo-img-container img {
+        transform: scale(1.08);
+    }
+    .promo-overlay {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 2;
+    }
+    
+    .premium-btn {
+        background: linear-gradient(135deg, #142E5E 0%, #071120 100%);
+        color: #fff !important;
+        border-radius: 50px;
+        padding: 12px 20px;
+        border: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .premium-btn:hover {
+        background: var(--premium-gold-grad);
+        color: #000 !important;
+        box-shadow: 0 8px 20px rgba(244, 208, 63, 0.4);
+    }
+    .premium-btn .transition-icon {
+        transition: transform 0.3s ease;
+    }
+    .premium-btn:hover .transition-icon {
+        transform: translateX(5px);
+    }
+
+    .carousel-item img { max-height: 450px; }
+</style>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="page-inner">
+        <!-- Welcome Hero -->
+        <div class="welcome-card fade-in-up" style="animation-delay: 0.1s;">
+            <div class="row align-items-center">
+                <div class="col-md-8 position-relative z-index-1">
+                    <h2 class="fw-bold mb-2">Selamat Datang, {{ Auth::user()->name }}! 👋</h2>
+                    <p class="fs-5 opacity-75 mb-4">Temukan event favoritmu dan nikmati pengalaman tak terlupakan bersama EasyTix.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ route('user.buyTickets') }}" class="btn btn-dark btn-round px-4 py-2 fw-bold">
+                            Cari Tiket <i class="fas fa-search ms-2"></i>
+                        </a>
+                        <a href="{{ route('user.myTickets') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm">
+                            Tiket Saya
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Banner Utama (Carousel) -->
         @if($mainBanners->count() > 0)
-        <div class="row mb-5">
+        <div class="row mb-5 fade-in-up" style="animation-delay: 0.2s;">
             <div class="col-md-12">
                 <div id="mainCarousel" class="carousel slide shadow-lg rounded-4 overflow-hidden" data-bs-ride="carousel">
                     <div class="carousel-indicators">
@@ -42,13 +130,13 @@
         <!-- Banner Card (Promo) -->
         @if($cardBanners->count() > 0)
         <div class="row mb-5 mt-4">
-            <div class="col-md-12 mb-4 d-flex align-items-center justify-content-between">
+            <div class="col-md-12 mb-4 d-flex align-items-center justify-content-between fade-in-up" style="animation-delay: 0.3s;">
                 <h3 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">
                     <i class="fas fa-gem text-warning me-2"></i> Penawaran Spesial
                 </h3>
             </div>
             @foreach($cardBanners as $banner)
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 fade-in-up" style="animation-delay: {{ 0.4 + ($loop->index * 0.1) }}s;">
                 <div class="card premium-promo-card h-100 border-0">
                     <div class="promo-img-container">
                         <img class="card-img-top" src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}">
@@ -69,68 +157,6 @@
             @endforeach
         </div>
         @endif
-
-        <!-- Fokus ke Banner Promo (Carousel & Card) -->
     </div>
 </div>
-
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
-
-    .premium-promo-card {
-        border-radius: 20px !important;
-        background: #ffffff;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        overflow: hidden;
-    }
-    .premium-promo-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
-    }
-    .promo-img-container {
-        position: relative;
-        height: 220px;
-        overflow: hidden;
-    }
-    .promo-img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-    .premium-promo-card:hover .promo-img-container img {
-        transform: scale(1.08); /* Efek zoom tipis */
-    }
-    .promo-overlay {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        z-index: 2;
-    }
-    
-    .premium-btn {
-        background: linear-gradient(135deg, #142E5E 0%, #071120 100%);
-        color: #fff !important;
-        border-radius: 50px;
-        padding: 12px 20px;
-        border: none;
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-    .premium-btn:hover {
-        background: linear-gradient(135deg, #F4D03F 0%, #E67E22 100%);
-        color: #000 !important;
-        box-shadow: 0 8px 20px rgba(244, 208, 63, 0.4);
-    }
-    .premium-btn .transition-icon {
-        transition: transform 0.3s ease;
-    }
-    .premium-btn:hover .transition-icon {
-        transform: translateX(5px);
-    }
-
-    .carousel-item img { max-height: 450px; }
-</style>
 @endsection
