@@ -95,6 +95,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
     Route::delete('/cart/remove', [OrderController::class, 'removeFromCart'])->name('cart.remove');
     Route::get('/user/checkout', [OrderController::class, 'checkout'])->name('user.checkout');
+    Route::post('/user/payment', [OrderController::class, 'saveDetails'])->name('user.saveDetails');
+    Route::get('/user/payment', [OrderController::class, 'showPayment'])->name('user.payment');
     Route::post('/user/process-order', [OrderController::class, 'processOrder'])->name('user.processOrder');
     Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
     Route::get('/user/notifications', [UserController::class, 'notifications'])->name('user.notifications');

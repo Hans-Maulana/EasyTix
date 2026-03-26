@@ -16,6 +16,11 @@
         color: #000; border: none; font-weight: 700; border-radius: 50px;
         padding: 15px 40px; transition: all 0.3s ease;
     }
+    .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(244, 208, 63, 0.3); }
+    .btn-premium:disabled {
+        background: #ccc !important; color: #666 !important; cursor: not-allowed;
+        transform: none !important; box-shadow: none !important;
+    }
 </style>
 @endsection
 
@@ -23,35 +28,49 @@
 <div class="container checkout-wrapper py-4">
     <div class="page-inner">
         <div class="mb-5" data-aos="fade-down">
-            <h2 class="fw-bold mb-0"><i class="fas fa-credit-card text-warning me-2"></i> Konfirmasi <span class="text-warning">Pembayaran</span></h2>
+            <h2 class="fw-bold mb-0"><i class="fas fa-ticket-alt text-warning me-2"></i> Detail <span class="text-warning">Pesanan</span></h2>
         </div>
 
-        <form action="{{ route('user.processOrder') }}" method="POST">
+        <form action="{{ route('user.saveDetails') }}" method="POST">
             @csrf
             <div class="row">
                 <div class="col-lg-7" data-aos="fade-right">
-                    <h5 class="fw-bold mb-4">Metode Pembayaran</h5>
-                    
-                    <div class="payment-option active" onclick="selectPayment('QRIS')">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-qrcode fs-2 me-3 text-warning"></i>
-                            <div>
-                                <h6 class="fw-bold mb-0">QRIS (OVO, GoPay, ShopeePay)</h6>
-                                <small class="text-muted italic">Cepat, Aman & Terverifikasi Otomatis</small>
-                            </div>
-                            <input type="radio" name="payment_method" value="QRIS" checked class="ms-auto">
-                        </div>
-                    </div>
-
-                    <div class="payment-option" onclick="selectPayment('Virtual Account')">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-university fs-2 me-3 text-warning"></i>
-                            <div>
-                                <h6 class="fw-bold mb-0">Virtual Account (BCA, Mandiri, BNI)</h6>
-                                <small class="text-muted italic">Transfer manual lewat bank favoritmu</small>
-                            </div>
-                            <input type="radio" name="payment_method" value="Virtual Account" class="ms-auto">
-                        </div>
+                    <div class="card border-0 rounded-4 p-4 shadow-sm mb-4">
+                        <h5 class="fw-bold mb-4">Detail Pemilik Tiket</h5>
+                        @php $ticketIdx = 0; @endphp
+                        @foreach($cart as $id => $details)
+                            @for($i = 0; $i < $details['quantity']; $i++)
+                                <div class="ticket-detail-group mb-4 p-3 border rounded-3 bg-white">
+                                    <h6 class="fw-bold text-warning mb-3">Identitas Tiket #{{ ++$ticketIdx }} - {{ $details['name'] }} ({{ $details['type'] }})</h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label small fw-bold">Nama Lengkap Sesuai KTP</label>
+                                            <input type="text" name="tickets[{{ $id }}][{{ $i }}][name]" class="form-control rounded-pill req-field" placeholder="Nama Lengkap" value="{{ $ticketDetails[$id][$i]['name'] ?? '' }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Nomor Telepon (WhatsApp)</label>
+                                            <input type="text" name="tickets[{{ $id }}][{{ $i }}][phone]" class="form-control rounded-pill req-field" placeholder="Nomor Telepon" value="{{ $ticketDetails[$id][$i]['phone'] ?? '' }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Email Aktif</label>
+                                            <input type="email" name="tickets[{{ $id }}][{{ $i }}][email]" class="form-control rounded-pill req-field" placeholder="Email" value="{{ $ticketDetails[$id][$i]['email'] ?? '' }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Jenis Kelamin</label>
+                                            <select name="tickets[{{ $id }}][{{ $i }}][gender]" class="form-select rounded-pill req-field" required>
+                                                <option value="" disabled {{ !isset($ticketDetails[$id][$i]['gender']) ? 'selected' : '' }}>Pilih Jenis Kelamin</option>
+                                                <option value="Laki-laki" {{ (isset($ticketDetails[$id][$i]['gender']) && $ticketDetails[$id][$i]['gender'] == 'Laki-laki') ? 'selected' : '' }}>Laki-laki</option>
+                                                <option value="Perempuan" {{ (isset($ticketDetails[$id][$i]['gender']) && $ticketDetails[$id][$i]['gender'] == 'Perempuan') ? 'selected' : '' }}>Perempuan</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Umur</label>
+                                            <input type="number" name="tickets[{{ $id }}][{{ $i }}][age]" class="form-control rounded-pill req-field" placeholder="Umur" min="1" value="{{ $ticketDetails[$id][$i]['age'] ?? '' }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endfor
+                        @endforeach
                     </div>
                 </div>
 
@@ -71,12 +90,9 @@
                             <span class="fs-4">Total Amount</span>
                             <span class="fs-4 fw-bold text-warning">Rp {{ number_format($total, 0, ',', '.') }}</span>
                         </div>
-                        <button type="submit" class="btn btn-premium w-100 py-3 mb-2">
-                            BAYAR SEKARANG
+                        <button type="submit" id="btnContinue" class="btn btn-premium w-100 py-3 mb-2" disabled>
+                            LANJUT KE PEMBAYARAN <i class="fas fa-arrow-right ms-2"></i>
                         </button>
-                        <p class="text-center text-muted small mt-3">
-                            <i class="fas fa-lock me-1"></i> Pembayaran Aman & Terenkripsi
-                        </p>
                     </div>
                 </div>
             </div>
@@ -87,11 +103,28 @@
 
 @section('ExtraJS')
 <script>
-    function selectPayment(method) {
-        document.querySelector(`input[value="${method}"]`).checked = true;
-        document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const btnContinue = document.getElementById('btnContinue');
+        const reqFields = document.querySelectorAll('.req-field');
+
+        function checkForm() {
+            let allFilled = true;
+            reqFields.forEach(field => {
+                if (!field.value || field.value.trim() === "") {
+                    allFilled = false;
+                }
+            });
+            btnContinue.disabled = !allFilled;
+        }
+
+        reqFields.forEach(field => {
+            field.addEventListener('input', checkForm);
+            field.addEventListener('change', checkForm);
+        });
+
+        // Initial check for pre-filled data
+        checkForm();
+    });
 </script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>

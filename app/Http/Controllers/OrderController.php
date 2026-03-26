@@ -77,13 +77,38 @@ class OrderController extends Controller
         $cart = session()->get('cart');
         if(!$cart) return redirect()->route('user.buyTickets')->with('error', 'Keranjang masih kosong!');
 
-        return view('user.checkout', compact('cart'));
+        $ticketDetails = session()->get('ticket_details', []);
+
+        return view('user.checkout', compact('cart', 'ticketDetails'));
+    }
+
+    public function saveDetails(Request $request)
+    {
+        $cart = session()->get('cart');
+        if(!$cart) return redirect()->route('user.buyTickets');
+
+        // Simpan data tiket ke session agar bisa dipakai di step selanjutnya
+        session()->put('ticket_details', $request->tickets);
+
+        return redirect()->route('user.payment');
+    }
+
+    public function showPayment()
+    {
+        $cart = session()->get('cart');
+        $ticketDetails = session()->get('ticket_details');
+
+        if(!$cart || !$ticketDetails) return redirect()->route('user.checkout');
+
+        return view('user.payment', compact('cart'));
     }
 
     public function processOrder(Request $request)
     {
         $cart = session()->get('cart');
-        if(!$cart) return redirect()->route('user.buyTickets');
+        $ticketDetails = session()->get('ticket_details');
+
+        if(!$cart || !$ticketDetails) return redirect()->route('user.buyTickets');
 
         $total = 0;
         $firstEventId = null;
@@ -135,15 +160,6 @@ class OrderController extends Controller
             'total_amount' => $total,
         ]);
 
-        // Simpan snapshot cart ke session untuk ditampilkan di my-tickets
-        $orderSnapshot = [
-            'id'             => $order->id,
-            'payment_method' => $paymentMethod,
-            'total_amount'   => $total,
-            'created_at'     => now()->format('d M Y, H:i'),
-            'items'          => [],
-        ];
-
         foreach($cart as $ticketId => $details) {
             for ($i = 0; $i < $details['quantity']; $i++) {
                 $orderDetailId = 'DET-' . date('Y') . '-' . strtoupper(Str::random(6));
@@ -158,28 +174,21 @@ class OrderController extends Controller
                 
                 QrCode::size(200)->generate($qrString, storage_path('app/public/qrcodes/'.$fileName));
 
-                $orderDetail = OrderDetail::create([
-                    'id'          => $orderDetailId,
-                    'owner_name'  => auth()->user()->name ?? 'Guest',
-                    'status'      => 'valid',
-                    'tickets_id'  => $ticketId,
-                    'orders_id'   => $order->id,
-                    'qr_code'     => $qrPath,
-                    'ticket_code' => $qrString, // Store the verification string
-                ]);
+                $ticketData = $ticketDetails[$ticketId][$i] ?? [];
 
-                $orderSnapshot['items'][] = [
-                    'ticket_id'    => $ticketId,
-                    'name'         => $details['name'],
-                    'type'         => $details['type'],
-                    'quantity'     => 1, // Individual ticket
-                    'price'        => $details['price'],
-                    'subtotal'     => $details['price'], // Subtotal for one ticket
+                $orderDetail = OrderDetail::create([
+                    'id'           => $orderDetailId,
+                    'owner_name'   => $ticketData['name'] ?? (auth()->user()->name ?? 'Guest'),
+                    'phone_number' => $ticketData['phone'] ?? null,
+                    'email'        => $ticketData['email'] ?? null,
+                    'gender'       => $ticketData['gender'] ?? null,
+                    'age'          => $ticketData['age'] ?? null,
+                    'status'       => 'valid',
+                    'tickets_id'   => $ticketId,
+                    'orders_id'    => $order->id,
                     'qr_code'      => $qrPath,
-                    'qr_string'    => $qrString,
-                    'ticket_index' => $i + 1,
-                    'total_qty'    => $details['quantity']
-                ];
+                    'ticket_code'  => $qrString, // Store the verification string
+                ]);
             }
         }
 
@@ -192,9 +201,8 @@ class OrderController extends Controller
             'link'    => route('user.myTickets'),
         ]);
 
-        // Session order_history is removed, relying strictly on DB now.
-
         session()->forget('cart');
+        session()->forget('ticket_details');
 
         $methodLabel = $paymentMethod === 'QRIS' ? 'QRIS' : 'Virtual Account';
         return redirect()->route('user.myTickets')
@@ -230,6 +238,11 @@ class OrderController extends Controller
                         'subtotal'     => $ticket->price,
                         'qr_code'      => $detail->qr_code,
                         'qr_string'    => $detail->ticket_code,
+                        'owner_name'   => $detail->owner_name,
+                        'phone_number' => $detail->phone_number,
+                        'email'        => $detail->email,
+                        'gender'       => $detail->gender,
+                        'age'          => $detail->age,
                         'ticket_index' => $index++,
                         'total_qty'    => $totalQty
                     ];

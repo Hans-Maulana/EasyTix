@@ -116,6 +116,31 @@
                                 <hr class="my-4 dashed" style="border-top: 1px dashed #ccc;">
                                 
                                 <div class="row text-start text-dark">
+                                    <div class="col-12 mb-4 bg-white p-3 rounded-4 border shadow-sm">
+                                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-user-circle me-2"></i> Detail Pemegang Tiket</h6>
+                                        <div class="row">
+                                            <div class="col-12 mb-2">
+                                                <small class="text-muted d-block text-uppercase small">Nama Pemilik</small>
+                                                <span class="fw-bold">{{ $item['owner_name'] }}</span>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <small class="text-muted d-block text-uppercase small">Telepon</small>
+                                                <span class="fw-bold">{{ $item['phone_number'] ?? '-' }}</span>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <small class="text-muted d-block text-uppercase small">Email</small>
+                                                <span class="fw-bold">{{ $item['email'] ?? '-' }}</span>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <small class="text-muted d-block text-uppercase small">Jenis Kelamin</small>
+                                                <span class="fw-bold">{{ $item['gender'] ?? '-' }}</span>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <small class="text-muted d-block text-uppercase small">Umur</small>
+                                                <span class="fw-bold">{{ $item['age'] ?? '-' }} Thn</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-6 mb-3">
                                         <small class="text-muted d-block text-uppercase">Order ID</small>
                                         <span class="fw-bold">{{ $order['id'] }}</span>
