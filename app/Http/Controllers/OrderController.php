@@ -53,6 +53,11 @@ class OrderController extends Controller
 
     public function addToCart(Request $request)
     {
+        $request->validate([
+            'ticket_id' => 'required|exists:tickets,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
         $ticket = Ticket::with(['ticket_type', 'event_schedule.event'])->findOrFail($request->ticket_id);
         $eventId = $ticket->event_schedule->event->id;
         $eventName = $ticket->event_schedule->event->name;
@@ -70,7 +75,22 @@ class OrderController extends Controller
         }
 
         if(isset($cart[$request->ticket_id])) {
-            $cart[$request->ticket_id]['quantity'] += $request->quantity;
+            $newQuantity = $cart[$request->ticket_id]['quantity'] + $request->quantity;
+        } else {
+            $newQuantity = $request->quantity;
+        }
+
+        if ($newQuantity > $ticket->capacity) {
+            // Return with waiting list prompt data
+            return redirect()->back()->with('waiting_list_prompt', [
+                'ticket_id' => $request->ticket_id,
+                'quantity' => $request->quantity,
+                'message' => 'Stok tiket tidak mencukupi atau sudah habis (Sisa: ' . $ticket->capacity . '). Apakah Anda ingin masuk ke Waiting List untuk mendapatkan informasi jika kuota bertambah?'
+            ]);
+        }
+
+        if(isset($cart[$request->ticket_id])) {
+            $cart[$request->ticket_id]['quantity'] = $newQuantity;
         } else {
             // Cek apakah ada multiple schedule untuk event ini, jika iya tambahkan label hari
             $totalSchedules = \App\Models\EventSchedule::where('event_id', $eventId)->count();
@@ -88,7 +108,7 @@ class OrderController extends Controller
                 "name"       => $eventName,
                 "events_id"  => $eventId,
                 "type"       => $typeName,
-                "quantity"   => $request->quantity,
+                "quantity"   => $newQuantity,
                 "price"      => $ticket->price,
                 "image"      => asset('assets/img/easytix_login_bg.png')
             ];
@@ -97,6 +117,8 @@ class OrderController extends Controller
         session()->put('cart', $cart);
         return redirect()->back()->with('success', 'Tiket berhasil ditambahkan ke keranjang!');
     }
+
+
 
     public function viewCart()
     {
@@ -225,6 +247,14 @@ class OrderController extends Controller
         ]);
 
         foreach($cart as $ticketId => $details) {
+            // Kurangi stok (capacity) tiket yang dibeli
+            $ticketModel = Ticket::find($ticketId);
+            if ($ticketModel) {
+                // Pastikan tidak minus, meski idealnya divalidasi juga sebelum checkout
+                $newCapacity = max(0, $ticketModel->capacity - $details['quantity']);
+                $ticketModel->update(['capacity' => $newCapacity]);
+            }
+
             for ($i = 0; $i < $details['quantity']; $i++) {
                 $orderDetailId = 'DET-' . date('Y') . '-' . strtoupper(Str::random(6));
 

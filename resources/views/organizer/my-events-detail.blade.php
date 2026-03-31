@@ -57,17 +57,16 @@
                                             <td>{{ \Carbon\Carbon::parse($schedule->event_date)->format('d M Y') }}</td>
                                             <td>{{ $schedule->start_time }} - {{ $schedule->end_time }}</td>
                                             <td>
-                                                <a href="{{ route('organizer.attendees', $schedule->id) }}" class="btn btn-primary btn-sm w-100">
+                                                <a href="{{ route('organizer.attendees', $schedule->id) }}" class="btn btn-primary btn-sm w-100 mb-2">
                                                     <i class="fas fa-list me-1"></i> Daftar Peserta
+                                                </a>
+                                                <a href="{{ route('organizer.waitingList', $schedule->id) }}" class="btn btn-warning btn-sm w-100">
+                                                    <i class="fas fa-clock me-1"></i> Waiting List
                                                 </a>
                                             </td>
                                         </tr>
                                     @endforeach
-                                    @if($event->event_schedule->isEmpty())
-                                    <tr>
-                                        <td colspan="4" class="text-center py-4">Belum ada jadwal untuk event ini.</td>
-                                    </tr>
-                                    @endif
+
                                 </tbody>
                             </table>
                         </div>

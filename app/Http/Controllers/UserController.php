@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\Genre;
 use Illuminate\Http\Request;
-use App\Models\Banner;
 use App\Models\EventSchedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
@@ -32,11 +31,11 @@ class UserController extends Controller
             // Dashboard Organizer
             $approvedRequests = EventRequest::where('users_id', auth()->id())
                                 ->where('status', 'approved')
-                                ->with('event')
+                                ->with(['event.category', 'event.performers.genres'])
                                 ->get();
             $totalMyEvents = $approvedRequests->count();
             
-            $myEventIds = $approvedRequests->pluck('events_id');
+            $myEventIds = $approvedRequests->pluck('event_id');
             
             // Hitung Tiket Valid (yang statusnya valid/belum digunakan)
             $totalTicketsValid = OrderDetail::whereHas('ticket.event_schedule.event', function($q) use ($myEventIds) {
@@ -48,9 +47,16 @@ class UserController extends Controller
 
             return view('organizer.dashboard', compact('totalMyEvents', 'approvedRequests', 'totalTicketsValid', 'totalRevenue'));
         } else {
-            // Dashboard User
-            $mainBanners = Banner::where('status', 'active')->where('type', 'main')->get();
-            $cardBanners = Banner::where('status', 'active')->where('type', 'card')->get();
+            // Dashboard User - Ambil event terbaru yang punya banner untuk dijadikan slide
+            $mainBanners = Event::where('status', 'active')->whereNotNull('banner')->latest()->limit(5)->get();
+            // Untuk card, kita bisa ambil event yang berbeda atau sekadar limit
+            $cardBanners = Event::where('status', 'active')->whereNotNull('banner')->latest()->offset(5)->limit(3)->get();
+            
+            // Jika offset 5 kosong, kita ambil saja yang ada
+            if ($cardBanners->isEmpty()) {
+                $cardBanners = Event::where('status', 'active')->whereNotNull('banner')->limit(3)->get();
+            }
+
             $events = Event::where('status', 'active')->latest()->limit(3)->get();
             return view('user.dashboard', compact('mainBanners', 'cardBanners', 'events'));
         }

@@ -85,8 +85,16 @@
                             <span class="status-badge-p">APPROVED</span>
                         </div>
                         <div class="event-content-p">
-                            <div class="d-flex gap-2 mb-3">
-                                @foreach($request->event->genres as $genre)
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-warning text-dark border px-3 py-2 rounded-pill small fw-bold">{{ $request->event->category->name ?? 'Uncategorized' }}</span>
+                                @php
+                                    $allGenres = collect();
+                                    foreach($request->event->performers as $p) {
+                                        $allGenres = $allGenres->merge($p->genres);
+                                    }
+                                    $uniqueGenres = $allGenres->unique('id')->take(2);
+                                @endphp
+                                @foreach($uniqueGenres as $genre)
                                     <span class="badge bg-light text-muted border px-3 py-2 rounded-pill small">{{ $genre->name }}</span>
                                 @endforeach
                             </div>

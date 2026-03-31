@@ -451,85 +451,53 @@
             <!-- Swiper Slider -->
             <div class="swiper concertSwiper" data-aos="fade-up" data-aos-delay="200">
                 <div class="swiper-wrapper py-3">
-                    
-                    <!-- Slipknot -->
-                    <div class="swiper-slide">
-                        <div class="concert-card h-100">
-                            <div class="concert-img-wrapper">
-                                <span class="concert-hot-badge"><i class="fa-solid fa-bolt"></i> Fast Selling</span>
-                                <div class="concert-date">
-                                    <span class="text-uppercase">Nov</span>
-                                    15
-                                </div>
-                                <img src="https://images.unsplash.com/photo-1540039155733-d7f0714ce06c?q=80&w=1000&auto=format&fit=crop" alt="Concert">
-                            </div>
-                            <div class="concert-info">
-                                <h4 class="text-white fw-bold mb-2">Slipknot - Knotfest</h4>
-                                <p class="text-light opacity-75 small mb-4"><i class="fa-solid fa-location-dot text-gold me-2"></i> Carnaval Beach Ancol, JKT</p>
-                                
-                                <div class="d-flex justify-content-between align-items-end pt-3 border-top border-secondary border-opacity-25">
-                                    <div>
-                                        <small class="text-light opacity-50 d-block">Harga mulai dari</small>
-                                        <span class="text-gold fw-bold fs-5">Rp 1.500.000</span>
+                    @forelse($events as $event)
+                        @php
+                            $schedule = $event->event_schedule->first();
+                            $minPrice = $schedule ? $schedule->tickets->min('price') : 0;
+                            $eventDate = $schedule ? \Carbon\Carbon::parse($schedule->event_date) : null;
+                        @endphp
+                        <div class="swiper-slide">
+                            <div class="concert-card h-100">
+                                <div class="concert-img-wrapper">
+                                    @if($event->status == 'active')
+                                        <span class="concert-hot-badge"><i class="fa-solid fa-bolt"></i> Active</span>
+                                    @endif
+                                    <div class="concert-date">
+                                        <span class="text-uppercase">{{ $eventDate ? $eventDate->format('M') : 'TBD' }}</span>
+                                        {{ $eventDate ? $eventDate->format('d') : '??' }}
                                     </div>
-                                    <button class="btn btn-primary-custom btn-sm px-4 py-2 rounded-pill">Beli</button>
+                                    @if($event->banner)
+                                        <img src="{{ asset('storage/' . $event->banner) }}" alt="{{ $event->name }}">
+                                    @else
+                                        <img src="{{ asset('assets/img/easytix_login_bg.png') }}" alt="{{ $event->name }}">
+                                    @endif
+                                </div>
+                                <div class="concert-info">
+                                    <h4 class="text-white fw-bold mb-1">{{ $event->name }}</h4>
+                                    <p class="text-gold small fw-bold mb-2">
+                                        {{ $event->category->name ?? 'Uncategorized' }} • 
+                                        @foreach($event->performers as $p)
+                                            {{ $p->name }}{{ !$loop->last ? ',' : '' }}
+                                        @endforeach
+                                    </p>
+                                    <p class="text-light opacity-75 small mb-4"><i class="fa-solid fa-location-dot text-gold me-2"></i> {{ $event->location }}</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-end pt-3 border-top border-secondary border-opacity-25">
+                                        <div>
+                                            <small class="text-light opacity-50 d-block">Harga mulai dari</small>
+                                            <span class="text-gold fw-bold fs-5">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
+                                        </div>
+                                        <a href="/login" class="btn btn-primary-custom btn-sm px-4 py-2 rounded-pill">Beli</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Taylor Swift -->
-                    <div class="swiper-slide">
-                        <div class="concert-card h-100">
-                            <div class="concert-img-wrapper">
-                                <span class="concert-hot-badge"><i class="fa-solid fa-star"></i> VIP Available</span>
-                                <div class="concert-date">
-                                    <span class="text-uppercase">Des</span>
-                                    02
-                                </div>
-                                <img src="https://images.unsplash.com/photo-1470229722913-7c090be5c5b9?q=80&w=1000&auto=format&fit=crop" alt="Concert">
-                            </div>
-                            <div class="concert-info">
-                                <h4 class="text-white fw-bold mb-2">The Eras Tour Live</h4>
-                                <p class="text-light opacity-75 small mb-4"><i class="fa-solid fa-location-dot text-gold me-2"></i> Gelora Bung Karno, JKT</p>
-                                
-                                <div class="d-flex justify-content-between align-items-end pt-3 border-top border-secondary border-opacity-25">
-                                    <div>
-                                        <small class="text-light opacity-50 d-block">Harga mulai dari</small>
-                                        <span class="text-gold fw-bold fs-5">Rp 2.100.000</span>
-                                    </div>
-                                    <button class="btn btn-primary-custom btn-sm px-4 py-2 rounded-pill">Beli</button>
-                                </div>
-                            </div>
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <h4 class="text-light opacity-50">Belum ada konser aktif saat ini.</h4>
                         </div>
-                    </div>
-
-                    <!-- ED Sheeran -->
-                    <div class="swiper-slide">
-                        <div class="concert-card h-100">
-                            <div class="concert-img-wrapper">
-                                <span class="concert-hot-badge" style="background: var(--text-light); color: var(--dark-blue);"><i class="fa-solid fa-ticket"></i> Normal Sales</span>
-                                <div class="concert-date">
-                                    <span class="text-uppercase">Jan</span>
-                                    20
-                                </div>
-                                <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1000&auto=format&fit=crop" alt="Concert">
-                            </div>
-                            <div class="concert-info">
-                                <h4 class="text-white fw-bold mb-2">Mathematics Tour</h4>
-                                <p class="text-light opacity-75 small mb-4"><i class="fa-solid fa-location-dot text-gold me-2"></i> JIS, Jakarta Utara</p>
-                                
-                                <div class="d-flex justify-content-between align-items-end pt-3 border-top border-secondary border-opacity-25">
-                                    <div>
-                                        <small class="text-light opacity-50 d-block">Harga mulai dari</small>
-                                        <span class="text-gold fw-bold fs-5">Rp 900.000</span>
-                                    </div>
-                                    <button class="btn btn-primary-custom btn-sm px-4 py-2 rounded-pill">Beli</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                     <!-- Add more slides if needed -->
+                    @endforelse
                 </div>
                 <!-- Pagination for mobile -->
                 <div class="swiper-pagination mt-4 d-md-none"></div>

@@ -1,0 +1,106 @@
+﻿composer : 
+./composer.json has been 
+updated
+At line:1 char:1
++ composer require simples
+oftwareio/simple-qrcode 
+--no-interaction 2>&1 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (.  
+  /composer.json has be   
+ en updated:String) []    
+, RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+Running composer update si
+mplesoftwareio/simple-qrco
+de
+Loading composer 
+repositories with package 
+information
+Updating dependencies
+Nothing to modify in lock 
+file
+Writing lock file
+Installing dependencies 
+from lock file (including 
+require-dev)
+Package operations: 3 
+installs, 0 updates, 0 
+removals
+  - Downloading 
+dasprid/enum (1.0.7)
+  - Downloading 
+bacon/bacon-qr-code 
+(2.0.8)
+  - Downloading simplesoft
+wareio/simple-qrcode 
+(4.2.0)
+ 0/3 [>--------------]   
+0%
+ 1/3 [=====>---------]  
+33%
+ 2/3 [==========>----]  
+66%
+ 3/3 [===============] 
+100%
+  - Installing 
+dasprid/enum (1.0.7): 
+Extracting archive
+  - Installing 
+bacon/bacon-qr-code 
+(2.0.8): Extracting 
+archive
+  - Installing simplesoftw
+areio/simple-qrcode 
+(4.2.0): Extracting 
+archive
+ 0/3 [>--------------]   
+0%
+ 1/3 [=====>---------]  
+33%
+ 3/3 [===============] 
+100%
+Generating optimized 
+autoload files
+> Illuminate\Foundation\Co
+mposerScripts::postAutoloa
+dDump
+> @php artisan 
+package:discover --ansi
+
+  [37;44m INFO [39;49m Discovering packages.  
+
+  laravel/breeze  [32;1mDONE[39;22m
+  laravel/pail [90m.[39m[90m.[39m [32;1mDONE[39;22m
+  laravel/sail [90m.[39m[90m.[39m [32;1mDONE[39;22m
+  laravel/tinker  [32;1mDONE[39;22m
+  nesbot/carbon [90m.[39m [32;1mDONE[39;22m
+  nunomaduro/collision  [32;1mDONE[39;22m
+  nunomaduro/termwind  [32;1mDONE[39;22m
+  simplesoftwareio/simple-qrcode  [32;1mDONE[39;22m
+
+81 packages you are using 
+are looking for funding.
+Use the `composer fund` 
+command to find out more!
+> @php artisan 
+vendor:publish 
+--tag=laravel-assets 
+--ansi --force
+
+  [37;44m INFO [39;49m No publishable resources for tag [1m[laravel-assets][22m.  
+
+Found 1 security 
+vulnerability advisory 
+affecting 1 package.
+Run "composer audit" for 
+a full list of advisories.
+Using version ^4.2 for sim
+plesoftwareio/simple-qrcod
+e

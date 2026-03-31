@@ -48,13 +48,18 @@
 @endsection
 
 @section('content')
-<div class="event-tickets-body pb-5">
+<div class="event-tickets-body pt-5 pb-5">
     
     <!-- Simple Header -->
     <div class="event-header-top shadow-sm">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
             <div>
-                <a href="{{ route('user.buyTickets') }}" class="text-muted small text-decoration-none mb-3 d-block"><i class="fas fa-arrow-left"></i> Kembali ke daftar event</a>
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb bg-transparent p-0 mb-0">
+                        <li class="breadcrumb-item"><a href="{{ route('user.buyTickets') }}" class="text-muted text-decoration-none">Event</a></li>
+                        <li class="breadcrumb-item active" aria-current="page" style="color: #000; font-weight: 700;">{{ $event->name }}</li>
+                    </ol>
+                </nav>
                 <h1 class="event-header-name">{{ $event->name }}</h1>
                 <div class="event-header-meta">
                     <span><i class="fas fa-map-marker-alt"></i> {{ $event->location }}</span>
@@ -88,18 +93,33 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                            @if($ticket->capacity > 0)
                             <form action="{{ route('cart.add') }}" method="POST" class="d-flex align-items-center gap-3">
                                 @csrf
                                 <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
                                 <div class="qty-control">
                                     <button type="button" onclick="this.nextElementSibling.stepDown()">-</button>
-                                    <input type="number" name="quantity" value="1" min="1" max="{{ $ticket->capacity }}" readonly>
+                                    <input type="number" name="quantity" value="0" min="0" max="{{ $ticket->capacity }}" readonly>
                                     <button type="button" onclick="this.previousElementSibling.stepUp()">+</button>
                                 </div>
                                 <button type="submit" class="btn-action-add shadow-sm">
                                     Pesan <i class="fas fa-shopping-cart ms-1"></i>
                                 </button>
                             </form>
+                            @else
+                            <form action="{{ route('cart.waitlist') }}" method="POST" class="d-flex align-items-center gap-3">
+                                @csrf
+                                <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
+                                <div class="qty-control">
+                                    <button type="button" onclick="this.nextElementSibling.stepDown()">-</button>
+                                    <input type="number" name="quantity" value="1" min="1" readonly>
+                                    <button type="button" onclick="this.previousElementSibling.stepUp()">+</button>
+                                </div>
+                                <button type="submit" class="btn btn-warning px-4 py-2 fw-bold shadow-sm" style="border-radius: 50px;">
+                                    <i class="fas fa-clock me-2"></i> Join Waiting List
+                                </button>
+                            </form>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -125,6 +145,42 @@
         @endif
         @if(session('success'))
             swal("Berhasil!", "{{ session('success') }}", "success");
+        @endif
+        @if(session('waiting_list_prompt'))
+            swal({
+                title: "Opps, Stok Gagal!",
+                text: "{{ session('waiting_list_prompt')['message'] }}",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "Batal",
+                        value: null,
+                        visible: true,
+                        className: "btn btn-danger",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "Masuk Waiting List",
+                        value: true,
+                        visible: true,
+                        className: "btn btn-success",
+                        closeModal: true
+                    }
+                }
+            }).then((value) => {
+                if (value) {
+                    var form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "{{ route('cart.waitlist') }}";
+                    form.innerHTML = `
+                        @csrf
+                        <input type="hidden" name="ticket_id" value="{{ session('waiting_list_prompt')['ticket_id'] }}">
+                        <input type="hidden" name="quantity" value="{{ session('waiting_list_prompt')['quantity'] }}">
+                    `;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
         @endif
     });
 </script>

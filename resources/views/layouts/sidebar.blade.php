@@ -54,6 +54,14 @@
                           <p>Manajemen User</p>
                       </a>
                   </li>
+
+                  <!-- 1.5 Request Organizer -->
+                  <li class="nav-item {{ request()->routeIs('admin.requestsOrganizer') ? 'active' : '' }}">
+                      <a href="{{ route('admin.requestsOrganizer') }}">
+                          <i class="fas fa-envelope-open-text"></i>
+                          <p>Request Organizer</p>
+                      </a>
+                  </li>
                   
                   <!-- 2. Manajemen Event -->
                   <li class="nav-item {{ request()->routeIs('admin.manageEvents') ? 'active' : '' }}">
@@ -71,15 +79,23 @@
                       </a>
                   </li>
 
-                  <!-- 4. Manajemen Banner -->
-                  <li class="nav-item {{ request()->routeIs('admin.manageBanners') ? 'active' : '' }}">
-                    <a href="{{ route('admin.manageBanners') }}">
-                        <i class="fas fa-image"></i>
-                        <p>Manajemen Banner</p>
+                   <!-- 4. Manajemen Kategori -->
+                  <li class="nav-item {{ request()->routeIs('admin.manageCategories') ? 'active' : '' }}">
+                    <a href="{{ route('admin.manageCategories') }}">
+                        <i class="fas fa-th-list"></i>
+                        <p>Manajemen Kategori</p>
                     </a>
                 </li>
 
-                <!-- 5. Manajemen Genre -->
+                  <!-- 5. Manajemen Performer -->
+                  <li class="nav-item {{ request()->routeIs('admin.managePerformers') ? 'active' : '' }}">
+                    <a href="{{ route('admin.managePerformers') }}">
+                        <i class="fas fa-microphone"></i>
+                        <p>Manajemen Performer</p>
+                    </a>
+                </li>
+
+                <!-- 6. Manajemen Genre -->
                 <li class="nav-item {{ request()->routeIs('admin.manageGenres') ? 'active' : '' }}">
                     <a href="{{ route('admin.manageGenres') }}">
                         <i class="fas fa-tags"></i>
@@ -157,16 +173,20 @@
                           <p>Dashboard</p>
                       </a>
                   </li>
-                  <li class="nav-item {{ request()->routeIs('user.schedule') ? 'active' : '' }}">
-                      <a href="{{ route('user.schedule') }}">
-                          <i class="fas fa-calendar-alt"></i>
-                          <p>Lihat Jadwal</p>
-                      </a>
-                  </li>
                   <li class="nav-item {{ request()->routeIs('user.buyTickets') ? 'active' : '' }}">
                       <a href="{{ route('user.buyTickets') }}">
                           <i class="fas fa-ticket-alt"></i>
                           <p>Beli Tiket</p>
+                      </a>
+                  </li>
+                  <li class="nav-item {{ request()->routeIs('cart.view') ? 'active' : '' }}">
+                      <a href="{{ route('cart.view') }}">
+                          <i class="fas fa-shopping-cart"></i>
+                          <p>Keranjang
+                              @if(session('cart') && count(session('cart')) > 0)
+                                  <span class="badge badge-count bg-danger ms-2">{{ count(session('cart')) }}</span>
+                              @endif
+                          </p>
                       </a>
                   </li>
                   <li class="nav-item {{ request()->routeIs('user.myTickets') ? 'active' : '' }}">

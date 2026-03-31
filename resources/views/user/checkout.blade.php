@@ -25,8 +25,15 @@
 @endsection
 
 @section('content')
-<div class="container checkout-wrapper py-4">
+<div class="container checkout-wrapper pt-5 pb-4">
     <div class="page-inner">
+        <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down" data-aos-delay="100">
+            <ol class="breadcrumb bg-transparent p-0 mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}" class="text-muted text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('cart.view') }}" class="text-muted text-decoration-none">Keranjang</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #000; font-weight: 700;">Checkout</li>
+            </ol>
+        </nav>
         <div class="mb-5" data-aos="fade-down">
             <h2 class="fw-bold mb-0"><i class="fas fa-ticket-alt text-warning me-2"></i> Detail <span class="text-warning">Pesanan</span></h2>
         </div>

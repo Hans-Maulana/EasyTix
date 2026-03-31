@@ -4,7 +4,7 @@
 <div class="container">
     <div class="page-inner">
         <div class="page-header">
-            <h3 class="fw-bold mb-3">Manajemen Event</h3>
+            <h3 class="fw-bold mb-3">Manajemen Kategori</h3>
             <ul class="breadcrumbs mb-3">
                 <li class="nav-home">
                     <a href="{{ route('admin.dashboard') }}">
@@ -21,7 +21,7 @@
                     <i class="icon-arrow-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">Manajemen Event</a>
+                    <a href="#">Manajemen Kategori</a>
                 </li>
             </ul>
         </div>
@@ -30,60 +30,37 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title">Daftar Event</h4>
-                            <a href="{{ route('admin.createEvent') }}" class="btn btn-primary btn-round ms-auto">
+                            <h4 class="card-title">Daftar Kategori</h4>
+                            <a href="{{ route('admin.createCategory') }}" class="btn btn-primary btn-round ms-auto">
                                 <i class="fa fa-plus"></i>
-                                Tambah Event
+                                Tambah Kategori
                             </a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="events-table" class="display table table-striped table-hover">
+                            <table id="categories-table" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Nama</th>
-                                        <th>Kategori</th>
-                                        <th>Performer</th>
-                                        <th>Lokasi</th>
-                                        <th>Status</th>
+                                        <th>Nama Kategori</th>
                                         <th style="width: 10%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($events as $event)
+                                    @foreach ($categories as $category)
                                         <tr>
-                                            <td>{{ $event->id }}</td>
-                                            <td>{{ $event->name }}</td>
-                                            <td>{{ $event->category->name ?? '-' }}</td>
-                                            <td>
-                                                @foreach($event->performers as $performer)
-                                                    <span class="badge badge-secondary">{{ $performer->name }}</span>
-                                                @endforeach
-                                            </td>
-                                            <td>{{ $event->location }}</td>
-                                            <td>
-                                                @if($event->status == 'active')
-                                                    <span class="badge badge-primary">Active</span>
-                                                @elseif($event->status == 'nonactive')
-                                                    <span class="badge badge-info">Non Active</span>
-                                                @elseif($event->status == 'pending')
-                                                    <span class="badge badge-secondary">Pending</span>
-                                                @endif
-                                            </td>
+                                            <td>{{ $category->id }}</td>
+                                            <td>{{ $category->name }}</td>
                                             <td>
                                                 <div class="form-button-action">
-                                                    <a href="{{ route('admin.editEvent', $event->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Event">
+                                                    <a href="{{ route('admin.editCategory', $category->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Kategori">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <a href="{{ route('admin.scheduleEvent', $event->id) }}" class="btn btn-link btn-success btn-lg" data-bs-toggle="tooltip" title="Detail Event">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-                                                    <form action="{{ route('admin.deleteEvent', $event->id) }}" method="POST" class="d-inline delete-form">
+                                                    <form action="{{ route('admin.deleteCategory', $category->id) }}" method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Event">
+                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Kategori">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -105,26 +82,21 @@
 @section('ExtraJS')
     <script>
         $(document).ready(function() {
-            $('#events-table').DataTable({
+            $('#categories-table').DataTable({
                 "pageLength": 10,
             });
 
-            // SweetAlert Flash Notifications
             @if(session('success'))
                 swal("Berhasil!", "{{ session('success') }}", "success");
             @endif
-            @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
-            @endif
 
-            // SweetAlert Delete Confirmation
             $('.btn-delete-confirm').on('click', function (e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 
                 swal({
-                    title: 'Hapus Event?',
-                    text: 'Data event yang dihapus tidak bisa dikembalikan!',
+                    title: 'Hapus Kategori?',
+                    text: 'Data yang dikaitkan dengan kategori ini mungkin akan terpengaruh!',
                     type: 'warning',
                     buttons: {
                         confirm: {

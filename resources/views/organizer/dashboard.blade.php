@@ -130,7 +130,14 @@
                                         </td>
                                         <td><i class="fas fa-map-marker-alt text-muted me-1"></i> {{ $req->event->location }}</td>
                                         <td>
-                                            @foreach($req->event->genres as $genre)
+                                            <span class="badge bg-warning text-dark border me-1">{{ $req->event->category->name ?? 'Uncategorized' }}</span>
+                                            @php
+                                                $allGenres = collect();
+                                                foreach($req->event->performers as $p) {
+                                                    $allGenres = $allGenres->merge($p->genres);
+                                                }
+                                            @endphp
+                                            @foreach($allGenres->unique('id')->take(2) as $genre)
                                                 <span class="badge bg-light text-dark border me-1">{{ $genre->name }}</span>
                                             @endforeach
                                         </td>

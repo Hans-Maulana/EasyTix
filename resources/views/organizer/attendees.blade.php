@@ -79,11 +79,7 @@
                                         </td>
                                     </tr>
                                     @endforeach
-                                    @if($attendees->isEmpty())
-                                    <tr class="text-center">
-                                        <td colspan="3">Belum ada peserta terdaftar untuk jadwal ini.</td>
-                                    </tr>
-                                    @endif
+
                                 </tbody>
                             </table>
                         </div>

@@ -8,8 +8,8 @@ class Genre extends Model
 {
     protected $fillable = ['name'];
 
-    public function events()
+    public function performers()
     {
-        return $this->belongsToMany(Event::class);
+        return $this->belongsToMany(Performer::class, 'performer_genre');
     }
 }

@@ -11,6 +11,9 @@ class Event extends Model
         'location',
         'status',
         'users_id',
+        'category_id',
+        'banner',
+        'description',
     ];
 
     public function user()
@@ -23,16 +26,26 @@ class Event extends Model
         return $this->hasMany(EventSchedule::class);
     }
 
-    public function genres()
+    public function category()
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsTo(Category::class);
+    }
+
+    public function performers()
+    {
+        return $this->belongsToMany(Performer::class, 'event_performer');
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(EventRequest::class, 'event_id', 'id');
     }
 
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
     }
-    
+
     protected static function booted()
     {
         static::creating(function ($event) {

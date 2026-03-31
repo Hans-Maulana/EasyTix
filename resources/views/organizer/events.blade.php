@@ -53,8 +53,16 @@
                                 <i class="fas fa-bullhorn"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="d-flex gap-2 mb-2">
-                                    @foreach($event->genres as $genre)
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    <span class="badge bg-warning text-dark border px-2 py-1 rounded-pill small fw-bold" style="font-size: 0.65rem;">{{ $event->category->name ?? 'Uncategorized' }}</span>
+                                    @php
+                                        $allGenres = collect();
+                                        foreach($event->performers as $p) {
+                                            $allGenres = $allGenres->merge($p->genres);
+                                        }
+                                        $uniqueGenres = $allGenres->unique('id')->take(3); // Limit to 3 badge displays
+                                    @endphp
+                                    @foreach($uniqueGenres as $genre)
                                         <span class="badge bg-light text-muted border px-2 py-1 rounded-pill small" style="font-size: 0.65rem;">{{ $genre->name }}</span>
                                     @endforeach
                                 </div>
@@ -64,12 +72,33 @@
                                 </div>
                             </div>
                             <div class="ms-auto">
-                                <form action="{{ route('organizer.requestAccess', $event->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary btn-request-p">
-                                        Request Access
-                                    </button>
-                                </form>
+                                @php
+                                    $requestStatus = $myRequests[$event->id] ?? null;
+                                @endphp
+                                
+                                @if($requestStatus === 'approved')
+                                    <span class="badge bg-success px-3 py-2 rounded-pill" style="font-size: 0.85rem;">
+                                        <i class="fas fa-check-circle me-1"></i> Disetujui
+                                    </span>
+                                @elseif($requestStatus === 'pending')
+                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill" style="font-size: 0.85rem;">
+                                        <i class="fas fa-clock me-1"></i> Menunggu
+                                    </span>
+                                @elseif($requestStatus === 'rejected')
+                                    <form action="{{ route('organizer.requestAccess', $event->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline-danger btn-request-p">
+                                            <i class="fas fa-redo me-1"></i> Request Ulang
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('organizer.requestAccess', $event->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary btn-request-p">
+                                            Request Access
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>

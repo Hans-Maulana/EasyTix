@@ -4,7 +4,7 @@
 <div class="container">
     <div class="page-inner">
         <div class="page-header">
-            <h3 class="fw-bold mb-3">Manajemen Event</h3>
+            <h3 class="fw-bold mb-3">Manajemen Performer</h3>
             <ul class="breadcrumbs mb-3">
                 <li class="nav-home">
                     <a href="{{ route('admin.dashboard') }}">
@@ -21,7 +21,7 @@
                     <i class="icon-arrow-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">Manajemen Event</a>
+                    <a href="#">Manajemen Performer</a>
                 </li>
             </ul>
         </div>
@@ -30,60 +30,51 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <h4 class="card-title">Daftar Event</h4>
-                            <a href="{{ route('admin.createEvent') }}" class="btn btn-primary btn-round ms-auto">
+                            <h4 class="card-title">Daftar Performer</h4>
+                            <a href="{{ route('admin.createPerformer') }}" class="btn btn-primary btn-round ms-auto">
                                 <i class="fa fa-plus"></i>
-                                Tambah Event
+                                Tambah Performer
                             </a>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="events-table" class="display table table-striped table-hover">
+                            <table id="performers-table" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Nama</th>
-                                        <th>Kategori</th>
-                                        <th>Performer</th>
-                                        <th>Lokasi</th>
-                                        <th>Status</th>
+                                        <th>Foto</th>
+                                        <th>Nama Performer</th>
+                                        <th>Genre Musik</th>
                                         <th style="width: 10%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($events as $event)
+                                    @foreach ($performers as $performer)
                                         <tr>
-                                            <td>{{ $event->id }}</td>
-                                            <td>{{ $event->name }}</td>
-                                            <td>{{ $event->category->name ?? '-' }}</td>
+                                            <td>{{ $performer->id }}</td>
                                             <td>
-                                                @foreach($event->performers as $performer)
-                                                    <span class="badge badge-secondary">{{ $performer->name }}</span>
-                                                @endforeach
-                                            </td>
-                                            <td>{{ $event->location }}</td>
-                                            <td>
-                                                @if($event->status == 'active')
-                                                    <span class="badge badge-primary">Active</span>
-                                                @elseif($event->status == 'nonactive')
-                                                    <span class="badge badge-info">Non Active</span>
-                                                @elseif($event->status == 'pending')
-                                                    <span class="badge badge-secondary">Pending</span>
+                                                @if($performer->image)
+                                                    <img src="{{ asset('storage/' . $performer->image) }}" class="rounded-circle" width="50" height="50" alt="Performer Photo">
+                                                @else
+                                                    <img src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png') }}" class="rounded-circle" width="50" height="50" alt="Default Performer Photo">
                                                 @endif
+                                            </td>
+                                            <td>{{ $performer->name }}</td>
+                                            <td>
+                                                @foreach ($performer->genres as $genre)
+                                                    <span class="badge badge-info">{{ $genre->name }}</span>
+                                                @endforeach
                                             </td>
                                             <td>
                                                 <div class="form-button-action">
-                                                    <a href="{{ route('admin.editEvent', $event->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Event">
+                                                    <a href="{{ route('admin.editPerformer', $performer->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Performer">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <a href="{{ route('admin.scheduleEvent', $event->id) }}" class="btn btn-link btn-success btn-lg" data-bs-toggle="tooltip" title="Detail Event">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-                                                    <form action="{{ route('admin.deleteEvent', $event->id) }}" method="POST" class="d-inline delete-form">
+                                                    <form action="{{ route('admin.deletePerformer', $performer->id) }}" method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Event">
+                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Performer">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -105,26 +96,21 @@
 @section('ExtraJS')
     <script>
         $(document).ready(function() {
-            $('#events-table').DataTable({
+            $('#performers-table').DataTable({
                 "pageLength": 10,
             });
 
-            // SweetAlert Flash Notifications
             @if(session('success'))
                 swal("Berhasil!", "{{ session('success') }}", "success");
             @endif
-            @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
-            @endif
 
-            // SweetAlert Delete Confirmation
             $('.btn-delete-confirm').on('click', function (e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 
                 swal({
-                    title: 'Hapus Event?',
-                    text: 'Data event yang dihapus tidak bisa dikembalikan!',
+                    title: 'Hapus Performer?',
+                    text: 'Data yang dikaitkan dengan performer ini akan kehilangan referensinya!',
                     type: 'warning',
                     buttons: {
                         confirm: {

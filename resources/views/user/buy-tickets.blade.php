@@ -52,9 +52,14 @@
 @endsection
 
 @section('content')
-<div class="container buy-tickets-body py-4">
+<div class="container buy-tickets-body pt-5 pb-4">
     <div class="page-inner">
-
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb bg-transparent p-0 mb-0">
+                <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}" class="text-muted text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #000; font-weight: 700;">Event</li>
+            </ol>
+        </nav>
         <h2 class="event-section-title">Event</h2>
 
         <div class="row g-4">

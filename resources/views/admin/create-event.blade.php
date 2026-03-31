@@ -49,14 +49,7 @@
             align-items: center;
         }
 
-        .genre-container {
-            max-height: 250px;
-            overflow-y: auto;
-            background: #fdfdfd;
-            scrollbar-width: thin;
-        }
-
-        .genre-item {
+        .performer-item {
             display: flex;
             align-items: center;
             padding: 5px 10px;
@@ -65,22 +58,38 @@
             cursor: pointer;
         }
 
-        .genre-item:hover {
+        .performer-item:hover {
             background: #f0f0f0;
         }
 
-        .genre-item input {
+        .performer-item input {
             margin-top: 0;
             cursor: pointer;
         }
 
-        .genre-item label {
+        .performer-item label {
             margin-bottom: 0;
             margin-left: 10px;
             cursor: pointer;
             font-size: 0.85rem;
             color: #333;
             flex: 1;
+        }
+
+        .genre-badge {
+            background: #e9ecef;
+            color: #495057;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .genre-badge.selected {
+            background: #1a2035;
+            color: white;
         }
     </style>
 @endsection
@@ -150,29 +159,55 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <div class="form-group p-0">
-                                            <label for="image" class="fw-bold">Banner / Gambar Event</label>
-                                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                            <small class="text-muted">Upload gambar banner untuk event ini (JPG, PNG, dll).</small>
+                                            <label for="category_id" class="fw-bold">Kategori Event</label>
+                                            <select class="form-select" id="category_id" name="category_id" required>
+                                                <option value="" disabled selected>Pilih Kategori</option>
+                                                @foreach($categories as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-group p-0">
+                                            <label for="banner" class="fw-bold">Banner / Gambar Event</label>
+                                            <input type="file" class="form-control" id="banner" name="banner" accept="image/*">
+                                            <small class="text-muted">Upload gambar banner (Optional)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-group p-0">
+                                            <label for="description" class="fw-bold">Deskripsi Event</label>
+                                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Masukkan deskripsi lengkap event..."></textarea>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-section-title mt-4">
-                                    <span class="text-primary">Kategori Genre Musik</span>
+                                    <span class="text-primary">Pilih Performer</span>
                                 </div>
-                                <div class="genre-container p-2 mb-4 rounded border shadow-sm">
+                                <div class="performer-container p-2 mb-4 rounded border shadow-sm" style="max-height: 250px; overflow-y: auto;">
                                     <div class="row g-1">
-                                        @foreach($genres as $genre)
+                                        @foreach($performers as $performer)
                                             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                                <div class="genre-item">
-                                                    <input class="form-check-input" type="checkbox" name="genre_ids[]"
-                                                        value="{{ $genre->id }}" id="genre_{{ $genre->id }}">
-                                                    <label for="genre_{{ $genre->id }}">
-                                                        {{ $genre->name }}
+                                                <div class="performer-item" data-genres='@json($performer->genres->pluck("id"))'>
+                                                    <input class="form-check-input performer-checkbox" type="checkbox" name="performer_ids[]"
+                                                        value="{{ $performer->id }}" id="performer_{{ $performer->id }}">
+                                                    <label for="performer_{{ $performer->id }}">
+                                                        {{ $performer->name }}
                                                     </label>
                                                 </div>
                                             </div>
                                         @endforeach
+                                    </div>
+                                </div>
+
+                                <div class="form-section-title mt-4">
+                                    <span class="text-primary">Genre Musik (Otomatis Terpilih sesuai Performer)</span>
+                                </div>
+                                <div id="genre-display-container" class="p-3 mb-4 rounded border bg-light">
+                                    <div id="selected-genres-list" class="d-flex flex-wrap">
+                                        <span class="text-muted italic">Pilih performer terlebih dahulu untuk melihat genre yang terkait...</span>
                                     </div>
                                 </div>
 
@@ -438,6 +473,45 @@
             if (item) {
                 item.remove();
             }
+        }
+
+        document.querySelectorAll('.performer-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateGenres);
+        });
+
+        function updateGenres() {
+            const selectedGenreIds = new Set();
+            document.querySelectorAll('.performer-checkbox:checked').forEach(checkbox => {
+                const performerItem = checkbox.closest('.performer-item');
+                const genres = JSON.parse(performerItem.getAttribute('data-genres'));
+                genres.forEach(id => selectedGenreIds.add(id));
+            });
+
+            const displayContainer = document.getElementById('selected-genres-list');
+            if (selectedGenreIds.size === 0) {
+                displayContainer.innerHTML = '<span class="text-muted italic">Pilih performer terlebih dahulu untuk melihat genre yang terkait...</span>';
+                return;
+            }
+
+            // Fetch genre names (we might need a mapping for this)
+            // For now, let's just show badges with IDs or we can pre-load names in JS
+            const genreNamesMap = {
+                @php
+                    $allGenres = \App\Models\Genre::all();
+                    foreach($allGenres as $g) {
+                        echo "$g->id: '" . addslashes($g->name) . "',";
+                    }
+                @endphp
+            };
+
+            displayContainer.innerHTML = '';
+            selectedGenreIds.forEach(id => {
+                const name = genreNamesMap[id] || `Genre ${id}`;
+                const badge = document.createElement('span');
+                badge.className = 'genre-badge selected';
+                badge.textContent = name;
+                displayContainer.appendChild(badge);
+            });
         }
 
     </script>

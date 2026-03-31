@@ -1,0 +1,73 @@
+﻿composer : Cannot use simp
+lesoftwareio/simple-qrcode
+'s latest version 4.2.0 
+as it requires ext-gd * 
+which is missing from 
+your platform.
+At line:1 char:1
++ composer require simples
+oftwareio/simple-qrcode 
+2>&1 | Out-File -File ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo        
+      : NotSpecified: (C  
+  annot use simp... you   
+ r platform.:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+In 
+PackageDiscoveryTrait.php 
+line 325:
+                          
+  Package simplesoftware  
+  io/simple-qrcode has r  
+  equirements incompatib  
+  le with your PHP versi  
+  on, PHP extensions and  
+   Composer version:      
+    - simplesoftwareio/s  
+  imple-qrcode 4.2.0 req  
+  uires ext-gd * but it   
+  is not present.         
+                          
+
+require [--dev] 
+[--dry-run] 
+[--prefer-source] 
+[--prefer-dist] 
+[--prefer-install 
+PREFER-INSTALL] [--fixed] 
+[--no-suggest] 
+[--no-progress] 
+[--no-update] 
+[--no-install] 
+[--no-audit] 
+[--audit-format 
+AUDIT-FORMAT] 
+[--no-security-blocking] 
+[--update-no-dev] [-w|--up
+date-with-dependencies] [-
+W|--update-with-all-depend
+encies] 
+[--with-dependencies] 
+[--with-all-dependencies] 
+[--ignore-platform-req 
+IGNORE-PLATFORM-REQ] 
+[--ignore-platform-reqs] 
+[--prefer-stable] 
+[--prefer-lowest] 
+[-m|--minimal-changes] 
+[--sort-packages] [-o|--op
+timize-autoloader] [-a|--c
+lassmap-authoritative] 
+[--apcu-autoloader] 
+[--apcu-autoloader-prefix 
+APCU-AUTOLOADER-PREFIX] 
+[--] [<packages>...]
+

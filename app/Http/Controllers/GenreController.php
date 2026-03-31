@@ -54,8 +54,8 @@ class GenreController extends Controller
     public function deleteGenre(Genre $genre)
     {
         try {
-            // Detach any relationships first to avoid foreign key issues
-            $genre->events()->detach();
+            // Detach from performers instead of events
+            $genre->performers()->detach();
             $genre->delete();
             return redirect()->route('admin.manageGenres')->with('success', 'Genre berhasil dihapus!');
         } catch (\Exception $e) {

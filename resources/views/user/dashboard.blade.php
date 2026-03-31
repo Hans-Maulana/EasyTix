@@ -105,11 +105,11 @@
                         @foreach($mainBanners as $index => $banner)
                         <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                             <div class="d-flex align-items-center justify-content-center" style="height: 450px; background: #000;">
-                                <img src="{{ asset('storage/' . $banner->image) }}" class="d-block mw-100 mh-100" alt="{{ $banner->title }}" style="object-fit: contain;">
+                                <img src="{{ asset('storage/' . $banner->banner) }}" class="d-block mw-100 mh-100" alt="{{ $banner->name }}" style="object-fit: contain;">
                             </div>
                             <div class="carousel-caption d-none d-md-block text-start p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8)); left:0; right:0; bottom:0;">
-                                <h2 class="fw-bold">{{ $banner->title }}</h2>
-                                <a href="{{ route('user.buyTickets') }}" class="btn premium-btn btn-lg btn-round mt-2">
+                                <h2 class="fw-bold">{{ $banner->name }}</h2>
+                                <a href="{{ route('user.eventTickets', $banner->id) }}" class="btn premium-btn btn-lg btn-round mt-2">
                                    <i class="fas fa-ticket-alt ms-2 transition-icon"></i> &nbsp; Beli Tiket Sekarang 
                                 </a>
                             </div>
@@ -139,15 +139,15 @@
             <div class="col-md-4 mb-4 fade-in-up" style="animation-delay: {{ 0.4 + ($loop->index * 0.1) }}s;">
                 <div class="card premium-promo-card h-100 border-0">
                     <div class="promo-img-container">
-                        <img class="card-img-top" src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}">
+                        <img class="card-img-top" src="{{ asset('storage/' . $banner->banner) }}" alt="{{ $banner->name }}">
                         <div class="promo-overlay">
                             <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase shadow-sm" style="letter-spacing: 1px;"><i class="fas fa-tag me-1"></i> Promo</span>
                         </div>
                     </div>
                     <div class="card-body p-4 d-flex flex-column">
-                        <h4 class="card-title fw-bold mb-3 text-dark" style="font-family: 'Outfit', sans-serif;">{{ $banner->title }}</h4>
+                        <h4 class="card-title fw-bold mb-3 text-dark" style="font-family: 'Outfit', sans-serif;">{{ $banner->name }}</h4>
                         <div class="mt-auto pt-3 text-center">
-                            <a href="{{ route('user.buyTickets') }}" class="btn premium-btn w-100 fw-bold">
+                            <a href="{{ route('user.eventTickets', $banner->id) }}" class="btn premium-btn w-100 fw-bold">
                                 Beli Tiketnya Sekarang <i class="fas fa-arrow-right ms-2 transition-icon"></i>
                             </a>
                         </div>
