@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 25, 2026 at 03:49 PM
+-- Generation Time: Mar 31, 2026 at 07:41 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,32 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `dbeasytix`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `banners`
---
-
-CREATE TABLE `banners` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `image` varchar(255) NOT NULL,
-  `link` varchar(255) DEFAULT NULL,
-  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
-  `type` enum('main','card') NOT NULL DEFAULT 'main',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `banners`
---
-
-INSERT INTO `banners` (`id`, `title`, `image`, `link`, `status`, `type`, `created_at`, `updated_at`) VALUES
-(1, 'Cold Play', 'banners/jXBdf6OE3vwv59hghNZ1x5T0XhMVpit0fWtk9z4r.png', NULL, 'active', 'main', '2026-03-23 23:01:00', '2026-03-23 23:01:00'),
-(3, 'Dewa 19', 'banners/74p5Xqjoaen8O16BdqI57qkayNd79iC0cUbnPHDD.png', NULL, 'active', 'main', '2026-03-23 23:39:29', '2026-03-23 23:39:29'),
-(4, 'Haiya', 'banners/H8nTRztgyoeNfaKBdLWor4WOqDBUWShrMsf1koO0.png', 'http://127.0.0.1:8000/user/dashboard', 'active', 'card', '2026-03-24 01:25:34', '2026-03-24 01:25:34');
 
 -- --------------------------------------------------------
 
@@ -74,6 +48,27 @@ CREATE TABLE `cache_locks` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'Leisure / Entertainment', '2026-03-30 06:58:52', '2026-03-30 06:58:52'),
+(2, 'Personal', '2026-03-30 06:59:02', '2026-03-30 06:59:02');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `events`
 --
 
@@ -85,62 +80,27 @@ CREATE TABLE `events` (
   `status` enum('active','nonactive','pending') NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `users_id` int(11) NOT NULL
+  `users_id` int(11) NOT NULL,
+  `category_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `events`
---
 
-INSERT INTO `events` (`id`, `name`, `location`, `image`, `status`, `created_at`, `updated_at`, `users_id`) VALUES
-('EVT-2026-006', 'dddd', 'dd', NULL, 'active', '2026-03-17 22:09:12', '2026-03-17 22:09:12', 1),
-('EVT-2026-007', 'Dewa 19', 'GBK', NULL, 'active', '2026-03-17 22:37:15', '2026-03-17 22:37:15', 1),
-('EVT-2026-008', 'polo', 'jalak harupat', NULL, 'active', '2026-03-17 23:07:48', '2026-03-17 23:08:36', 1),
-('EVT-2026-009', 'awda', 'GBK', NULL, 'nonactive', '2026-03-17 23:12:43', '2026-03-17 23:12:43', 1),
-('EVT-2026-010', '[alwdpawldpawld', 'BKJ', NULL, 'active', '2026-03-18 01:39:53', '2026-03-18 01:39:53', 1),
-('EVT-2026-011', 'Dewa 67', 'GBK', NULL, 'pending', '2026-03-18 01:49:42', '2026-03-18 01:49:42', 1),
-('EVT-2026-012', 'adadadafafaad', 'dd', NULL, 'active', '2026-03-23 21:48:56', '2026-03-23 21:48:56', 1),
-('EVT-2026-013', 'adadadafafaadadaf', 'ddaddad', NULL, 'active', '2026-03-23 22:04:02', '2026-03-23 22:04:02', 1);
-
--- --------------------------------------------------------
 
 --
--- Table structure for table `event_genre`
+-- Table structure for table `event_performer`
 --
 
-CREATE TABLE `event_genre` (
-  `genre_id` int(11) NOT NULL,
-  `event_id` varchar(35) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+CREATE TABLE `event_performer` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `event_id` varchar(255) NOT NULL,
+  `performer_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `event_genre`
---
 
-INSERT INTO `event_genre` (`genre_id`, `event_id`) VALUES
-(2, 'EVT-2026-006'),
-(6, 'EVT-2026-006'),
-(1, 'EVT-2026-007'),
-(5, 'EVT-2026-007'),
-(23, 'EVT-2026-007'),
-(9, 'EVT-2026-008'),
-(13, 'EVT-2026-008'),
-(1, 'EVT-2026-009'),
-(2, 'EVT-2026-006'),
-(6, 'EVT-2026-006'),
-(1, 'EVT-2026-007'),
-(5, 'EVT-2026-007'),
-(23, 'EVT-2026-007'),
-(9, 'EVT-2026-008'),
-(13, 'EVT-2026-008'),
-(1, 'EVT-2026-009'),
-(1, 'EVT-2026-010'),
-(1, 'EVT-2026-011'),
-(21, 'EVT-2026-012'),
-(13, 'EVT-2026-013'),
-(17, 'EVT-2026-013');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `event_requests`
@@ -154,16 +114,6 @@ CREATE TABLE `event_requests` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `event_requests`
---
-
-INSERT INTO `event_requests` (`id`, `event_id`, `users_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'EVT-2026-007', 2, 'approved', '2026-03-24 04:50:44', '2026-03-24 04:53:32'),
-(2, 'EVT-2026-006', 2, 'pending', '2026-03-24 05:29:31', '2026-03-24 05:29:31');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `event_schedules`
@@ -180,22 +130,6 @@ CREATE TABLE `event_schedules` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `event_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Dumping data for table `event_schedules`
---
-
-INSERT INTO `event_schedules` (`id`, `start_time`, `end_time`, `status`, `event_date`, `description`, `created_at`, `updated_at`, `event_id`) VALUES
-('ES-2026-001', '11:48:00', '13:50:00', 'scheduled', '2026-03-18', 'dddd', '2026-03-17 22:09:12', '2026-03-17 22:09:12', 'EVT-2026-006'),
-('ES-2026-002', '17:00:00', '22:00:00', 'scheduled', '2026-03-26', 'single dewa', '2026-03-17 22:37:15', '2026-03-17 22:37:15', 'EVT-2026-007'),
-('ES-2026-003', '14:00:00', '20:00:00', 'scheduled', '2026-05-20', 'awawaw', '2026-03-17 23:07:48', '2026-03-17 23:07:48', 'EVT-2026-008'),
-('ES-2026-004', '14:00:00', '20:00:00', 'scheduled', '2026-05-20', 'wda', '2026-03-17 23:12:43', '2026-03-17 23:12:43', 'EVT-2026-009'),
-('ES-2026-005', '20:00:00', '23:00:00', 'scheduled', '2026-03-18', 'add', '2026-03-18 01:39:53', '2026-03-18 01:39:53', 'EVT-2026-010'),
-('ES-2026-006', '20:00:00', '23:00:00', 'scheduled', '2026-03-17', 'aokdoawdkoa', '2026-03-18 01:49:42', '2026-03-18 01:49:42', 'EVT-2026-011'),
-('ES-2026-007', '20:00:00', '12:00:00', 'ongoing', '2026-04-11', 'dafafafafafa', '2026-03-18 02:06:58', '2026-03-18 02:06:58', 'EVT-2026-011'),
-('ES-2026-008', '12:22:00', '22:22:00', 'scheduled', '2026-03-24', 'dED', '2026-03-23 22:04:02', '2026-03-23 22:04:02', 'EVT-2026-013');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `failed_jobs`
@@ -319,12 +253,10 @@ CREATE TABLE `migrations` (
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000001_create_cache_table', 1),
-(2, '0001_01_01_000002_create_jobs_table', 1),
-(3, '0001_01_01_000000_create_users_table', 2),
-(4, '2026_03_24_053222_create_banners_table', 3),
-(5, '2026_03_24_060525_add_type_to_banners_table', 4),
-(7, '2026_03_25_123044_add_ticket_code_to_order_details_table', 5);
+(9, '2026_03_30_132519_create_categories_table', 1),
+(10, '2026_03_30_132519_create_performers_table', 2),
+(11, '2026_03_30_132520_modify_events_table_for_category_and_banner', 3),
+(12, '2026_03_30_132521_drop_banners_and_event_genre_tables', 4);
 
 -- --------------------------------------------------------
 
@@ -344,16 +276,7 @@ CREATE TABLE `notifications` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `notifications`
---
 
-INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`, `is_read`, `created_at`, `updated_at`) VALUES
-(2, 3, 'offer', 'Coldplay: Music of the Spheres! 🪐', 'Dapatkan tiket eksklusif konser Coldplay di EasyTix. Stok sangat terbatas!', 'http://127.0.0.1:8000/user/dashboard', 1, '2026-03-25 07:40:11', '2026-03-25 07:43:51');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `orders`
 --
 
@@ -367,25 +290,16 @@ CREATE TABLE `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
--- Dumping data for table `orders`
---
-
-INSERT INTO `orders` (`id`, `total_amount`, `created_at`, `updated_at`, `users_id`, `events_id`) VALUES
-('ORD-2026-001', 999999, '2026-03-25 05:37:52', '2026-03-25 05:37:52', 3, 'EVT-2026-010'),
-('ORD-2026-002', 999999, '2026-03-25 07:13:19', '2026-03-25 07:13:19', 3, 'EVT-2026-010'),
-('TEST-ORD-2026-8WTIZ', 999999, '2026-03-25 05:35:56', '2026-03-25 05:35:56', 1, 'EVT-2026-010'),
-('TEST-ORD-2026-D8LCM', 999999, '2026-03-25 05:35:13', '2026-03-25 05:35:13', 1, 'EVT-2026-010'),
-('TEST-ORD-2026-S9WO0', 999999, '2026-03-25 05:36:08', '2026-03-25 05:36:08', 1, 'EVT-2026-010');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `order_details`
 --
 
 CREATE TABLE `order_details` (
   `id` varchar(35) NOT NULL,
   `owner_name` varchar(100) NOT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
   `status` enum('valid','invalid','used','expired','cancelled') NOT NULL,
   `qr_code` varchar(200) NOT NULL,
   `ticket_code` varchar(255) DEFAULT NULL,
@@ -395,14 +309,6 @@ CREATE TABLE `order_details` (
   `orders_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `order_details`
---
-
-INSERT INTO `order_details` (`id`, `owner_name`, `status`, `qr_code`, `ticket_code`, `created_at`, `updated_at`, `tickets_id`, `orders_id`) VALUES
-('DET-2026-WHUCAB', 'User Biasa', 'valid', 'qrcodes/qr_1774447999_DET-2026-WHUCAB.svg', 'VERIFY-DET-2026-WHUCAB', '2026-03-25 07:13:19', '2026-03-25 07:13:19', 'TKT-2026-001', 'ORD-2026-002');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `password_reset_tokens`
@@ -436,16 +342,25 @@ CREATE TABLE `payments` (
 --
 
 CREATE TABLE `performers` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` varchar(200) DEFAULT NULL,
-  `contact` varchar(15) NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `event_schedules_id` varchar(35) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+--
+-- Table structure for table `performer_genre`
+--
+
+CREATE TABLE `performer_genre` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `performer_id` bigint(20) UNSIGNED NOT NULL,
+  `genre_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 --
 -- Table structure for table `sessions`
@@ -465,7 +380,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('M6cnUQDj6VZm5JgxTRvpV0bNWLhodEm1cQkavt8u', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTG1MTlo5N0EwMWJ1U2VVQk5FdTNyRlh0NVc1bHVuQ1NPVlBFdHBrRiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1774361009);
+('Gn0AiX9SfAsReS61CQz3QKLqjicvUpNfszoBTlre', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiS3ZaSnlVTHdBQkh2VnJJOXBmRjVKRHU0VGZ6UzRGaFNnS21nMEpqbCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2V2ZW50L0VWVC0yMDI2LTAwMi90aWNrZXRzIjtzOjU6InJvdXRlIjtzOjE3OiJ1c2VyLmV2ZW50VGlja2V0cyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7fQ==', 1774935075),
+('HnfGTNkXUsrtEemhs9qp1UCfNlH30oPZTkNE0vw1', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiR3IwYzZtV1NUQWlqUVQ2aWpxSlIyTDBtSEIyMld2ZUNDTWRYaTVEaSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2Rhc2hib2FyZCI7czo1OiJyb3V0ZSI7czoxNDoidXNlci5kYXNoYm9hcmQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1774935606);
 
 -- --------------------------------------------------------
 
@@ -483,19 +399,6 @@ CREATE TABLE `tickets` (
   `event_schedules_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `tickets`
---
-
-INSERT INTO `tickets` (`id`, `capacity`, `price`, `created_at`, `updated_at`, `ticket_types_id`, `event_schedules_id`) VALUES
-('TKT-2026-001', 100, 999999, '2026-03-18 01:39:53', '2026-03-18 01:39:53', 1, 'ES-2026-005'),
-('TKT-2026-002', 200, 999999, '2026-03-18 01:49:42', '2026-03-18 01:49:42', 3, 'ES-2026-006'),
-('TKT-2026-003', 141, 13333, '2026-03-18 01:58:03', '2026-03-18 01:58:03', 2, 'ES-2026-006'),
-('TKT-2026-004', 2333, 100000, '2026-03-18 02:05:26', '2026-03-18 02:05:26', 1, 'ES-2026-006'),
-('TKT-2026-005', 1000, 300000000, '2026-03-23 21:25:07', '2026-03-23 21:25:07', 1, 'ES-2026-007'),
-('TKT-2026-006', 212, 122344, '2026-03-23 22:04:02', '2026-03-23 22:04:02', 1, 'ES-2026-008');
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `ticket_types`
@@ -541,20 +444,28 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone_number`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin Utama', 'admin@gmail.com', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'eRbDFgmhI7tVNmMxMZWunk8DxNUdTgDaQXF2ZYgZwqjs0ZCog9GEL879l8eC', '2026-03-17 06:05:19', '2026-03-17 06:05:19'),
+(1, 'Admin Utama', 'admin@gmail.com', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'IAhYSPAUi54n7u53QxjXrGY12p1foJpzXrs5WoDCA4qzShpEM3wkFRKo2NzD', '2026-03-17 06:05:19', '2026-03-17 06:05:19'),
 (2, 'Organizer PK Entertainment', 'organizer@gmail.com', '$2y$12$rYbTsu0vPVNKmAUghFav5eucynaAikGOuNyL37AMokV3yg/wEbrZq', '081234567891', 'organizer', NULL, '2026-03-17 06:05:20', '2026-03-17 06:05:20'),
 (3, 'User Biasa', 'user@gmail.com', '$2y$12$Qibq1c2xWoPeqAfLDYVf..mbIgpQixdSpfLEpzqvZ5/Cx4VS3sk7W', '081234567892', 'user', NULL, '2026-03-17 06:05:20', '2026-03-17 06:05:20'),
 (8, 'Ferdinand Brian', '2472022@maranatha.ac.id', '$2y$12$68mWjg4qH9d7wYpWLb3VGu7h5LFcPnlC5/TS2Gy36gagfxwq1N30C', '0833234525626', 'admin', NULL, '2026-03-23 21:39:23', '2026-03-23 21:39:59');
 
---
--- Indexes for dumped tables
---
+-- --------------------------------------------------------
 
 --
--- Indexes for table `banners`
+-- Table structure for table `waiting_lists`
 --
-ALTER TABLE `banners`
-  ADD PRIMARY KEY (`id`);
+
+CREATE TABLE `waiting_lists` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `ticket_id` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `status` enum('pending','requested','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 
 --
 -- Indexes for table `cache`
@@ -571,18 +482,24 @@ ALTER TABLE `cache_locks`
   ADD KEY `cache_locks_expiration_index` (`expiration`);
 
 --
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `events`
 --
 ALTER TABLE `events`
   ADD PRIMARY KEY (`id`,`users_id`),
-  ADD KEY `fk_events_users_idx` (`users_id`);
+  ADD KEY `fk_events_users_idx` (`users_id`),
+  ADD KEY `events_category_id_foreign` (`category_id`);
 
 --
--- Indexes for table `event_genre`
+-- Indexes for table `event_performer`
 --
-ALTER TABLE `event_genre`
-  ADD KEY `fk_event_genres_genres1_idx` (`genre_id`),
-  ADD KEY `fk_event_genres_events1_idx` (`event_id`);
+ALTER TABLE `event_performer`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `event_requests`
@@ -668,8 +585,14 @@ ALTER TABLE `payments`
 -- Indexes for table `performers`
 --
 ALTER TABLE `performers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `performer_genre`
+--
+ALTER TABLE `performer_genre`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_performers_event_schedules1_idx` (`event_schedules_id`);
+  ADD KEY `performer_genre_performer_id_foreign` (`performer_id`);
 
 --
 -- Indexes for table `sessions`
@@ -700,20 +623,32 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `waiting_lists`
+--
+ALTER TABLE `waiting_lists`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `banners`
+-- AUTO_INCREMENT for table `categories`
 --
-ALTER TABLE `banners`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `categories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `event_performer`
+--
+ALTER TABLE `event_performer`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -737,13 +672,25 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `performers`
+--
+ALTER TABLE `performers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `performer_genre`
+--
+ALTER TABLE `performer_genre`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `ticket_types`
@@ -758,6 +705,12 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `waiting_lists`
+--
+ALTER TABLE `waiting_lists`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -765,14 +718,8 @@ ALTER TABLE `users`
 -- Constraints for table `events`
 --
 ALTER TABLE `events`
+  ADD CONSTRAINT `events_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_events_users` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `event_genre`
---
-ALTER TABLE `event_genre`
-  ADD CONSTRAINT `fk_event_genres_events1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_event_genres_genres1` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `event_schedules`
@@ -801,10 +748,10 @@ ALTER TABLE `payments`
   ADD CONSTRAINT `fk_payments_orders1` FOREIGN KEY (`orders_id`) REFERENCES `orders` (`id`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `performers`
+-- Constraints for table `performer_genre`
 --
-ALTER TABLE `performers`
-  ADD CONSTRAINT `fk_performers_event_schedules1` FOREIGN KEY (`event_schedules_id`) REFERENCES `event_schedules` (`id`) ON UPDATE CASCADE;
+ALTER TABLE `performer_genre`
+  ADD CONSTRAINT `performer_genre_performer_id_foreign` FOREIGN KEY (`performer_id`) REFERENCES `performers` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tickets`
