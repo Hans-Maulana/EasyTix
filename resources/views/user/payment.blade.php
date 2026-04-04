@@ -6,16 +6,16 @@
 <style>
     .payment-wrapper { font-family: 'Outfit', sans-serif; }
     .payment-option {
-        border: 2px solid #f0f0f0; border-radius: 20px; padding: 25px;
+        border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px;
         margin-bottom: 20px; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        cursor: pointer; position: relative; background: #fff;
+        cursor: pointer; position: relative; background: rgba(255, 255, 255, 0.05); color: #fff;
     }
-    .payment-option:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-color: #F4D03F; }
-    .payment-option.active { border-color: #F4D03F; background: rgba(244, 208, 63, 0.03); box-shadow: 0 5px 20px rgba(244, 208, 63, 0.2); }
+    .payment-option:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: #F4D03F; background: rgba(255, 255, 255, 0.08); }
+    .payment-option.active { border-color: #F4D03F; background: rgba(244, 208, 63, 0.1); box-shadow: 0 5px 20px rgba(244, 208, 63, 0.2); }
     
     .payment-option .check-mark {
         position: absolute; top: 20px; right: 20px; width: 24px; height: 24px;
-        border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center;
         transition: all 0.3s;
     }
     .payment-option.active .check-mark { background: #F4D03F; border-color: #F4D03F; color: #000; }
@@ -24,15 +24,15 @@
     /* Bank Card Selector */
     .bank-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
     .bank-card {
-        border: 2px solid #eee; border-radius: 15px; padding: 15px; text-align: center;
-        transition: all 0.3s; cursor: pointer; background: #fff; position: relative;
+        border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 15px; text-align: center;
+        transition: all 0.3s; cursor: pointer; background: rgba(255, 255, 255, 0.05); position: relative;
     }
-    .bank-card:hover { border-color: #F4D03F; transform: scale(1.05); }
-    .bank-card.active { border-color: #F4D03F; background: #fffdf5; box-shadow: 0 5px 15px rgba(244, 208, 63, 0.2); }
-    .bank-card img { height: 45px; width: 100%; object-fit: contain; transition: all 0.3s; }
-    .bank-card.active img { transform: scale(1.1); }
-    .bank-card .small-label { font-size: 0.75rem; font-weight: 700; color: #666; display: block; }
-    .bank-card.active .small-label { color: #000; }
+    .bank-card:hover { border-color: #F4D03F; transform: scale(1.05); background: rgba(255,255,255,0.1); }
+    .bank-card.active { border-color: #F4D03F; background: rgba(244, 208, 63, 0.15); box-shadow: 0 5px 15px rgba(244, 208, 63, 0.2); }
+    .bank-card img { height: 45px; width: 100%; object-fit: contain; transition: all 0.3s; filter: brightness(0.9); }
+    .bank-card.active img { transform: scale(1.1); filter: brightness(1); }
+    .bank-card .small-label { font-size: 0.75rem; font-weight: 700; color: #cbd5e1; display: block; }
+    .bank-card.active .small-label { color: #fff; }
 
     .btn-premium {
         background: linear-gradient(135deg, #F4D03F 0%, #E67E22 100%);
@@ -44,14 +44,15 @@
     /* QRIS Overlay Styles */
     #qrisOverlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
         z-index: 9999; display: none; align-items: center; justify-content: center;
         transition: all 0.3s ease;
     }
     .qris-modal {
-        background: #fff; border-radius: 30px; padding: 40px;
+        background: rgba(15, 25, 45, 0.95); border-radius: 30px; padding: 40px;
         max-width: 600px; width: 95%; text-align: center;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.2); transform: scale(0.9); transition: all 0.3s ease;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
     }
     #qrisOverlay.active { display: flex; }
     #qrisOverlay.active .qris-modal { transform: scale(1); }
@@ -120,15 +121,15 @@
                         </div>
                     </div>
 
-                    <div class="mt-4 p-3 bg-light rounded-4 border-start border-warning border-4">
-                        <small class="text-muted d-block mb-1"><i class="fas fa-info-circle me-1"></i> Informasi:</small>
-                        <p class="small mb-0">Tiket elektronik Anda akan langsung dikirim ke menu <strong>Tiket Saya</strong> setelah pembayaran dikonfirmasi oleh sistem.</p>
+                    <div class="mt-4 p-3 rounded-4 border-start border-warning border-4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                        <small class="text-white d-block mb-1"><i class="fas fa-info-circle me-1"></i> Informasi:</small>
+                        <p class="small mb-0 text-light">Tiket elektronik Anda akan langsung dikirim ke menu <strong>Tiket Saya</strong> setelah pembayaran dikonfirmasi oleh sistem.</p>
                     </div>
                 </div>
 
                 <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
-                    <div class="card border-0 rounded-4 p-4 shadow-sm bg-light">
-                        <h5 class="fw-bold mb-4">Ringkasan Pembayaran</h5>
+                    <div class="card border-0 rounded-4 p-4 shadow-sm" style="background: rgba(255,255,255,0.05);">
+                        <h5 class="fw-bold mb-4 text-white">Ringkasan Pembayaran</h5>
                         @php $total = 0; @endphp
                         @foreach($cart as $id => $details)
                             @php $total += $details['price'] * $details['quantity']; @endphp

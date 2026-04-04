@@ -3,47 +3,49 @@
 @section('ExtraCSS')
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-    .event-tickets-body { font-family: 'Outfit', sans-serif; background: #fdfdfd; }
+    .event-tickets-body { font-family: 'Outfit', sans-serif; }
     
     /* Header Section */
     .event-header-top { 
-        background: #fff; padding: 40px 0; border-bottom: 1px solid #f0f0f0; 
+        background: rgba(255, 255, 255, 0.02); padding: 40px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
         margin-bottom: 30px;
     }
-    .event-header-name { font-weight: 900; font-size: 2.2rem; color: #111; margin-bottom: 10px; }
-    .event-header-meta { font-size: 0.95rem; color: #666; display: flex; align-items: center; gap: 20px; }
-    .event-header-meta i { color: #888; margin-right: 5px; }
+    .event-header-name { font-weight: 900; font-size: 2.2rem; color: #fff; margin-bottom: 10px; }
+    .event-header-meta { font-size: 0.95rem; color: #cbd5e1; display: flex; align-items: center; gap: 20px; }
+    .event-header-meta i { color: #a0aec0; margin-right: 5px; }
 
     /* Schedule & Tickets */
     .schedule-block { margin-bottom: 50px; }
     .day-badge { 
-        background: #000; color: #fff; padding: 4px 15px; border-radius: 5px; 
+        background: var(--premium-gold-grad); color: #000; padding: 4px 15px; border-radius: 5px; 
         font-weight: 700; font-size: 0.8rem; text-transform: uppercase;
         margin-right: 15px;
     }
-    .schedule-title { font-weight: 800; font-size: 1.25rem; color: #000; display: flex; align-items: center; }
+    .schedule-title { font-weight: 800; font-size: 1.25rem; color: #fff; display: flex; align-items: center; }
 
     .ticket-row {
-        background: #fff; border: 1px solid #eee; border-radius: 15px;
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
         padding: 25px; margin-bottom: 20px; transition: all 0.3s ease;
         display: flex; align-items: center; justify-content: space-between;
-        flex-wrap: wrap; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        flex-wrap: wrap; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        backdrop-filter: blur(10px);
     }
-    .ticket-row:hover { border-color: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .ticket-row:hover { border-color: rgba(255,255,255,0.3); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
 
-    .ticket-type-name { font-weight: 800; font-size: 1.15rem; color: #111; margin-bottom: 5px; }
-    .ticket-price { font-weight: 800; font-size: 1.3rem; color: #000; margin-right: 15px; }
-    .ticket-stock { font-size: 0.85rem; color: #888; }
+    .ticket-type-name { font-weight: 800; font-size: 1.15rem; color: #fff; margin-bottom: 5px; }
+    .ticket-price { font-weight: 800; font-size: 1.3rem; color: var(--premium-gold); margin-right: 15px; }
+    .ticket-stock { font-size: 0.85rem; color: #a0aec0; }
 
     .btn-action-add {
-        background: #000; color: #fff; border: none; font-weight: 800;
+        background: var(--premium-gold-grad); color: #000; border: none; font-weight: 800;
         border-radius: 50px; padding: 12px 35px; transition: 0.3s;
     }
-    .btn-action-add:hover { background: #333; transform: translateY(-2px); }
+    .btn-action-add:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(244, 208, 63, 0.4); color: #000; }
 
-    .qty-control { width: 140px; display: flex; align-items: center; background: #f5f5f5; border-radius: 50px; padding: 5px; }
-    .qty-control button { border: none; background: #fff; color: #000; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-    .qty-control input { border: none; background: transparent; text-align: center; font-weight: 800; width: 50px; color: #000; }
+    .qty-control { width: 140px; display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 50px; padding: 5px; border: 1px solid rgba(255,255,255,0.1); }
+    .qty-control button { border: none; background: rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: 0.2s; }
+    .qty-control button:hover { background: rgba(255,255,255,0.2); }
+    .qty-control input { border: none; background: transparent; text-align: center; font-weight: 800; width: 50px; color: #fff; }
 </style>
 @endsection
 
@@ -57,7 +59,7 @@
                 <nav aria-label="breadcrumb" class="mb-3">
                     <ol class="breadcrumb bg-transparent p-0 mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('user.buyTickets') }}" class="text-muted text-decoration-none">Event</a></li>
-                        <li class="breadcrumb-item active" aria-current="page" style="color: #000; font-weight: 700;">{{ $event->name }}</li>
+                        <li class="breadcrumb-item active" aria-current="page" style="color: #cbd5e1; font-weight: 700;">{{ $event->name }}</li>
                     </ol>
                 </nav>
                 <h1 class="event-header-name">{{ $event->name }}</h1>
@@ -66,7 +68,7 @@
                 </div>
             </div>
             <div class="mt-3 mt-lg-0">
-                <img src="{{ $event->image ? asset('storage/'.$event->image) : asset('assets/img/easytix_login_bg.png') }}" alt="{{ $event->name }}" style="height: 120px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <img src="{{ $event->image ? asset('storage/'.$event->image) : asset('assets/img/easytix_login_bg.png') }}" alt="{{ $event->name }}" style="height: 120px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
             </div>
         </div>
     </div>
@@ -124,7 +126,7 @@
                     </div>
                 </div>
                 @empty
-                <div class="col-12 p-3 text-center bg-white rounded-3 border">
+                <div class="col-12 p-3 text-center rounded-3 bg-transparent border border-light border-opacity-25">
                     <p class="text-muted mb-0">Tiket belum tersedia untuk hari ini.</p>
                 </div>
                 @endforelse

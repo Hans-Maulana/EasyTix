@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyTix - Eksplorasi Konser Tanpa Batas</title>
+    <title>EasyTix</title>
+    <link rel="icon" href="{{ asset('assets/img/logo_easytix_new.png') }}" type="image/x-icon" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -349,8 +350,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom" id="navbar">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                <img src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png') }}" alt="EasyTix" height="50">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url('/') }}">
+                <img src="{{ asset('assets/img/logo_easytix_new.png') }}" alt="EasyTix" height="50">
             </a>
             <button class="navbar-toggler shadow-none border-0 text-gold fs-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <i class="fa-solid fa-bars-staggered"></i>
@@ -363,8 +364,35 @@
                     <li class="nav-item"><a class="nav-link" href="#testimoni">Testimoni</a></li>
                 </ul>
                 <div class="d-flex gap-3 align-items-center mt-3 mt-lg-0">
-                    <a href="/login" class="text-white text-decoration-none fw-semibold hero-link">Masuk</a>
-                    <a href="/register" class="btn btn-primary-custom px-4 py-2">Daftar</a>
+                    @guest
+                        <a href="{{ route('login') }}" class="text-white text-decoration-none fw-semibold">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary-custom px-4 py-2">Daftar</a>
+                    @else
+                        <div class="dropdown">
+                            <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle glass-card p-2 rounded-pill px-3" href="#" role="button" data-bs-toggle="dropdown">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=F4D03F&color=000&size=100" class="rounded-circle me-2" height="35" alt="Avatar">
+                                <span class="small fw-semibold">{{ auth()->user()->name }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark glass-card border-0 mt-2 p-2 shadow-lg" style="min-width: 200px;">
+                                <li>
+                                    <div class="dropdown-item-text">
+                                        <p class="mb-0 fw-bold">{{ auth()->user()->name }}</p>
+                                        <p class="mb-0 small opacity-75">{{ auth()->user()->email }}</p>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                <li><a class="dropdown-item rounded-3 mb-1" href="{{ route('dashboard') }}"><i class="fas fa-th-large me-2 small"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item rounded-3 mb-1" href="{{ route('profile.edit') }}"><i class="fas fa-user-circle me-2 small"></i> Profil Saya</a></li>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item rounded-3 text-danger"><i class="fas fa-sign-out-alt me-2 small"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    @endguest
                 </div>
             </div>
         </div>

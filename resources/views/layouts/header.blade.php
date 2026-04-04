@@ -3,12 +3,7 @@
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
               <a href="{{ url('/') }}" class="logo">
-                <img
-                  src="{{ asset('assets/img/kaiadmin/logo_EasyTix_white.png')}}"
-                  alt="navbar brand"
-                  class="navbar-brand"
-                  height="30"
-                />
+                <img src="{{ asset('assets/img/logo_easytix_new.png') }}" alt="EasyTix" height="45" class="me-2">
               </a>
               <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
@@ -111,12 +106,12 @@
                     aria-expanded="false"
                   >
                     <div class="avatar-sm">
-                      <img
-                        src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('assets/img/profile.jpg') }}"
-                        alt="avatar"
-                        class="avatar-img rounded-circle"
-                        style="width: 100%; height: 100%; object-fit: cover;"
-                      />
+                        <img
+                          src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=F4D03F&color=000"
+                          alt="avatar"
+                          class="avatar-img rounded-circle"
+                          style="width: 100%; height: 100%; object-fit: cover;"
+                        />
                     </div>
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
@@ -129,7 +124,7 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('assets/img/profile.jpg') }}"
+                              src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=F4D03F&color=000"
                               alt="image profile"
                               class="avatar-img rounded"
                               style="width: 100%; height: 100%; object-fit: cover;"

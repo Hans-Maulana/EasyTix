@@ -2,16 +2,17 @@
 
 @section('ExtraCSS')
 <style>
-    .card-stats-premium {
+    .card-stats-premium, .chart-container-premium, .recent-table-premium {
         border-radius: 2rem !important;
-        border: none !important;
-        background: #fff;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.03) !important;
+        background: rgba(7, 17, 32, 0.6) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .card-stats-premium:hover {
         transform: translateY(-10px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.08) !important;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
     }
     .icon-box-premium {
         width: 70px;
@@ -27,34 +28,30 @@
     .bg-gradient-g { background: var(--premium-gold-grad); color: #000; }
     .bg-gradient-b { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
     
-    .chart-container-premium {
-        background: #fff;
-        border-radius: 2rem;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-    }
+    .chart-container-premium { padding: 2rem; }
+    .recent-table-premium { overflow: hidden; }
     
-    .recent-table-premium {
-        border-radius: 2rem;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-    }
     .table thead th {
-        background: #fcfcfc !important;
+        background: rgba(0,0,0,0.2) !important;
         text-transform: uppercase;
         font-size: 0.7rem;
         font-weight: 800;
         letter-spacing: 1.5px;
-        color: #999;
+        color: var(--premium-gold) !important;
         padding: 1.5rem 1rem !important;
         border: none !important;
     }
     .table tbody td {
         padding: 1.5rem 1rem !important;
-        border-bottom: 1px solid #f8f8f8 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         vertical-align: middle !important;
+        color: #cbd5e1 !important;
     }
+    
+    .text-dark { color: #fff !important; }
+    .badge.bg-light { background: rgba(255,255,255,0.1) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+    .btn-light { background: rgba(255,255,255,0.1) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+    .btn-light:hover { background: rgba(255,255,255,0.2) !important; color: #fff !important; }
 </style>
 @endsection
 
@@ -200,8 +197,8 @@ $(document).ready(function() {
     // Sales Line Chart
     const ctx = document.getElementById('salesChart').getContext('2d');
     let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(20, 46, 94, 0.4)');
-    gradient.addColorStop(1, 'rgba(20, 46, 94, 0)');
+    gradient.addColorStop(0, 'rgba(0, 210, 255, 0.4)');
+    gradient.addColorStop(1, 'rgba(0, 210, 255, 0)');
 
     new Chart(ctx, {
         type: 'line',
@@ -210,12 +207,12 @@ $(document).ready(function() {
             datasets: [{
                 label: 'Pendapatan',
                 data: {!! json_encode($chartData) !!},
-                borderColor: '#142E5E',
+                borderColor: '#00d2ff',
                 backgroundColor: gradient,
                 borderWidth: 4,
                 fill: true,
                 pointBackgroundColor: '#fff',
-                pointBorderColor: '#142E5E',
+                pointBorderColor: '#00d2ff',
                 pointBorderWidth: 2,
                 pointRadius: 6,
                 pointHoverRadius: 8,
@@ -242,14 +239,16 @@ $(document).ready(function() {
             },
             scales: {
                 y: {
-                    grid: { display: true, drawBorder: false, color: '#f0f0f0' },
+                    grid: { display: true, drawBorder: false, color: 'rgba(255,255,255,0.05)' },
                     ticks: {
+                        color: '#E0E6ED',
                         font: { family: 'Outfit' },
                         callback: value => 'Rp ' + (value/1000000) + 'M'
                     }
                 },
                 x: {
-                    grid: { display: false }
+                    grid: { display: false },
+                    ticks: { color: '#E0E6ED' }
                 }
             }
         }
@@ -263,9 +262,15 @@ $(document).ready(function() {
             labels: {!! json_encode(array_column($eventStats, 'name')) !!},
             datasets: [{
                 data: {!! json_encode(array_column($eventStats, 'revenue')) !!},
-                backgroundColor: ['#F4D03F', '#142E5E', '#E67E22', '#3498db', '#2ecc71'],
-                borderWidth: 8,
-                borderColor: '#fff',
+                backgroundColor: [
+                    'rgba(244, 208, 63, 0.85)',   // Gold
+                    'rgba(0, 210, 255, 0.85)',    // Cyan
+                    'rgba(255, 107, 107, 0.85)',  // Coral/Pink
+                    'rgba(161, 140, 209, 0.85)',  // Purple
+                    'rgba(79, 172, 254, 0.85)'    // Light Blue
+                ],
+                borderWidth: 2,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
                 hoverOffset: 15
             }]
         },
@@ -277,6 +282,7 @@ $(document).ready(function() {
                 legend: {
                     position: 'bottom',
                     labels: {
+                        color: '#E0E6ED',
                         usePointStyle: true,
                         padding: 20,
                         font: { family: 'Outfit', size: 12 }

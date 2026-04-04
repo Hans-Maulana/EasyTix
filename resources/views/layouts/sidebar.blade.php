@@ -5,12 +5,13 @@
           <div class="logo-header" data-background-color="dark">
             <a href="{{ url('/') }}" class="logo">
               <img
-                src="{{ asset('assets/img/kaiadmin/logo_EasyTix_white.png')}}"
+                src="{{ asset('assets/img/logo_easytix_new.png')}}"
                 alt="EasyTix Logo"
                 class="navbar-brand"
-                height="35"
-                style="margin-left: 20px; filter: drop-shadow(0 0 5px rgba(244, 208, 63, 0.4));"
+                height="45"
+                style="margin-left: 10px;"
               />
+
             </a>
 
 
@@ -58,7 +59,7 @@
                   <!-- 1.5 Request Organizer -->
                   <li class="nav-item {{ request()->routeIs('admin.requestsOrganizer') ? 'active' : '' }}">
                       <a href="{{ route('admin.requestsOrganizer') }}">
-                          <i class="fas fa-envelope-open-text"></i>
+                          <i class="fas fa-address-card"></i>
                           <p>Request Organizer</p>
                       </a>
                   </li>
@@ -105,8 +106,8 @@
 
 
                   <!-- 4. Fitur Laporan -->
-                  <li class="nav-item {{ request()->routeIs('admin.laporan') ? 'active' : '' }}">
-                      <a href="#">
+                  <li class="nav-item {{ request()->routeIs('admin.reports') ? 'active' : '' }}">
+                      <a href="{{ route('admin.reports') }}">
                           <i class="fas fa-chart-bar"></i>
                           <p>Fitur Laporan</p>
                       </a>

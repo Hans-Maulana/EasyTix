@@ -40,18 +40,8 @@ class ProfileController extends Controller
         $user = $request->user();
         $user->fill($request->validated());
 
-        if ($user->isDirty('email')) {
+        if ($user->isDirty('email') && $user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail) {
             $user->email_verified_at = null;
-        }
-
-        if ($request->hasFile('profile_photo')) {
-            // Delete old photo if exists
-            if ($user->profile_photo) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
-            $user->profile_photo = $path;
         }
 
         $user->save();

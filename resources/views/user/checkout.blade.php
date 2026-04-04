@@ -47,23 +47,23 @@
                         @php $ticketIdx = 0; @endphp
                         @foreach($cart as $id => $details)
                             @for($i = 0; $i < $details['quantity']; $i++)
-                                <div class="ticket-detail-group mb-4 p-3 border rounded-3 bg-white">
+                                <div class="ticket-detail-group mb-4 p-3 border border-light border-opacity-25 rounded-3 bg-transparent">
                                     <h6 class="fw-bold text-warning mb-3">Identitas Tiket #{{ ++$ticketIdx }} - {{ $details['name'] }} ({{ $details['type'] }})</h6>
                                     <div class="row g-3">
                                         <div class="col-md-12">
-                                            <label class="form-label small fw-bold">Nama Lengkap Sesuai KTP</label>
+                                            <label class="form-label small fw-bold text-light">Nama Lengkap Sesuai KTP</label>
                                             <input type="text" name="tickets[{{ $id }}][{{ $i }}][name]" class="form-control rounded-pill req-field" placeholder="Nama Lengkap" value="{{ $ticketDetails[$id][$i]['name'] ?? '' }}" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Nomor Telepon (WhatsApp)</label>
+                                            <label class="form-label small fw-bold text-light">Nomor Telepon (WhatsApp)</label>
                                             <input type="text" name="tickets[{{ $id }}][{{ $i }}][phone]" class="form-control rounded-pill req-field" placeholder="Nomor Telepon" value="{{ $ticketDetails[$id][$i]['phone'] ?? '' }}" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Email Aktif</label>
+                                            <label class="form-label small fw-bold text-light">Email Aktif</label>
                                             <input type="email" name="tickets[{{ $id }}][{{ $i }}][email]" class="form-control rounded-pill req-field" placeholder="Email" value="{{ $ticketDetails[$id][$i]['email'] ?? '' }}" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Jenis Kelamin</label>
+                                            <label class="form-label small fw-bold text-light">Jenis Kelamin</label>
                                             <select name="tickets[{{ $id }}][{{ $i }}][gender]" class="form-select rounded-pill req-field" required>
                                                 <option value="" disabled {{ !isset($ticketDetails[$id][$i]['gender']) ? 'selected' : '' }}>Pilih Jenis Kelamin</option>
                                                 <option value="Laki-laki" {{ (isset($ticketDetails[$id][$i]['gender']) && $ticketDetails[$id][$i]['gender'] == 'Laki-laki') ? 'selected' : '' }}>Laki-laki</option>
@@ -71,7 +71,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Umur</label>
+                                            <label class="form-label small fw-bold text-light">Umur</label>
                                             <input type="number" name="tickets[{{ $id }}][{{ $i }}][age]" class="form-control rounded-pill req-field" placeholder="Umur" min="1" value="{{ $ticketDetails[$id][$i]['age'] ?? '' }}" required>
                                         </div>
                                     </div>
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="col-lg-5" data-aos="fade-left" data-aos-delay="200">
-                    <div class="card border-0 rounded-4 p-4 shadow-sm bg-light">
+                    <div class="card border-0 rounded-4 p-4 shadow-sm" style="background: rgba(255,255,255,0.05);">
                         <h5 class="fw-bold mb-4">Total Bayar</h5>
                         @php $total = 0; @endphp
                         @foreach($cart as $id => $details)

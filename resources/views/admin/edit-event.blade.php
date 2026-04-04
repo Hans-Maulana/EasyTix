@@ -1,55 +1,101 @@
 @extends('layouts.master')
 
 @section('ExtraCSS')
-<style>
-    .form-section-title {
-        border-bottom: 2px solid #f1f1f1;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        color: #1a2035;
-        font-weight: 700;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .performer-item {
-        display: flex;
-        align-items: center;
-        padding: 5px 10px;
-        border-radius: 6px;
-        transition: background 0.2s;
-        cursor: pointer;
-    }
-    .performer-item:hover {
-        background: #f0f0f0;
-    }
-    .performer-item input {
-        margin-top: 0;
-        cursor: pointer;
-    }
-    .performer-item label {
-        margin-bottom: 0;
-        margin-left: 10px;
-        cursor: pointer;
-        font-size: 0.85rem;
-        color: #333;
-        flex: 1;
-    }
-    .genre-badge {
-        background: #e9ecef;
-        color: #495057;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        margin-right: 4px;
-        margin-bottom: 4px;
-        display: inline-block;
-    }
-    .genre-badge.selected {
-        background: #1a2035;
-        color: white;
-    }
-</style>
+    <style>
+        .schedule-card {
+            border-left: 5px solid var(--premium-gold);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .schedule-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .remove-schedule {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .add-schedule-btn {
+            background: rgba(0, 210, 255, 0.2);
+            color: #00d2ff;
+            border: 1px solid rgba(0, 210, 255, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .add-schedule-btn:hover {
+            background: rgba(0, 210, 255, 0.4);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .form-section-title {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .performer-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .performer-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .performer-item input {
+            margin-top: 0;
+            cursor: pointer;
+        }
+
+        .performer-item label {
+            margin-bottom: 0;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #E0E6ED;
+            flex: 1;
+        }
+
+        .genre-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .genre-badge.selected {
+            background: var(--premium-gold-grad);
+            color: #000;
+            border: none;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -128,18 +174,6 @@
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <div class="form-group p-0">
-                                            <label for="banner" class="fw-bold">Banner / Gambar Event</label>
-                                            @if($event->banner)
-                                                <div class="mb-2">
-                                                    <img src="{{ asset('storage/' . $event->banner) }}" alt="Banner" class="img-thumbnail" style="max-height: 150px;">
-                                                </div>
-                                            @endif
-                                            <input type="file" class="form-control" id="banner" name="banner" accept="image/*">
-                                            <small class="text-muted">Biarkan kosong jika tidak ingin mengubah banner.</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 mb-3">
-                                        <div class="form-group p-0">
                                             <label for="description" class="fw-bold">Deskripsi Event</label>
                                             <textarea class="form-control" id="description" name="description" rows="3" placeholder="Masukkan deskripsi lengkap event...">{{ $event->description }}</textarea>
                                         </div>
@@ -172,9 +206,9 @@
                                 <div class="form-section-title mt-4">
                                     <span class="text-primary">Genre Musik (Otomatis Terpilih sesuai Performer)</span>
                                 </div>
-                                <div id="genre-display-container" class="p-3 mb-4 rounded border bg-light">
+                                <div id="genre-display-container" class="p-3 mb-4 rounded border bg-transparent">
                                     <div id="selected-genres-list" class="d-flex flex-wrap">
-                                        <span class="text-muted italic">Genre akan muncul secara otomatis berdasarkan performer yang dipilih...</span>
+                                        <span class="text-muted italic">Pilih performer terlebih dahulu untuk melihat genre yang terkait...</span>
                                     </div>
                                 </div>
 
@@ -283,6 +317,23 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                <div class="form-section-title mt-4">
+                                    <span class="text-primary">Banner / Gambar Event</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-group p-0">
+                                            @if($event->banner)
+                                                <div class="mb-2">
+                                                    <img src="{{ asset('storage/' . $event->banner) }}" alt="Banner saat ini" class="img-thumbnail rounded shadow-sm" style="max-height: 200px;">
+                                                </div>
+                                            @endif
+                                            <input type="file" class="form-control" id="banner" name="banner" accept="image/*">
+                                            <small class="text-muted mt-2 d-block">Upload gambar banner dengan ekstensi JPG/PNG/JPEG (Biarkan kosong jika tidak ingin mengubahnya).</small>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="card-action bg-light">
                                 <div class="d-flex justify-content-end gap-2">
@@ -310,14 +361,19 @@
         // SweetAlert Flash Notifications
         $(document).ready(function () {
             @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#142E5E'
+                });
             @endif
 
             @if($errors->any())
-                swal({
+                Swal.fire({
                     title: 'Validasi Gagal!',
-                    text: '@foreach($errors->all() as $error)• {{ $error }} @endforeach',
-                    type: 'error',
+                    html: '@foreach($errors->all() as $error)• {{ $error }}<br> @endforeach',
+                    icon: 'error',
                     confirmButtonColor: '#dc3545',
                     confirmButtonText: 'OK',
                 });
@@ -452,17 +508,19 @@
             const item = document.getElementById(id);
 
             if (item) {
-                swal({
+                Swal.fire({
                     title: 'Yakin hapus tiket ini?',
                     text: 'Data akan hilang permanen!',
-                    type: 'warning',
+                    icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Ya, hapus',
-                    cancelButtonText: 'Batal',
-                    closeOnConfirm: true
-                }, function() {
-                    item.remove(); // hapus baris tabel
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        item.remove(); // hapus baris tabel
+                    }
                 });
             }
         }

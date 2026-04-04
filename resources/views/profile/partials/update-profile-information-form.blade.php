@@ -13,24 +13,22 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
         <div class="mb-4">
-            <x-input-label for="profile_photo" :value="__('Foto Profil')" />
+            <x-input-label for="profile_photo" :value="__('Foto Profil (Otomatis)')" />
             <div class="d-flex align-items-center mt-3 gap-4">
                 <div class="avatar avatar-xl">
-                    <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 4px solid #f8f9fa; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                        <img id="profile-preview" src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('assets/img/profile.jpg') }}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 4px solid #F4D03F; box-shadow: 0 4px 15px rgba(244, 208, 63, 0.2);">
+                        <img id="profile-preview" src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=F4D03F&color=000&size=200" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 </div>
                 <div class="flex-grow-1">
-                    <input type="file" id="profile_photo" name="profile_photo" class="form-control" accept="image/*" onchange="previewImage(event)" style="border-radius: 10px; padding: 10px;">
-                    <p class="text-muted small mt-2 mb-0"><i class="fas fa-info-circle me-1"></i> Format: JPG, PNG, atau GIF (Maks. 2MB)</p>
+                    <p class="text-muted small mb-0"><i class="fas fa-magic me-1"></i> Foto profil dibuat otomatis berdasarkan nama Anda untuk menjaga keaslian identitas.</p>
                 </div>
             </div>
-            <x-input-error class="mt-2" :messages="$errors->get('profile_photo')" />
         </div>
 
         <div>

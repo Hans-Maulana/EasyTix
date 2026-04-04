@@ -5,29 +5,34 @@
     .genre-select-container {
         max-height: 200px;
         overflow-y: auto;
-        border: 1px solid #ebedf2;
-        border-radius: 5px;
-        padding: 10px;
-        background: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
     .genre-item {
         display: flex;
         align-items: center;
         margin-bottom: 5px;
-        padding: 5px;
-        border-radius: 4px;
+        padding: 8px 10px;
+        border-radius: 6px;
         transition: background 0.2s;
     }
     .genre-item:hover {
-        background: #f8f9fa;
+        background: rgba(255, 255, 255, 0.1);
     }
     .genre-item input {
         margin-right: 10px;
+        margin-top: 0;
+        cursor: pointer;
     }
     .genre-item label {
         margin-bottom: 0;
         cursor: pointer;
         font-size: 0.9rem;
+        color: #E0E6ED;
+        flex: 1;
     }
 </style>
 @endsection
@@ -110,7 +115,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-action bg-light p-4">
+                        <div class="card-action bg-transparent p-4 border-top border-light border-opacity-10">
                             <div class="d-flex justify-content-end gap-2">
                                 <a href="{{ route('admin.managePerformers') }}" class="btn btn-outline-danger px-4">
                                     <i class="fa fa-times me-1"></i> Batal

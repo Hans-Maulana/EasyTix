@@ -97,6 +97,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/genres/{genre}/edit', [GenreController::class, 'editGenre'])->name('admin.editGenre');
     Route::put('/admin/genres/{genre}', [GenreController::class, 'updateGenre'])->name('admin.updateGenre');
     Route::delete('/admin/genres/{genre}', [GenreController::class, 'deleteGenre'])->name('admin.deleteGenre');
+
+    // Admin Report
+    Route::get('/admin/reports', [UserController::class, 'adminReport'])->name('admin.reports');
 });
 
 

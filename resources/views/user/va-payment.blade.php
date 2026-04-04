@@ -17,8 +17,9 @@
 <style>
     .va-wrapper { font-family: 'Outfit', sans-serif; min-height: 80vh; display: flex; align-items: center; }
     .va-card {
-        border-radius: 30px; border: none; overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.1); background: #fff;
+        border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4); background: rgba(15, 25, 45, 0.95);
+        backdrop-filter: blur(20px); color: #fff;
     }
     .va-header {
         background: {{ $themeColor }}; color: {{ $bank == 'Mandiri' ? '#000' : '#fff' }};
@@ -30,9 +31,10 @@
         margin: 0 auto 20px; font-weight: 800; font-size: 1.2rem; color: {{ $themeColor }};
     }
     .va-number-box {
-        background: #f8f9fa; border: 2px dashed {{ $themeColor }};
+        background: rgba(255,255,255,0.05); border: 2px dashed {{ $themeColor }};
         border-radius: 15px; padding: 20px; position: relative;
     }
+    .va-number-box h3 { color: #fff; }
     .btn-copy {
         position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
         color: {{ $themeColor }}; cursor: pointer; border: none; background: none;
@@ -49,7 +51,7 @@
         border: none; font-weight: 700; border-radius: 50px; padding: 15px 40px;
         width: 100%; transition: all 0.3s ease;
     }
-    .btn-va-finish:hover { opacity: 0.9; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); color: {{ $bank == 'Mandiri' ? '#000' : '#fff' }}; }
+    .btn-va-finish:hover { opacity: 0.9; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); color: {{ $bank == 'Mandiri' ? '#000' : '#fff' }}; }
 </style>
 @endsection
 
@@ -87,11 +89,11 @@
                             @foreach($cart as $id => $details)
                                 @php $total += $details['price'] * $details['quantity']; @endphp
                             @endforeach
-                            <span class="fw-bold text-dark">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                            <span class="fw-bold text-white">Rp {{ number_format($total, 0, ',', '.') }}</span>
                         </div>
                         <div class="d-flex justify-content-between">
                             <span class="text-muted">Metode</span>
-                            <span class="fw-bold text-dark">VA {{ $bank }}</span>
+                            <span class="fw-bold text-white">VA {{ $bank }}</span>
                         </div>
                     </div>
 

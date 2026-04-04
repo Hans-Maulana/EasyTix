@@ -6,16 +6,18 @@
 <style>
     .cart-wrapper { font-family: 'Outfit', sans-serif; }
     .cart-item {
-        border-radius: 20px; overflow: hidden; background: #fff;
-        border: 1px solid rgba(0,0,0,0.05); margin-bottom: 20px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border-radius: 20px; overflow: hidden; background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+        transition: all 0.3s ease; color: #fff;
     }
+    .cart-item:hover { background: rgba(255,255,255,0.08); }
     .btn-premium {
-        background: linear-gradient(135deg, #F4D03F 0%, #E67E22 100%);
+        background: var(--premium-gold-grad);
         color: #000; border: none; font-weight: 700; border-radius: 50px;
         padding: 15px 40px; transition: all 0.3s ease;
     }
-    .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(244, 208, 63, 0.3); }
+    .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(244, 208, 63, 0.4); color: #000; }
 </style>
 @endsection
 
@@ -25,7 +27,7 @@
         <nav aria-label="breadcrumb" class="mb-4" data-aos="fade-down" data-aos-delay="100">
             <ol class="breadcrumb bg-transparent p-0 mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('user.dashboard') }}" class="text-muted text-decoration-none">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page" style="color: #000; font-weight: 700;">Keranjang</li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #cbd5e1; font-weight: 700;">Keranjang</li>
             </ol>
         </nav>
         <div class="mb-5" data-aos="fade-down">
@@ -46,7 +48,7 @@
                             <div class="col-md-5">
                                 <h5 class="fw-bold mb-1">{{ $details['name'] }}</h5>
                                 <span class="badge bg-warning text-dark mb-2">{{ $details['type'] }}</span>
-                                <h6 class="fw-bold text-dark">Rp {{ number_format($details['price'], 0, ',', '.') }}</h6>
+                                <h6 class="fw-bold text-light">Rp {{ number_format($details['price'], 0, ',', '.') }}</h6>
                             </div>
                             <div class="col-md-2">
                                 <div class="input-group">
@@ -65,19 +67,19 @@
 
             <div class="col-lg-4" data-aos="fade-left">
                 <div class="card border-0 rounded-4 p-4 shadow-sm">
-                    <h5 class="fw-bold mb-4">Ringkasan Pesanan</h5>
+                    <h5 class="fw-bold mb-4 text-white">Ringkasan Pesanan</h5>
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Total Items</span>
-                        <span class="fw-bold text-dark">{{ count(session('cart')) }}</span>
+                        <span class="text-white">Total Items</span>
+                        <span class="fw-bold text-white">{{ count(session('cart')) }}</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-4 pb-4 border-bottom">
-                        <span class="fs-5">Subtotal</span>
+                    <div class="d-flex justify-content-between mb-4 pb-4 border-bottom border-secondary">
+                        <span class="fs-5 text-white">Subtotal</span>
                         <span class="fs-5 fw-bold text-warning">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
                     <a href="{{ route('user.checkout') }}" class="btn btn-premium w-100 mb-3">
                         Checkout Sekarang <i class="fas fa-arrow-right ms-2"></i>
                     </a>
-                    <a href="{{ route('user.buyTickets') }}" class="btn btn-outline-dark w-100 rounded-pill py-3 fw-bold">
+                    <a href="{{ route('user.buyTickets') }}" class="btn btn-outline-light w-100 rounded-pill py-3 fw-bold">
                         Lanjut Belanja
                     </a>
                 </div>

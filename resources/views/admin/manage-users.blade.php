@@ -105,10 +105,20 @@
 
             // SweetAlert Flash Notifications
             @if(session('success'))
-                swal("Berhasil!", "{{ session('success') }}", "success");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#142E5E'
+                });
             @endif
             @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#142E5E'
+                });
             @endif
 
             // SweetAlert Delete Confirmation
@@ -116,23 +126,17 @@
                 e.preventDefault();
                 const form = $(this).closest('form');
                 
-                swal({
+                Swal.fire({
                     title: 'Hapus User?',
                     text: 'Data user yang dihapus tidak bisa dikembalikan!',
-                    type: 'warning',
-                    buttons: {
-                        confirm: {
-                            text: "Ya, Hapus!",
-                            className: "btn btn-danger",
-                        },
-                        cancel: {
-                            visible: true,
-                            text: "Batal",
-                            className: "btn btn-secondary",
-                        },
-                    },
-                }).then((Delete) => {
-                    if (Delete) {
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         form.submit();
                     }
                 });

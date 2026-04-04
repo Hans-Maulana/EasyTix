@@ -24,12 +24,12 @@
                 <div class="col-md-8 position-relative z-index-1">
                     <h2 class="fw-bold mb-2">Dashboard Admin 👋</h2>
                     <p class="fs-5 opacity-75 mb-4">Pantau dan kelola seluruh ekosistem EasyTix dari satu tempat secara real-time.</p>
-                    <div class="d-flex gap-3">
-                        <a href="{{ route('admin.manageEvents') }}" class="btn btn-dark btn-round px-4 py-2 fw-bold">
+                    <div class="d-flex flex-wrap mt-4">
+                        <a href="{{ route('admin.manageEvents') }}" class="btn btn-dark btn-round px-4 py-2 fw-bold me-3 mb-2">
                             Kelola Event <i class="fas fa-calendar-check ms-2"></i>
                         </a>
-                        <a href="{{ route('admin.manageUsers') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm">
-                            Manajemen User
+                        <a href="{{ route('admin.manageUsers') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm mb-2">
+                            Manajemen User <i class="fas fa-users ms-2"></i>
                         </a>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                             </div>
                             <div>
                                 <p class="text-muted mb-0 small fw-bold text-uppercase">Tiket Terjual</p>
-                                <h3 class="fw-bold mb-0">8,421</h3>
+                                <h3 class="fw-bold mb-0">{{ number_format($totalTicketsSold) }}</h3>
                             </div>
                         </div>
                         <div class="progress mb-2" style="height: 6px;">

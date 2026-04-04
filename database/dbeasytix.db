@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2026 at 07:41 AM
+-- Generation Time: Apr 04, 2026 at 08:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -86,7 +86,14 @@ CREATE TABLE `events` (
   `description` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Dumping data for table `events`
+--
 
+INSERT INTO `events` (`id`, `name`, `location`, `image`, `status`, `created_at`, `updated_at`, `users_id`, `category_id`, `banner`, `description`) VALUES
+('EVT-2026-001', 'Dewa 19', 'GBK', NULL, 'active', '2026-04-03 22:48:56', '2026-04-03 22:48:56', 1, 1, 'events/banners/9IwVCRJqYqWV0oFPK4TdtUZsSQ69K2bXruEqVT1L.jpg', 'Konser');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `event_performer`
@@ -100,7 +107,14 @@ CREATE TABLE `event_performer` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `event_performer`
+--
 
+INSERT INTO `event_performer` (`id`, `event_id`, `performer_id`, `created_at`, `updated_at`) VALUES
+(4, 'EVT-2026-001', 4, NULL, NULL);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `event_requests`
@@ -114,6 +128,15 @@ CREATE TABLE `event_requests` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `event_requests`
+--
+
+INSERT INTO `event_requests` (`id`, `event_id`, `users_id`, `status`, `created_at`, `updated_at`) VALUES
+(7, 'EVT-2026-001', 2, 'approved', '2026-04-03 22:49:18', '2026-04-03 22:51:06');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `event_schedules`
@@ -130,6 +153,15 @@ CREATE TABLE `event_schedules` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `event_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `event_schedules`
+--
+
+INSERT INTO `event_schedules` (`id`, `start_time`, `end_time`, `status`, `event_date`, `description`, `created_at`, `updated_at`, `event_id`) VALUES
+('ES-2026-001', '14:00:00', '20:00:00', 'scheduled', '2026-04-11', NULL, '2026-04-03 22:48:56', '2026-04-03 22:48:56', 'EVT-2026-001');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `failed_jobs`
@@ -276,7 +308,18 @@ CREATE TABLE `notifications` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `notifications`
+--
 
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`, `is_read`, `created_at`, `updated_at`) VALUES
+(23, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-001 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-03 22:50:41', '2026-04-03 22:50:41'),
+(24, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-002 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-03 23:19:28', '2026-04-03 23:19:28'),
+(25, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-003 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-03 23:27:41', '2026-04-03 23:27:41');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `orders`
 --
 
@@ -288,6 +331,17 @@ CREATE TABLE `orders` (
   `users_id` int(11) NOT NULL,
   `events_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `total_amount`, `created_at`, `updated_at`, `users_id`, `events_id`) VALUES
+('ORD-2026-001', 200000, '2026-04-03 22:50:38', '2026-04-03 22:50:38', 3, 'EVT-2026-001'),
+('ORD-2026-002', 140000, '2026-04-03 23:19:28', '2026-04-03 23:19:28', 3, 'EVT-2026-001'),
+('ORD-2026-003', 200000, '2026-04-03 23:27:41', '2026-04-03 23:27:41', 3, 'EVT-2026-001');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `order_details`
@@ -309,6 +363,17 @@ CREATE TABLE `order_details` (
   `orders_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Dumping data for table `order_details`
+--
+
+INSERT INTO `order_details` (`id`, `owner_name`, `phone_number`, `email`, `gender`, `age`, `status`, `qr_code`, `ticket_code`, `created_at`, `updated_at`, `tickets_id`, `orders_id`) VALUES
+('DET-2026-AGU2RU', 'Ferdinand Brian', '123495', '2472021@gmail.com', 'Laki-laki', 23, 'valid', 'qrcodes/qr_1775281841_DET-2026-AGU2RU.svg', 'VERIFY-DET-2026-AGU2RU', '2026-04-03 22:50:41', '2026-04-03 22:50:41', 'TKT-2026-002', 'ORD-2026-001'),
+('DET-2026-DHN1IC', 'Hans', '123', '123@gmail.com', 'Laki-laki', 123, 'valid', 'qrcodes/qr_1775284061_DET-2026-DHN1IC.svg', 'VERIFY-DET-2026-DHN1IC', '2026-04-03 23:27:41', '2026-04-03 23:27:41', 'TKT-2026-003', 'ORD-2026-003'),
+('DET-2026-ETTGDP', 'Bryan Christian', '12345', '2472022@gmail.com', 'Laki-laki', 23, 'valid', 'qrcodes/qr_1775281838_DET-2026-ETTGDP.svg', 'VERIFY-DET-2026-ETTGDP', '2026-04-03 22:50:41', '2026-04-03 22:50:41', 'TKT-2026-002', 'ORD-2026-001'),
+('DET-2026-KTXEYG', 'a', '123', '123@gmail.com', 'Laki-laki', 123, 'valid', 'qrcodes/qr_1775283568_DET-2026-KTXEYG.svg', 'VERIFY-DET-2026-KTXEYG', '2026-04-03 23:19:28', '2026-04-03 23:19:28', 'TKT-2026-001', 'ORD-2026-002');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `password_reset_tokens`
@@ -350,6 +415,15 @@ CREATE TABLE `performers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
+-- Dumping data for table `performers`
+--
+
+INSERT INTO `performers` (`id`, `name`, `image`, `created_at`, `updated_at`) VALUES
+(4, 'Ferdinand Brian', 'performers/01heash2EhagOSObrJlAHWpRl2Eo9Al2Bg19L1yK.jpg', '2026-04-03 22:26:51', '2026-04-03 22:26:51');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `performer_genre`
 --
 
@@ -361,6 +435,15 @@ CREATE TABLE `performer_genre` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `performer_genre`
+--
+
+INSERT INTO `performer_genre` (`id`, `performer_id`, `genre_id`, `created_at`, `updated_at`) VALUES
+(12, 4, 1, NULL, NULL),
+(13, 4, 4, NULL, NULL);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `sessions`
@@ -380,8 +463,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('Gn0AiX9SfAsReS61CQz3QKLqjicvUpNfszoBTlre', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiS3ZaSnlVTHdBQkh2VnJJOXBmRjVKRHU0VGZ6UzRGaFNnS21nMEpqbCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2V2ZW50L0VWVC0yMDI2LTAwMi90aWNrZXRzIjtzOjU6InJvdXRlIjtzOjE3OiJ1c2VyLmV2ZW50VGlja2V0cyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7fQ==', 1774935075),
-('HnfGTNkXUsrtEemhs9qp1UCfNlH30oPZTkNE0vw1', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiR3IwYzZtV1NUQWlqUVQ2aWpxSlIyTDBtSEIyMld2ZUNDTWRYaTVEaSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2Rhc2hib2FyZCI7czo1OiJyb3V0ZSI7czoxNDoidXNlci5kYXNoYm9hcmQiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1774935606);
+('8s3Ctm1eqoXfNwgktdvRhvH0U2D6yVEdkK4bcVAu', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidERVaDJtbXNrcFRFVjBodVlHakFwRE5ndFBVcG5pNXN5bXJLb3NHMSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1775284072);
 
 -- --------------------------------------------------------
 
@@ -399,6 +481,16 @@ CREATE TABLE `tickets` (
   `event_schedules_id` varchar(35) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Dumping data for table `tickets`
+--
+
+INSERT INTO `tickets` (`id`, `capacity`, `price`, `created_at`, `updated_at`, `ticket_types_id`, `event_schedules_id`) VALUES
+('TKT-2026-001', 99, 140000, '2026-04-03 22:48:56', '2026-04-03 23:19:28', 1, 'ES-2026-001'),
+('TKT-2026-002', 498, 100000, '2026-04-03 22:48:56', '2026-04-03 22:50:38', 2, 'ES-2026-001'),
+('TKT-2026-003', 99, 200000, '2026-04-03 22:48:56', '2026-04-03 23:27:41', 4, 'ES-2026-001');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `ticket_types`
@@ -444,7 +536,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone_number`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin Utama', 'admin@gmail.com', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'IAhYSPAUi54n7u53QxjXrGY12p1foJpzXrs5WoDCA4qzShpEM3wkFRKo2NzD', '2026-03-17 06:05:19', '2026-03-17 06:05:19'),
+(1, 'Admin Utama', '2472021@maranatha.ac.id', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'TBqSRljlxccmQFEsSR4FzHVD4ExkLemWrrdahvX1QfowCXjGILniyAyrIBku', '2026-03-17 06:05:19', '2026-04-03 22:15:50'),
 (2, 'Organizer PK Entertainment', 'organizer@gmail.com', '$2y$12$rYbTsu0vPVNKmAUghFav5eucynaAikGOuNyL37AMokV3yg/wEbrZq', '081234567891', 'organizer', NULL, '2026-03-17 06:05:20', '2026-03-17 06:05:20'),
 (3, 'User Biasa', 'user@gmail.com', '$2y$12$Qibq1c2xWoPeqAfLDYVf..mbIgpQixdSpfLEpzqvZ5/Cx4VS3sk7W', '081234567892', 'user', NULL, '2026-03-17 06:05:20', '2026-03-17 06:05:20'),
 (8, 'Ferdinand Brian', '2472022@maranatha.ac.id', '$2y$12$68mWjg4qH9d7wYpWLb3VGu7h5LFcPnlC5/TS2Gy36gagfxwq1N30C', '0833234525626', 'admin', NULL, '2026-03-23 21:39:23', '2026-03-23 21:39:59');
@@ -465,7 +557,9 @@ CREATE TABLE `waiting_lists` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
+--
+-- Indexes for dumped tables
+--
 
 --
 -- Indexes for table `cache`
@@ -642,13 +736,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `event_performer`
 --
 ALTER TABLE `event_performer`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -678,19 +772,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `performers`
 --
 ALTER TABLE `performers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `performer_genre`
 --
 ALTER TABLE `performer_genre`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `ticket_types`

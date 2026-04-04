@@ -66,12 +66,16 @@
 <style>
     .notif-item {
         transition: background 0.3s ease;
+        border-bottom-color: rgba(255,255,255,0.05) !important;
+    }
+    .notif-item.bg-light {
+        background: rgba(255, 255, 255, 0.05) !important;
     }
     .notif-item:hover {
-        background-color: rgba(0,0,0,0.02);
+        background-color: rgba(255,255,255,0.08) !important;
     }
     .notif-icon-circle {
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 </style>
 @endsection

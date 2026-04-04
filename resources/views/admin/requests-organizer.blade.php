@@ -20,12 +20,7 @@
             </ul>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
+
 
         <div class="row">
             <div class="col-md-12">
@@ -128,11 +123,11 @@
                                                     @if($wl->status == 'requested')
                                                         <form action="{{ route('admin.approveWaitingList', $wl->id) }}" method="POST" class="d-inline">
                                                             @csrf
-                                                            <button class="btn btn-success btn-sm" onclick="return confirm('Yakin menyetujui penambahan kuota tiket ke sistem?')"><i class="fas fa-check"></i> Terima</button>
+                                                            <button class="btn btn-success btn-sm" onclick="confirmAction(event, 'Yakin menyetujui penambahan kuota tiket ke sistem?')"><i class="fas fa-check"></i> Terima</button>
                                                         </form>
                                                         <form action="{{ route('admin.rejectWaitingList', $wl->id) }}" method="POST" class="d-inline">
                                                             @csrf
-                                                            <button class="btn btn-danger btn-sm" onclick="return confirm('Tolak permohonan penambahan tiket ini?')"><i class="fas fa-times"></i> Tolak</button>
+                                                            <button class="btn btn-danger btn-sm" onclick="confirmAction(event, 'Tolak permohonan penambahan tiket ini?')"><i class="fas fa-times"></i> Tolak</button>
                                                         </form>
                                                     @endif
                                                 </td>
@@ -157,6 +152,45 @@
             $('.datatable').DataTable({
                 "pageLength": 10,
             });
+
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#142E5E'
+                });
+            @endif
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#142E5E'
+                });
+            @endif
+            
+            // Konfirmasi untuk Approve/Reject custom dengan SweetAlert2
+            // karena button tidak memakai class khusus pada form, kita ubah logic onclicknya:
         });
+        
+        function confirmAction(event, message) {
+            event.preventDefault();
+            const form = event.target.closest('form');
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: message,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#142E5E',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Lanjutkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
     </script>
 @endsection

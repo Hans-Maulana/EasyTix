@@ -1,7 +1,7 @@
 <x-auth-modern-layout>
-    <div class="auth-logo" style="display: flex; justify-content: center; margin-bottom: 24px;">
-        <a href="/">
-            <img src="{{ asset('assets/img/kaiadmin/logo_EasyTix_white.png') }}" alt="EasyTix Logo" style="height: 60px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));">
+    <div class="auth-logo" style="display: flex; justify-content: center; margin-bottom: 24px; align-items: center;">
+        <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+            <img src="{{ asset('assets/img/logo_easytix_new.png') }}" alt="EasyTix Logo" style="height: 60px;">
         </a>
     </div>
 

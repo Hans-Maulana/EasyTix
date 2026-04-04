@@ -25,8 +25,9 @@ class UserController extends Controller
             $totalUsers = User::count();
             $totalEvents = Event::count();
             $totalPendingRequests = EventRequest::where('status', 'pending')->count();
+            $totalTicketsSold = OrderDetail::count();
             $requests = EventRequest::latest()->get();
-            return view('admin.dashboard', compact('totalUsers', 'totalEvents', 'totalPendingRequests', 'requests'));
+            return view('admin.dashboard', compact('totalUsers', 'totalEvents', 'totalPendingRequests', 'totalTicketsSold', 'requests'));
         } elseif (auth()->user()->role === 'organizer') {
             // Dashboard Organizer
             $approvedRequests = EventRequest::where('users_id', auth()->id())
@@ -159,9 +160,43 @@ class UserController extends Controller
     {
         $notifications = auth()->user()->notifications()->latest()->get();
         
-        // Tandai semua sebagai sudah dibaca
         auth()->user()->notifications()->where('is_read', false)->update(['is_read' => true]);
 
         return view('user.notifications', compact('notifications'));
+    }
+
+    public function adminReport()
+    {
+        $ticketStats = DB::table('order_details')
+            ->join('tickets', 'order_details.tickets_id', '=', 'tickets.id')
+            ->join('ticket_types', 'tickets.ticket_types_id', '=', 'ticket_types.id')
+            ->select(
+                'ticket_types.name as category_name', 
+                DB::raw('count(*) as total_sold'),
+                DB::raw('sum(tickets.price) as total_revenue')
+            )
+            ->groupBy('ticket_types.name')
+            ->get();
+
+        $capacityPerCategory = DB::table('tickets')
+            ->join('ticket_types', 'tickets.ticket_types_id', '=', 'ticket_types.id')
+            ->select('ticket_types.name as category_name', DB::raw('sum(capacity) as total_capacity'))
+            ->groupBy('ticket_types.name')
+            ->get();
+
+        $quotaStats = $capacityPerCategory->map(function($item) use ($ticketStats) {
+            $sold = $ticketStats->firstWhere('category_name', $item->category_name)->total_sold ?? 0;
+            return (object) [
+                'category_name' => $item->category_name,
+                'total_capacity' => $item->total_capacity,
+                'remaining' => $item->total_capacity - $sold
+            ];
+        });
+        $attendanceStats = DB::table('order_details')
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->get();
+
+        return view('admin.reports', compact('ticketStats', 'quotaStats', 'attendanceStats'));
     }
 }

@@ -3,19 +3,20 @@
 @section('ExtraCSS')
     <style>
         .schedule-card {
-            border-left: 5px solid #1a2035;
-            background: #f8f9fa;
+            border-left: 5px solid var(--premium-gold);
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .schedule-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background: #fff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .remove-schedule {
@@ -25,24 +26,25 @@
         }
 
         .add-schedule-btn {
-            background: #1a2035;
-            color: white;
-            border: none;
+            background: rgba(0, 210, 255, 0.2);
+            color: #00d2ff;
+            border: 1px solid rgba(0, 210, 255, 0.5);
             padding: 10px 20px;
             border-radius: 5px;
             transition: all 0.3s;
         }
 
         .add-schedule-btn:hover {
-            background: #2c3e50;
+            background: rgba(0, 210, 255, 0.4);
             transform: translateY(-2px);
+            color: #fff;
         }
 
         .form-section-title {
-            border-bottom: 2px solid #f1f1f1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 10px;
             margin-bottom: 20px;
-            color: #1a2035;
+            color: #fff;
             font-weight: 700;
             display: flex;
             justify-content: space-between;
@@ -59,7 +61,7 @@
         }
 
         .performer-item:hover {
-            background: #f0f0f0;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .performer-item input {
@@ -72,24 +74,26 @@
             margin-left: 10px;
             cursor: pointer;
             font-size: 0.85rem;
-            color: #333;
+            color: #E0E6ED;
             flex: 1;
         }
 
         .genre-badge {
-            background: #e9ecef;
-            color: #495057;
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
             padding: 2px 8px;
             border-radius: 12px;
             font-size: 0.75rem;
             margin-right: 4px;
             margin-bottom: 4px;
             display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .genre-badge.selected {
-            background: #1a2035;
-            color: white;
+            background: var(--premium-gold-grad);
+            color: #000;
+            border: none;
         }
     </style>
 @endsection
@@ -168,13 +172,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 mb-3">
-                                        <div class="form-group p-0">
-                                            <label for="banner" class="fw-bold">Banner / Gambar Event</label>
-                                            <input type="file" class="form-control" id="banner" name="banner" accept="image/*">
-                                            <small class="text-muted">Upload gambar banner (Optional)</small>
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-12 mb-3">
                                         <div class="form-group p-0">
                                             <label for="description" class="fw-bold">Deskripsi Event</label>
@@ -205,7 +203,7 @@
                                 <div class="form-section-title mt-4">
                                     <span class="text-primary">Genre Musik (Otomatis Terpilih sesuai Performer)</span>
                                 </div>
-                                <div id="genre-display-container" class="p-3 mb-4 rounded border bg-light">
+                                <div id="genre-display-container" class="p-3 mb-4 rounded border bg-transparent">
                                     <div id="selected-genres-list" class="d-flex flex-wrap">
                                         <span class="text-muted italic">Pilih performer terlebih dahulu untuk melihat genre yang terkait...</span>
                                     </div>
@@ -303,6 +301,18 @@
 
                                     </div>
                                 </div>
+                                <div class="form-section-title mt-4">
+                                    <span class="text-primary">Banner / Gambar Event</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-group p-0">
+                                            <input type="file" class="form-control" id="banner" name="banner" accept="image/*">
+                                            <small class="text-muted mt-2 d-block">Upload gambar banner dengan ekstensi JPG/PNG/JPEG (Opsional, tapi sangat disarankan supaya event lebih menarik di halaman utama).</small>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="card-action bg-light">
                                 <div class="d-flex justify-content-end gap-2">
@@ -330,14 +340,19 @@
         // SweetAlert Flash Notifications
         $(document).ready(function () {
             @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#142E5E'
+                });
             @endif
 
             @if($errors->any())
-                swal({
+                Swal.fire({
                     title: 'Validasi Gagal!',
-                    text: '@foreach($errors->all() as $error)• {{ $error }} @endforeach',
-                    type: 'error',
+                    html: '@foreach($errors->all() as $error)• {{ $error }}<br> @endforeach',
+                    icon: 'error',
                     confirmButtonColor: '#dc3545',
                     confirmButtonText: 'OK',
                 });
@@ -471,7 +486,20 @@
         function removeTicket(id) {
             const item = document.getElementById(id);
             if (item) {
-                item.remove();
+                Swal.fire({
+                    title: 'Yakin hapus tiket ini?',
+                    text: 'Baris tiket ini akan dihapus dari form.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        item.remove();
+                    }
+                });
             }
         }
 

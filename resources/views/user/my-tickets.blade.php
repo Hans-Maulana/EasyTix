@@ -6,12 +6,14 @@
 <style>
     .tickets-wrapper { font-family: 'Outfit', sans-serif; }
     .ticket-item {
-        border-radius: 20px; overflow: hidden; background: #fff;
-        border: 1px solid rgba(0,0,0,0.05); margin-bottom: 30px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border-radius: 20px; overflow: hidden; background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
     }
+    .ticket-item:hover { background: rgba(255, 255, 255, 0.08); }
     .qr-container {
-        background: #f8f9fa; border-top: 1px dashed #ddd; padding: 20px;
+        background: rgba(255, 255, 255, 0.03); border-left: 1px dashed rgba(255,255,255,0.15); padding: 20px;
         text-align: center;
     }
     .qr-code {
@@ -25,6 +27,21 @@
     .ticket-item.status-used { opacity: 0.75; filter: grayscale(50%); }
     .ticket-item.status-used .qr-code img { filter: blur(5px); pointer-events: none; }
     .badge-status { font-weight: 700; letter-spacing: 0.5px; }
+
+    /* Modal Dark Glass */
+    .modal-content {
+        background: rgba(15, 25, 45, 0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(20px) !important;
+        color: #fff;
+    }
+    .modal-header { background: rgba(255, 255, 255, 0.05) !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; }
+    .modal-header .modal-title { color: #fff !important; }
+    .modal-header .btn-close { filter: invert(1); }
+    .modal-body .text-dark { color: #fff !important; }
+    .modal-body .bg-white { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.1) !important; }
+    .modal-body .bg-light { background: rgba(255,255,255,0.05) !important; }
+    .modal-body hr { border-color: rgba(255,255,255,0.1) !important; }
 </style>
 @endsection
 
@@ -44,13 +61,13 @@
             @foreach(array_reverse($orderHistory) as $order)
                 @foreach($order['items'] as $item)
                 @php $isUsed = ($item['status'] ?? 'valid') != 'valid'; @endphp
-                <div class="row ticket-item bg-white mx-0 {{ $isUsed ? 'status-used' : '' }}" data-aos="fade-up">
+                <div class="row ticket-item mx-0 {{ $isUsed ? 'status-used' : '' }}" data-aos="fade-up">
                     <div class="col-md-8 p-0">
                         <div class="ticket-info">
                             <div class="d-flex justify-content-between mb-4 align-items-center">
                                 <div>
                                     <span class="badge bg-dark-blue text-white px-3 py-2 rounded-pill shadow-sm me-2">
-                                        <i class="fas fa-star me-2 text-warning "></i> <span class="text-black">{{ $order['id'] }}</span>
+                                        <i class="fas fa-star me-2 text-warning "></i> <span class="text-white">{{ $order['id'] }}</span>
                                     </span>
                                     <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm">
                                         <i class="fas fa-check-circle me-1"></i> PAID
@@ -71,16 +88,16 @@
                                 </span>
                             </div>
 
-                            <h3 class="fw-bold text-dark mb-1">{{ $item['name'] }}</h3>
+                            <h3 class="fw-bold text-white mb-1">{{ $item['name'] }}</h3>
 
                             <div class="row mt-4">
                                 <div class="col-4">
                                     <h6 class="text-muted small text-uppercase fw-bold mb-1">Tipe Tiket</h6>
-                                    <h5 class="fw-bold text-dark">{{ $item['type'] }} (Tiket {{ $item['ticket_index'] ?? 1 }}/{{ $item['total_qty'] ?? 1 }})</h5>
+                                    <h5 class="fw-bold text-white">{{ $item['type'] }} (Tiket {{ $item['ticket_index'] ?? 1 }}/{{ $item['total_qty'] ?? 1 }})</h5>
                                 </div>
                                 <div class="col-4 text-center">
                                     <h6 class="text-muted small text-uppercase fw-bold mb-1">Bayar Via</h6>
-                                    <h5 class="fw-bold text-dark">
+                                    <h5 class="fw-bold text-white">
                                         @if($order['payment_method'] === 'QRIS')
                                             <i class="fas fa-qrcode text-warning me-1"></i> QRIS
                                         @else
@@ -100,7 +117,7 @@
                             <div class="qr-code mt-3 p-2">
                                 <img src="{{ asset('storage/' . $item['qr_code']) }}" width="130" height="130" alt="QR Code">
                             </div>
-                            <h6 class="fw-bold text-dark mb-1">Kode Tiket</h6>
+                            <h6 class="fw-bold text-white mb-1">Kode Tiket</h6>
                             <p class="text-muted small mb-2">{{ $item['qr_string'] ?? $item['qr_code'] }}</p>
                             <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ md5($item['qr_code']) }}">
                                 Lihat Detail
@@ -118,8 +135,8 @@
                 <div class="modal fade" id="detailModal{{ md5($item['qr_code']) }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content border-0" style="border-radius: 20px;">
-                            <div class="modal-header border-0 bg-light" style="border-radius: 20px 20px 0 0;">
-                                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-ticket-alt text-warning me-2"></i> Detail Tiket</h5>
+                            <div class="modal-header border-0" style="border-radius: 20px 20px 0 0;">
+                                <h5 class="modal-title fw-bold text-white"><i class="fas fa-ticket-alt text-warning me-2"></i> Detail Tiket</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4 text-center">
@@ -130,13 +147,13 @@
                                     <img src="{{ asset('storage/' . $item['qr_code']) }}" width="200" height="200" alt="QR Code">
                                 </div>
                                 
-                                <h3 class="fw-bold text-dark" style="letter-spacing: 2px;">{{ $item['qr_string'] ?? $item['qr_code'] }}</h3>
+                                <h3 class="fw-bold text-white" style="letter-spacing: 2px;">{{ $item['qr_string'] ?? $item['qr_code'] }}</h3>
                                 <p class="text-muted small mb-0">Tunjukkan QR Code ini kepada petugas di pintu masuk.</p>
                                 
                                 <hr class="my-4 dashed" style="border-top: 1px dashed #ccc;">
                                 
-                                <div class="row text-start text-dark">
-                                    <div class="col-12 mb-4 bg-white p-3 rounded-4 border shadow-sm">
+                                <div class="row text-start text-white">
+                                    <div class="col-12 mb-4 p-3 rounded-4 shadow-sm" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
                                         <h6 class="fw-bold text-warning mb-3"><i class="fas fa-user-circle me-2"></i> Detail Pemegang Tiket</h6>
                                         <div class="row">
                                             <div class="col-12 mb-2">

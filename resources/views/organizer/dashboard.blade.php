@@ -24,12 +24,12 @@
                 <div class="col-md-8 position-relative z-index-1">
                     <h2 class="fw-bold mb-2">Halo, {{ Auth::user()->name }}! 👋</h2>
                     <p class="fs-5 opacity-75 mb-4">Senang melihat Anda kembali. Semua event dan penjualan tiket Anda terpantau aman hari ini.</p>
-                    <div class="d-flex gap-3">
-                        <a href="{{ route('organizer.events') }}" class="btn btn-dark btn-round px-4 py-2 fw-bold">
-                            Tamba Event Baru <i class="fas fa-plus ms-2"></i>
+                    <div class="d-flex flex-wrap mt-4">
+                        <a href="{{ route('organizer.events') }}" class="btn btn-dark btn-round px-4 py-2 fw-bold me-3 mb-2">
+                            Tambah Event Baru <i class="fas fa-plus ms-2"></i>
                         </a>
-                        <a href="{{ route('organizer.salesReport') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm">
-                            Lihat Laporan
+                        <a href="{{ route('organizer.salesReport') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm mb-2">
+                            Lihat Laporan <i class="fas fa-chart-line ms-2"></i>
                         </a>
                     </div>
                 </div>
