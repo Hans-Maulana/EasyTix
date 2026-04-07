@@ -29,11 +29,15 @@ Terima kasih telah melakukan pembelian tiket melalui **EasyTix**. Pembayaran And
 - **Pemilik:** {{ $item['owner_name'] ?? '-' }}
 - **Kode Tiket:** `{{ $item['ticket_code'] ?? '-' }}`
 
+<div style="text-align: center; margin-top: 10px;">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($item['ticket_code'] ?? '') }}" alt="QR Code" width="150" height="150" style="background-color: #ffffff; padding: 5px; border-radius: 5px;">
+</div>
+
 @endforeach
 
-> **Catatan:** File QR Code tiket terlampir di email ini. Tunjukkan QR Code saat memasuki venue.
+> **Catatan:** Jika QR code tidak muncul di atas, silakan cek file lampiran di email ini. Tunjukkan QR Code saat memasuki venue.
 
-<x-mail::button :url="config('app.url') . '/my-tickets'" color="primary">
+<x-mail::button :url="route('user.myTickets')" color="primary">
 Lihat Tiket Saya
 </x-mail::button>
 

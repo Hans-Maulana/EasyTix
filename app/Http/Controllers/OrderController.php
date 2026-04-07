@@ -11,7 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TicketPurchased;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
+
 
 class OrderController extends Controller
 {
@@ -263,7 +268,7 @@ class OrderController extends Controller
                 $orderDetailId = 'DET-' . date('Y') . '-' . strtoupper(Str::random(6));
 
                 $qrString = "VERIFY-" . $orderDetailId;
-                $fileName = 'qr_' . time() . '_' . $i . '_' . $orderDetailId . '.svg';
+                $fileName = 'qr_' . time() . '_' . $i . '_' . $orderDetailId . '.png';
                 $qrPath = 'qrcodes/' . $fileName;
 
                 // Simpan ke storage/app/qrcodes (bukan public)
@@ -272,7 +277,18 @@ class OrderController extends Controller
                     mkdir($qrDir, 0777, true);
                 }
 
-                QrCode::size(200)->generate($qrString, $qrDir . '/' . $fileName);
+                $qrResult = Builder::create()
+                    ->writer(new PngWriter())
+                    ->data($qrString)
+                    ->encoding(new Encoding('UTF-8'))
+                    ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+                    ->size(200)
+                    ->margin(10)
+                    ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
+                    ->build();
+
+                $qrResult->saveToFile($qrDir . '/' . $fileName);
+
 
                 $ticketData = $ticketDetails[$ticketId][$i] ?? [];
 
@@ -402,7 +418,7 @@ class OrderController extends Controller
         if (!file_exists($path)) {
             abort(404);
         }
-        return response()->file($path, ['Content-Type' => 'image/svg+xml']);
+        return response()->file($path, ['Content-Type' => 'image/png']);
     }
 }
 

@@ -37,6 +37,18 @@
             @endif
         </div>
 
+        <!-- Phone Number -->
+        <div class="form-group">
+            <label for="phone_number" class="form-label">Nomor Telepon</label>
+            <input id="phone_number" class="form-input" type="text" name="phone_number" value="{{ old('phone_number') }}" required placeholder="Contoh: 081234567890" />
+            @if ($errors->has('phone_number'))
+                <div class="form-error">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    {{ $errors->first('phone_number') }}
+                </div>
+            @endif
+        </div>
+
         <!-- Password -->
         <div class="form-group">
             <label for="password" class="form-label">Kata Sandi</label>

@@ -71,7 +71,7 @@ class TicketPurchased extends Mailable
                 if (file_exists($qrPath)) {
                     $attachments[] = Attachment::fromPath($qrPath)
                         ->as('QR_Tiket_' . ($item['owner_name'] ?? 'Guest') . '_' . basename($item['qr_code']))
-                        ->withMime('image/svg+xml');
+                        ->withMime('image/png');
                 }
             }
         }

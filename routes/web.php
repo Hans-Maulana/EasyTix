@@ -23,7 +23,7 @@ Route::get('/', function () {
     return view('landing-page', compact('events'));
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
         if ($user->role === 'admin') {
@@ -114,7 +114,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
     Route::get('/user/schedule', [UserController::class, 'schedule'])->name('user.schedule');
 
@@ -142,6 +142,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart/clear', [OrderController::class, 'clearCart'])->name('cart.clear');
     Route::get('/qrcodes/{filename}', [OrderController::class, 'serveQrCode'])->name('qrcode.serve');
 });
+
+// Redirect for easier access from email/external links
+Route::get('/my-tickets', function() {
+    return redirect()->route('user.myTickets');
+})->middleware(['auth', 'verified', 'user']);
 
 
 Route::middleware(['auth', 'organizer'])->group(function () {
