@@ -385,9 +385,9 @@
                                 <li><a class="dropdown-item rounded-3 mb-1" href="{{ route('profile.edit') }}"><i class="fas fa-user-circle me-2 small"></i> Profil Saya</a></li>
                                 <li><hr class="dropdown-divider border-secondary"></li>
                                 <li>
-                                    <form method="POST" action="{{ route('logout') }}">
+                                    <form id="landing-logout-form" method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item rounded-3 text-danger"><i class="fas fa-sign-out-alt me-2 small"></i> Logout</button>
+                                        <button type="submit" class="dropdown-item rounded-3 text-danger" data-confirm="Apakah Anda yakin ingin keluar dari akun ini?"><i class="fas fa-sign-out-alt me-2 small"></i> Logout</button>
                                     </form>
                                 </li>
                             </ul>
@@ -682,8 +682,78 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .swal2-popup {
+            background: #071120 !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            border-radius: 1.5rem !important;
+        }
+        .swal2-title, .swal2-html-container {
+            color: #fff !important;
+        }
+        .swal2-confirm {
+            background: var(--gold-gradient) !important;
+            color: #000 !important;
+            border: none !important;
+            font-weight: 700 !important;
+            border-radius: 50px !important;
+            padding: 12px 30px !important;
+            box-shadow: 0 4px 15px rgba(244, 208, 63, 0.2) !important;
+        }
+        .swal2-cancel {
+            background: transparent !important;
+            color: #cbd5e1 !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            font-weight: 600 !important;
+            border-radius: 50px !important;
+            padding: 12px 30px !important;
+        }
+        /* Prevent SweetAlert DOM leakage */
+        .swal2-input, .swal2-file, .swal2-textarea, .swal2-select, .swal2-radio, .swal2-checkbox {
+            display: none;
+        }
+        .swal2-popup [style*="display: none"] {
+            display: none !important;
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // SweetAlert2 Global Styling & Defaults
+            const swalPremium = Swal.mixin({
+                customClass: {
+                    popup: 'border border-light shadow-lg',
+                },
+                buttonsStyling: false
+            });
+
+            const confirmElements = document.querySelectorAll('[data-confirm]');
+            confirmElements.forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const message = this.getAttribute('data-confirm');
+                    
+                    swalPremium.fire({
+                        title: 'Konfirmasi',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (this.dataset.submitForm) {
+                                document.getElementById(this.dataset.submitForm).submit();
+                            } else if (this.tagName === 'A') {
+                                window.location.href = this.href;
+                            } else if (this.closest('form')) {
+                                this.closest('form').submit();
+                            }
+                        }
+                    });
+                });
+            });
+
             // Initialize AOS
             AOS.init({
                 once: true,

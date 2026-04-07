@@ -163,19 +163,29 @@
     $(".remove-from-cart").click(function (e) {
         e.preventDefault();
         var ele = $(this);
-        if(confirm("Yakin ingin menghapus tiket ini?")) {
-            $.ajax({
-                url: '{{ route('cart.remove') }}',
-                method: "DELETE",
-                data: {
-                    _token: '{{ csrf_token() }}', 
-                    id: ele.attr("data-id")
-                },
-                success: function (response) {
-                    window.location.reload();
-                }
-            });
-        }
+        
+        swalPremium.fire({
+            title: 'Hapus Tiket?',
+            text: "Yakin ingin menghapus tiket ini dari keranjang?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route('cart.remove') }}',
+                    method: "DELETE",
+                    data: {
+                        _token: '{{ csrf_token() }}', 
+                        id: ele.attr("data-id")
+                    },
+                    success: function (response) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
     });
 
 </script>

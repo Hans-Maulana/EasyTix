@@ -124,7 +124,7 @@
 
                 <div class="card card-settings">
                     <div class="card-header">
-                        <h4 class="card-title text-danger">Hapus Akun</h4>
+                        <h4 class="card-title text-danger">Hapus Akun Permanen</h4>
                     </div>
                     <div class="card-body">
                         <div class="max-w-xl">

@@ -13,10 +13,6 @@
         <p class="auth-subtitle">Masuk untuk mengelola tiket dan temukan pengalaman seru bersama kami.</p>
     </div>
 
-    <!-- Session Status -->
-    <div class="mb-4">
-        <x-auth-session-status :status="session('status')" />
-    </div>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf

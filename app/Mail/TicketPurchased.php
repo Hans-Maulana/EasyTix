@@ -37,6 +37,7 @@ class TicketPurchased extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new \Illuminate\Mail\Mailables\Address('noreply@easytix.id', 'EasyTix'),
             subject: 'E-Ticket Anda - Pesanan #' . $this->order->id . ' | EasyTix',
         );
     }
@@ -47,7 +48,7 @@ class TicketPurchased extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.ticket-purchased',
+            view: 'emails.ticket-purchased',
             with: [
                 'order'      => $this->order,
                 'orderItems' => $this->orderItems,

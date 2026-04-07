@@ -151,7 +151,7 @@
                         <!-- Form Logout Laravel -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item" data-confirm="Apakah Anda yakin ingin keluar dari akun ini?">Logout</button>
                         </form>
                       </li>
                     </div>

@@ -139,38 +139,48 @@
 @endsection
 
 @section('ExtraJS')
-<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Add quantity validation for ticket forms
+        const ticketForms = document.querySelectorAll('form[action$="/cart/add"]');
+        ticketForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const qtyInput = this.querySelector('input[name="quantity"]');
+                const qty = parseInt(qtyInput ? qtyInput.value : 0);
+                
+                if (qty <= 0) {
+                    e.preventDefault();
+                    swalPremium.fire({
+                        icon: 'warning',
+                        text: 'Silakan masukkan jumlah tiket terlebih dahulu.',
+                        confirmButtonText: 'OKE',
+                        confirmButtonColor: '#3b82f6',
+                        background: '#071120',
+                        color: '#fff',
+                        customClass: {
+                            popup: 'border border-light shadow-lg'
+                        }
+                    });
+                }
+            });
+        });
+
         @if(session('info'))
-            swal("Info", "{{ session('info') }}", "info");
+            swalPremium.fire("Info", "{{ session('info') }}", "info");
         @endif
-        @if(session('success'))
-            swal("Berhasil!", "{{ session('success') }}", "success");
-        @endif
+        
         @if(session('waiting_list_prompt'))
-            swal({
+            swalPremium.fire({
                 title: "Opps, Stok Gagal!",
                 text: "{{ session('waiting_list_prompt')['message'] }}",
                 icon: "warning",
-                buttons: {
-                    cancel: {
-                        text: "Batal",
-                        value: null,
-                        visible: true,
-                        className: "btn btn-danger",
-                        closeModal: true,
-                    },
-                    confirm: {
-                        text: "Masuk Waiting List",
-                        value: true,
-                        visible: true,
-                        className: "btn btn-success",
-                        closeModal: true
-                    }
-                }
-            }).then((value) => {
-                if (value) {
+                showCancelButton: true,
+                confirmButtonText: "Masuk Waiting List",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#dc3545"
+            }).then((result) => {
+                if (result.isConfirmed) {
                     var form = document.createElement("form");
                     form.method = "POST";
                     form.action = "{{ route('cart.waitlist') }}";

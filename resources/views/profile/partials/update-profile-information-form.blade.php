@@ -68,21 +68,51 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button onclick="return confirm('Apakah anda yakin ingin menyimpan perubahan profil ini?')">{{ __('Simpan Perubahan') }}</x-primary-button>
-
-            @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Berhasil disimpan.') }}</p>
-            @endif
+            <x-primary-button id="btn-save-profile" type="submit" data-confirm="Apakah anda yakin ingin menyimpan perubahan profil ini?">{{ __('Simpan Perubahan') }}</x-primary-button>
         </div>
     </form>
     
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSaveProfile = document.getElementById('btn-save-profile');
+            const profileForm = btnSaveProfile.closest('form');
+            const inputs = profileForm.querySelectorAll('input:not([type="hidden"])');
+            
+            // Store initial values
+            const initialValues = {};
+            inputs.forEach(input => {
+                initialValues[input.name] = input.value;
+            });
+
+            // Initial state: disabled
+            btnSaveProfile.disabled = true;
+            btnSaveProfile.style.opacity = '0.5';
+            btnSaveProfile.style.cursor = 'not-allowed';
+
+            const checkChanges = () => {
+                let hasChanged = false;
+                inputs.forEach(input => {
+                    if (input.value !== initialValues[input.name]) {
+                        hasChanged = true;
+                    }
+                });
+
+                if (hasChanged) {
+                    btnSaveProfile.disabled = false;
+                    btnSaveProfile.style.opacity = '1';
+                    btnSaveProfile.style.cursor = 'pointer';
+                } else {
+                    btnSaveProfile.disabled = true;
+                    btnSaveProfile.style.opacity = '0.5';
+                    btnSaveProfile.style.cursor = 'not-allowed';
+                }
+            };
+
+            inputs.forEach(input => {
+                input.addEventListener('input', checkChanges);
+            });
+        });
+
         function previewImage(event) {
             const reader = new FileReader();
             reader.onload = function() {

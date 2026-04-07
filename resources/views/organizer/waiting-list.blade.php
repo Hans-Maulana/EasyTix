@@ -99,7 +99,7 @@
                                              <form action="{{ route('organizer.requestWaitingListAdmin', $wl->id) }}" method="POST" class="d-flex align-items-center gap-2">
                                                  @csrf
                                                  <input type="number" name="quantity" value="{{ $wl->quantity }}" min="1" class="form-control form-control-sm" style="width: 80px;">
-                                                 <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Minta admin untuk menyetujui penambahan kuota waiting list ini?')">
+                                                 <button type="submit" class="btn btn-sm btn-success" data-confirm="Minta admin untuk menyetujui penambahan kuota waiting list ini?">
                                                      <i class="fas fa-paper-plane"></i> Request ke Admin
                                                  </button>
                                              </form>

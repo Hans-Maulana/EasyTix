@@ -14,7 +14,7 @@
         @method('put')
 
         <div>
-            <x-input-label for="update_password_current_password" :value="__('Password Saat Ini')" />
+            <x-input-label for="update_password_current_password" :value="__('Password Lama')" />
             <x-text-input id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
             <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
         </div>
@@ -32,17 +32,44 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button onclick="return confirm('Apakah anda yakin ingin mengubah password?')">{{ __('Simpan Perubahan') }}</x-primary-button>
-
-            @if (session('status') === 'password-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Berhasil disimpan.') }}</p>
-            @endif
+            <x-primary-button id="btn-save-password" type="submit" data-confirm="Apakah anda yakin ingin mengubah password?">{{ __('Simpan Perubahan') }}</x-primary-button>
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSavePassword = document.getElementById('btn-save-password');
+            const newPassword = document.getElementById('update_password_password');
+            const confirmPassword = document.getElementById('update_password_password_confirmation');
+            const currentPassword = document.getElementById('update_password_current_password');
+
+            // Initially disabled
+            btnSavePassword.disabled = true;
+            btnSavePassword.style.opacity = '0.5';
+            btnSavePassword.style.cursor = 'not-allowed';
+
+            const validatePasswords = () => {
+                const valNew = newPassword.value;
+                const valConfirm = confirmPassword.value;
+                const valCurrent = currentPassword.value;
+
+                // Ensure both new and confirm are not empty, they match, and current is not empty
+                const isMatch = valNew === valConfirm && valNew.trim() !== '' && valConfirm.trim() !== '' && valCurrent.trim() !== '';
+
+                if (isMatch) {
+                    btnSavePassword.disabled = false;
+                    btnSavePassword.style.opacity = '1';
+                    btnSavePassword.style.cursor = 'pointer';
+                } else {
+                    btnSavePassword.disabled = true;
+                    btnSavePassword.style.opacity = '0.5';
+                    btnSavePassword.style.cursor = 'not-allowed';
+                }
+            };
+
+            [newPassword, confirmPassword, currentPassword].forEach(input => {
+                input.addEventListener('input', validatePasswords);
+            });
+        });
+    </script>
 </section>

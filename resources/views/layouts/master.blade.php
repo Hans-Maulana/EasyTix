@@ -587,6 +587,137 @@
 
     <!-- Kaiadmin JS -->
     <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
+
+    <style>
+        .swal2-popup {
+            background: #071120 !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            border-radius: 1.5rem !important;
+        }
+        .swal2-title, .swal2-html-container {
+            color: #fff !important;
+        }
+        .swal2-confirm {
+            background: var(--premium-gold-grad) !important;
+            color: #000 !important;
+            border: none !important;
+            font-weight: 700 !important;
+            border-radius: 50px !important;
+            padding: 12px 30px !important;
+            box-shadow: 0 4px 15px rgba(244, 208, 63, 0.2) !important;
+        }
+        .swal2-cancel {
+            background: transparent !important;
+            color: #cbd5e1 !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            font-weight: 600 !important;
+            border-radius: 50px !important;
+            padding: 12px 30px !important;
+        }
+        /* Prevent SweetAlert DOM leakage */
+        .swal2-input, .swal2-file, .swal2-textarea, .swal2-select, .swal2-radio, .swal2-checkbox {
+            display: none;
+        }
+        /* When Swal actually needs them, it overrides inline or via classes. But if global css broke it, we force hide if they have display:none inline */
+        .swal2-popup [style*="display: none"] {
+            display: none !important;
+        }
+    </style>
+    <script>
+        // SweetAlert2 Global Styling & Defaults
+        window.swalPremium = Swal.mixin({
+            customClass: {
+                popup: 'border border-light shadow-lg',
+            },
+            buttonsStyling: false // Let our CSS handle it
+        });
+
+        // Handle Global Flash Messages from Session
+        @if(session('success'))
+            swalPremium.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        @endif
+
+        @if(session('status'))
+            @php
+                $statusMsg = session('status');
+                if ($statusMsg === 'profile-updated') $statusMsg = 'Profil berhasil diperbarui.';
+                elseif ($statusMsg === 'password-updated') $statusMsg = 'Password berhasil diperbarui.';
+                elseif ($statusMsg === 'verification-link-sent') $statusMsg = 'Link verifikasi baru telah dikirim ke email Anda.';
+            @endphp
+            swalPremium.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ $statusMsg }}",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        @endif
+
+        @if(session('error'))
+            swalPremium.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "{{ session('error') }}",
+            });
+        @endif
+
+        @if(session('warning'))
+            swalPremium.fire({
+                icon: 'warning',
+                title: 'Perhatian!',
+                text: "{{ session('warning') }}",
+            });
+        @endif
+
+        @if(session('info'))
+            swalPremium.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: "{{ session('info') }}",
+            });
+        @endif
+
+        // Global Confirmation Handler for Links and Forms
+        document.addEventListener('DOMContentLoaded', function () {
+            // Find all elements with data-confirm attribute
+            const confirmElements = document.querySelectorAll('[data-confirm]');
+            
+            confirmElements.forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const message = this.getAttribute('data-confirm');
+                    
+                    swalPremium.fire({
+                        title: 'Konfirmasi',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (this.dataset.submitForm) {
+                                document.getElementById(this.dataset.submitForm).submit();
+                            } else if (this.tagName === 'A') {
+                                window.location.href = this.href;
+                            } else if (this.closest('form')) {
+                                this.closest('form').submit();
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    
     @yield('ExtraJS')   
   </body>
 </html>

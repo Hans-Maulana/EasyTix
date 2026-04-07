@@ -262,5 +262,31 @@
             {{ $slot }}
         </div>
     </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if(session('status'))
+                @php
+                    $status = session('status');
+                    $isReset = ($status === __('passwords.reset'));
+                    $msg = $isReset ? 'Password Anda berhasil direset! Silakan login kembali.' : $status;
+                @endphp
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ $msg }}",
+                    background: '#0f172a',
+                    color: '#ffffff',
+                    confirmButtonText: '{{ $isReset ? "Login Sekarang" : "Tutup" }}',
+                    confirmButtonColor: '#3b82f6',
+                    customClass: {
+                        popup: 'border border-light rounded-4 shadow-lg'
+                    }
+                });
+            @endif
+        });
+    </script>
 </body>
 </html>

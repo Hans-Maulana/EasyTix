@@ -7,13 +7,9 @@
 
     <div class="auth-header">
         <h1 class="auth-title">Lupa Kata Sandi?</h1>
-        <p class="auth-subtitle">Masih ingat emailnya kan? Masukkan email Anda di bawah dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi ke kotak masuk Anda.</p>
+        <p class="auth-subtitle">Masukkan email yang terdaftar pada akun anda untuk reset password</p>
     </div>
 
-    <!-- Session Status -->
-    <div class="mb-4">
-        <x-auth-session-status :status="session('status')" />
-    </div>
 
     <form method="POST" action="{{ route('password.email') }}">
         @csrf

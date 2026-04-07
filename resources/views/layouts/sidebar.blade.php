@@ -116,7 +116,7 @@
 
                   <!-- 7. Logout (biasanya di header, tapi ditambahkan sesuai request) -->
                   <li class="nav-item mt-4">
-                      <a href="#" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" class="text-danger">
+                      <a href="#" class="text-danger" data-confirm="Apakah Anda yakin ingin keluar dari akun ini?" data-submit-form="sidebar-logout-form">
                           <i class="fas fa-sign-out-alt text-danger"></i>
                           <p>Logout</p>
                       </a>
