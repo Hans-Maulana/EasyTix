@@ -73,7 +73,6 @@
 @section('content')
 <div class="container">
     <div class="page-inner">
-        <!-- Welcome Hero -->
         <div class="welcome-card fade-in-up" style="animation-delay: 0.1s;">
             <div class="row align-items-center">
                 <div class="col-md-8 position-relative z-index-1">
@@ -84,6 +83,7 @@
                             Cari Tiket <i class="fas fa-search ms-2"></i>
                         </a>
                         <a href="{{ route('user.myTickets') }}" class="btn btn-white btn-round px-4 py-2 fw-bold border shadow-sm">
+                            <i class="fas fa-ticket-alt me-2"></i>
                             Tiket Saya
                         </a>
                     </div>
@@ -91,7 +91,6 @@
             </div>
         </div>
 
-        <!-- Banner Utama (Carousel) -->
         @if($mainBanners->count() > 0)
         <div class="row mb-5 fade-in-up" style="animation-delay: 0.2s;">
             <div class="col-md-12">
@@ -105,7 +104,7 @@
                         @foreach($mainBanners as $index => $banner)
                         <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                             <div class="d-flex align-items-center justify-content-center" style="height: 450px; background: #000;">
-                                <img src="{{ asset('storage/' . $banner->banner) }}" class="d-block mw-100 mh-100" alt="{{ $banner->name }}" style="object-fit: contain;">
+                                <img src="{{ $banner->banner ? asset('storage/' . $banner->banner) : asset('assets/img/easytix_login_bg.png') }}" class="d-block mw-100 mh-100" alt="{{ $banner->name }}" style="object-fit: contain;">
                             </div>
                             <div class="carousel-caption d-none d-md-block text-start p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8)); left:0; right:0; bottom:0;">
                                 <h2 class="fw-bold">{{ $banner->name }}</h2>
@@ -127,19 +126,18 @@
         </div>
         @endif
 
-        <!-- Banner Card (Promo) -->
         @if($cardBanners->count() > 0)
         <div class="row mb-5 mt-4">
             <div class="col-md-12 mb-4 d-flex align-items-center justify-content-between fade-in-up" style="animation-delay: 0.3s;">
                 <h3 class="fw-bold mb-0 text-dark" style="font-family: 'Outfit', sans-serif;">
-                    <i class="fas fa-gem text-warning me-2"></i> Penawaran Spesial
+                    <i class="fas text-warning me-2">Jadwal Event</i> 
                 </h3>
             </div>
             @foreach($cardBanners as $banner)
             <div class="col-md-4 mb-4 fade-in-up" style="animation-delay: {{ 0.4 + ($loop->index * 0.1) }}s;">
                 <div class="card premium-promo-card h-100 border-0">
                     <div class="promo-img-container">
-                        <img class="card-img-top" src="{{ asset('storage/' . $banner->banner) }}" alt="{{ $banner->name }}">
+                        <img class="card-img-top" src="{{ $banner->banner ? asset('storage/' . $banner->banner) : asset('assets/img/easytix_login_bg.png') }}" alt="{{ $banner->name }}">
                         <div class="promo-overlay">
                             <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase shadow-sm" style="letter-spacing: 1px;"><i class="fas fa-tag me-1"></i> Promo</span>
                         </div>

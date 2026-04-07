@@ -24,6 +24,17 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->role === 'organizer') {
+            return redirect()->route('organizer.dashboard');
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    })->name('dashboard');
+
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 });
 
@@ -129,6 +140,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
     Route::get('/user/notifications', [UserController::class, 'notifications'])->name('user.notifications');
     Route::get('/cart/clear', [OrderController::class, 'clearCart'])->name('cart.clear');
+    Route::get('/qrcodes/{filename}', [OrderController::class, 'serveQrCode'])->name('qrcode.serve');
 });
 
 

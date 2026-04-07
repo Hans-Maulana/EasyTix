@@ -57,7 +57,7 @@
     #qrisOverlay.active { display: flex; }
     #qrisOverlay.active .qris-modal { transform: scale(1); }
     .timer-badge {
-        background: #F4D03F; color: #000; padding: 8px 20px;
+        background: #ad6c6c28; color: #000000; padding: 8px 20px;
         border-radius: 50px; font-weight: 800; display: inline-block; margin-bottom: 20px;
     }
 </style>
@@ -163,7 +163,7 @@
 <div id="qrisOverlay">
     <div class="qris-modal" data-aos="zoom-in">
         <div class="timer-badge">
-            <i class="fas fa-clock me-2"></i> <span id="qrisTimer">01:00</span>
+            <i class="fas fa-clock me-2"></i> <span id="qrisTimer">02:00</span>
         </div>
         <h3 class="fw-bold mb-3">Scan QRIS</h3>
         <div class="p-3 border rounded-4 mb-4 bg-white shadow-sm" style="display:inline-block; border: 2px solid #f0f0f0;">
@@ -232,7 +232,7 @@
         const overlay = document.getElementById('qrisOverlay');
         overlay.classList.add('active');
         
-        let timeLeft = 60;
+        let timeLeft = 120;
         const timerDisplay = document.getElementById('qrisTimer');
 
         timerInterval = setInterval(() => {

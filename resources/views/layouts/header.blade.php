@@ -74,7 +74,7 @@
                         <div class="notif-center">
                           @forelse($notifications as $notif)
                           <a href="{{ $notif->link ?? '#' }}">
-                            <div class="notif-icon notif-{{ $notif->type }}">
+                            <div class="notif-icon notif-{{ $notif->type }}" style="min-width: 40px; min-height: 40px; flex-shrink: 0;">
                               <i class="fa fa-{{ $notif->type === 'success' ? 'check' : ($notif->type === 'offer' ? 'tag' : 'info') }}"></i>
                             </div>
                             <div class="notif-content">

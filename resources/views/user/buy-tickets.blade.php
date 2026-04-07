@@ -68,7 +68,7 @@
             <div class="col-lg-4 col-md-6">
                 <div class="event-grid-card">
                     <div class="event-grid-img-wrapper">
-                        <img src="{{ $event->image ? asset('storage/'.$event->image) : asset('assets/img/easytix_login_bg.png') }}"
+                        <img src="{{ $event->banner ? asset('storage/'.$event->banner) : asset('assets/img/easytix_login_bg.png') }}"
                              alt="{{ $event->name }}">
                     </div>
                     <div class="event-grid-info">

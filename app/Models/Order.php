@@ -9,7 +9,7 @@ class Order extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['id', 'users_id', 'events_id', 'total_amount'];
+    protected $fillable = ['id', 'users_id', 'events_id', 'total_amount', 'payment_method'];
 
     public function user()
     {

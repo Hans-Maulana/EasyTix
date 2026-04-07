@@ -9,6 +9,8 @@ use App\Models\OrderDetail;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TicketPurchased;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class OrderController extends Controller
@@ -20,10 +22,8 @@ class OrderController extends Controller
             ->with(['event_schedule.tickets'])
             ->get()
             ->map(function ($event) {
-                // Cari harga terendah dari semua tiket di semua jadwal event ini
                 $event->min_price = $event->event_schedule->flatMap->tickets->min('price');
 
-                // Format rentang tanggal (Misal: 30 - 31 Mei 2026 atau 28 Juni 2026)
                 $schedules = $event->event_schedule->sortBy('event_date');
                 if($schedules->count() > 1) {
                     $start = \Carbon\Carbon::parse($schedules->first()->event_date);
@@ -39,7 +39,7 @@ class OrderController extends Controller
                 return $event;
             });
             
-        $banners = $events->take(3); // Gunakan 3 event terbaru sebagai banner carousel
+        $banners = $events->take(3); 
         return view('user.buy-tickets', compact('events', 'banners'));
     }
 
@@ -63,12 +63,9 @@ class OrderController extends Controller
         $eventName = $ticket->event_schedule->event->name;
         
         $cart = session()->get('cart', []);
-
-        // Logika: Hanya bisa beli untuk 1 event saja
         if (!empty($cart)) {
             $firstItem = reset($cart);
             if ($firstItem['events_id'] != $eventId) {
-                // Berbeda event, kosongkan keranjang sebelumnya
                 $cart = [];
                 session()->flash('info', "Keranjang dibersihkan karena Anda memilih event baru: $eventName");
             }
@@ -81,7 +78,6 @@ class OrderController extends Controller
         }
 
         if ($newQuantity > $ticket->capacity) {
-            // Return with waiting list prompt data
             return redirect()->back()->with('waiting_list_prompt', [
                 'ticket_id' => $request->ticket_id,
                 'quantity' => $request->quantity,
@@ -92,13 +88,11 @@ class OrderController extends Controller
         if(isset($cart[$request->ticket_id])) {
             $cart[$request->ticket_id]['quantity'] = $newQuantity;
         } else {
-            // Cek apakah ada multiple schedule untuk event ini, jika iya tambahkan label hari
             $totalSchedules = \App\Models\EventSchedule::where('event_id', $eventId)->count();
             $scheduleDate = \Carbon\Carbon::parse($ticket->event_schedule->event_date)->translatedFormat('d M Y');
             $typeName = $ticket->ticket_type->name;
             
             if ($totalSchedules > 1) {
-                // Temukan index hari
                 $schedules = \App\Models\EventSchedule::where('event_id', $eventId)->orderBy('event_date', 'asc')->pluck('id')->toArray();
                 $dayIndex = array_search($ticket->event_schedule->id, $schedules) + 1;
                 $typeName .= " - Day $dayIndex ($scheduleDate)";
@@ -224,26 +218,36 @@ class OrderController extends Controller
 
         // Generate ID manual karena kolom id adalah varchar(35), bukan auto-increment
         $year = date('Y');
-        $lastOrder = Order::where('id', 'like', "ORD-{$year}-%")
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if ($lastOrder) {
-            // Trim to handle CHAR columns with trailing spaces
-            $lastId = trim($lastOrder->id);
-            $lastNum = (int) substr($lastId, -3);
-            $newNum = str_pad($lastNum + 1, 3, '0', STR_PAD_LEFT);
-        } else {
-            $newNum = '001';
+        $orders = Order::where('id', 'like', "ORD-{$year}-%")->get();
+        
+        $maxNum = 0;
+        foreach ($orders as $o) {
+            $idStr = trim($o->id);
+            if (preg_match('/ORD-' . $year . '-(\d+)/', $idStr, $matches)) {
+                $num = (int)$matches[1];
+                if ($num > $maxNum) {
+                    $maxNum = $num;
+                }
+            }
         }
+
+        $newNum = str_pad($maxNum + 1, 3, '0', STR_PAD_LEFT);
         $orderId = "ORD-{$year}-{$newNum}";
+        
+        // Pastikan tidak ada duplikasi
+        while (Order::where('id', $orderId)->exists()) {
+            $maxNum++;
+            $newNum = str_pad($maxNum + 1, 3, '0', STR_PAD_LEFT);
+            $orderId = "ORD-{$year}-{$newNum}";
+        }
 
         // Insert ke tabel orders yang sudah ada (users_id, events_id, total_amount)
         $order = Order::create([
-            'id'          => $orderId,
-            'users_id'    => auth()->id(),
-            'events_id'   => $firstEventId,
-            'total_amount' => $total,
+            'id'             => $orderId,
+            'users_id'       => auth()->id(),
+            'events_id'      => $firstEventId,
+            'total_amount'   => $total,
+            'payment_method' => $paymentMethod,
         ]);
 
         foreach($cart as $ticketId => $details) {
@@ -259,14 +263,16 @@ class OrderController extends Controller
                 $orderDetailId = 'DET-' . date('Y') . '-' . strtoupper(Str::random(6));
 
                 $qrString = "VERIFY-" . $orderDetailId;
-                $fileName = 'qr_' . time() . '_' . $orderDetailId . '.svg';
+                $fileName = 'qr_' . time() . '_' . $i . '_' . $orderDetailId . '.svg';
                 $qrPath = 'qrcodes/' . $fileName;
 
-                if(!file_exists(storage_path('app/public/qrcodes'))) {
-                    mkdir(storage_path('app/public/qrcodes'), 0777, true);
+                // Simpan ke storage/app/qrcodes (bukan public)
+                $qrDir = storage_path('app/qrcodes');
+                if (!file_exists($qrDir)) {
+                    mkdir($qrDir, 0777, true);
                 }
-                
-                QrCode::size(200)->generate($qrString, storage_path('app/public/qrcodes/'.$fileName));
+
+                QrCode::size(200)->generate($qrString, $qrDir . '/' . $fileName);
 
                 $ticketData = $ticketDetails[$ticketId][$i] ?? [];
 
@@ -294,6 +300,32 @@ class OrderController extends Controller
             'message' => "Tiket untuk pesanan #{$order->id} telah diterbitkan. Silakan cek di menu Tiket Saya.",
             'link'    => route('user.myTickets'),
         ]);
+
+        // Kumpulkan data tiket untuk email
+        $emailOrderItems = [];
+        $allOrderDetails = OrderDetail::where('orders_id', $order->id)->get();
+        foreach ($allOrderDetails as $detail) {
+            $ticket = Ticket::with(['ticket_type', 'event_schedule.event'])->find($detail->tickets_id);
+            $emailOrderItems[] = [
+                'event_name'  => $ticket && $ticket->event_schedule && $ticket->event_schedule->event
+                                    ? $ticket->event_schedule->event->name : 'Unknown Event',
+                'ticket_type' => $ticket && $ticket->ticket_type
+                                    ? $ticket->ticket_type->name : 'Ticket',
+                'owner_name'  => $detail->owner_name,
+                'ticket_code' => $detail->ticket_code,
+                'qr_code'     => $detail->qr_code,
+            ];
+        }
+
+        // Kirim email dengan QR code ke user yang login
+        try {
+            Mail::to(auth()->user()->email)->send(
+                new TicketPurchased($order, $emailOrderItems, auth()->user()->name)
+            );
+        } catch (\Exception $e) {
+            // Log error tapi jangan gagalkan order
+            \Log::error('Gagal mengirim email tiket: ' . $e->getMessage());
+        }
 
         session()->forget('cart');
         session()->forget('ticket_details');
@@ -348,7 +380,7 @@ class OrderController extends Controller
 
             $orderHistory[] = [
                 'id'             => $order->id,
-                'payment_method' => 'QRIS',
+                'payment_method' => $order->payment_method ?? 'QRIS',
                 'total_amount'   => $order->total_amount,
                 'created_at'     => $order->created_at->format('d M Y, H:i'),
                 'items'          => $items,
@@ -362,6 +394,15 @@ class OrderController extends Controller
     {
         session()->forget('cart');
         return redirect()->route('user.buyTickets')->with('success', 'Keranjang berhasil direset. Silakan tambah tiket kembali.');
+    }
+
+    public function serveQrCode($filename)
+    {
+        $path = storage_path('app/qrcodes/' . basename($filename));
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        return response()->file($path, ['Content-Type' => 'image/svg+xml']);
     }
 }
 

@@ -30,7 +30,7 @@
                             @forelse($notifications as $notif)
                             <div class="notif-item p-4 border-bottom {{ $notif->is_read ? '' : 'bg-light' }}">
                                 <div class="d-flex align-items-center">
-                                    <div class="notif-icon-circle me-3 bg-{{ $notif->type === 'success' ? 'success' : ($notif->type === 'offer' ? 'warning' : 'primary') }} text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 50%;">
+                                    <div class="notif-icon-circle me-3 bg-{{ $notif->type === 'success' ? 'success' : ($notif->type === 'offer' ? 'warning' : 'primary') }} text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; min-width: 50px; min-height: 50px; border-radius: 50%; flex-shrink: 0;">
                                         <i class="fa fa-{{ $notif->type === 'success' ? 'check' : ($notif->type === 'offer' ? 'tag' : 'info-circle') }} fa-lg"></i>
                                     </div>
                                     <div class="notif-body flex-grow-1">

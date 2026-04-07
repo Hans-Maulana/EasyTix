@@ -174,7 +174,7 @@
                           <p>Dashboard</p>
                       </a>
                   </li>
-                  <li class="nav-item {{ request()->routeIs('user.buyTickets') ? 'active' : '' }}">
+                  <li class="nav-item {{ request()->routeIs('user.buyTickets') || request()->routeIs('user.eventTickets') ? 'active' : '' }}">
                       <a href="{{ route('user.buyTickets') }}">
                           <i class="fas fa-ticket-alt"></i>
                           <p>Beli Tiket</p>

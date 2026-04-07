@@ -10,7 +10,7 @@
         $themeColor = '#ffc107'; // Mandiri Yellow
         $logo = 'mandiri.jpg';
     } elseif($bank == 'BNI') {
-        $themeColor = '#f15a24'; // BNI Orange
+        $themeColor = '#e06c41ff'; // BNI Orange
         $logo = 'bni.jpg';
     }
 @endphp

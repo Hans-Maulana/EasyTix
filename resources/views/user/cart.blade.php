@@ -18,6 +18,13 @@
         padding: 15px 40px; transition: all 0.3s ease;
     }
     .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(244, 208, 63, 0.4); color: #000; }
+    
+    .qty-control { width: 100%; max-width: 130px; display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); border-radius: 50px; padding: 5px; border: 1px solid rgba(255,255,255,0.1); }
+    .qty-control button { border: none; background: rgba(255,255,255,0.1); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; transition: 0.2s; outline: none; }
+    .qty-control button:hover { background: rgba(255,255,255,0.2); }
+    .qty-control input { border: none; background: transparent; text-align: center; font-weight: 800; width: 40px; color: #fff; -moz-appearance: textfield; outline: none; }
+    .qty-control input::-webkit-outer-spin-button,
+    .qty-control input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 </style>
 @endsection
 
@@ -50,12 +57,14 @@
                                 <span class="badge bg-warning text-dark mb-2">{{ $details['type'] }}</span>
                                 <h6 class="fw-bold text-light">Rp {{ number_format($details['price'], 0, ',', '.') }}</h6>
                             </div>
-                            <div class="col-md-2">
-                                <div class="input-group">
-                                    <input type="number" value="{{ $details['quantity'] }}" class="form-control quantity update-cart rounded-pill" data-id="{{ $id }}" min="1">
+                            <div class="col-md-3">
+                                <div class="qty-control my-2 my-md-0 mx-auto mx-md-0">
+                                    <button type="button" class="btn-qty-minus" data-id="{{ $id }}">-</button>
+                                    <input type="number" value="{{ $details['quantity'] }}" class="quantity update-cart qty-input-{{ $id }}" data-id="{{ $id }}" min="1" readonly>
+                                    <button type="button" class="btn-qty-plus" data-id="{{ $id }}">+</button>
                                 </div>
                             </div>
-                            <div class="col-md-2 text-end">
+                            <div class="col-md-1 text-end">
                                 <button class="btn btn-outline-danger btn-sm rounded-circle remove-from-cart" data-id="{{ $id }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -66,14 +75,29 @@
             </div>
 
             <div class="col-lg-4" data-aos="fade-left">
-                <div class="card border-0 rounded-4 p-4 shadow-sm">
-                    <h5 class="fw-bold mb-4 text-white">Ringkasan Pesanan</h5>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-white">Total Items</span>
-                        <span class="fw-bold text-white">{{ count(session('cart')) }}</span>
+                <div class="card border-0 rounded-4 p-4 shadow-sm" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1)!important;">
+                    <h5 class="fw-bold mb-4 text-white"><i class="fas fa-file-invoice-dollar text-warning me-2"></i> Ringkasan Pesanan</h5>
+                    
+                    <div class="border-bottom border-light border-opacity-10 pb-3 mb-3">
+                        @php $totalItems = 0; @endphp
+                        @foreach(session('cart') as $id => $details)
+                        @php $totalItems += $details['quantity']; @endphp
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="text-white">
+                                <div class="fw-bold text-warning" style="font-size: 0.95rem;">{{ $details['name'] }}</div>
+                                <div class="text-light" style="font-size: 0.85rem;">{{ $details['type'] }} <span class="ms-1 px-2 py-1 rounded" style="background: rgba(255,255,255,0.1); font-size: 0.75rem;">x{{ $details['quantity'] }}</span></div>
+                            </div>
+                            <span class="fw-bold text-white text-end" style="font-size: 0.95rem;">Rp {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}</span>
+                        </div>
+                        @endforeach
                     </div>
-                    <div class="d-flex justify-content-between mb-4 pb-4 border-bottom border-secondary">
-                        <span class="fs-5 text-white">Subtotal</span>
+
+                    <div class="d-flex justify-content-between mb-2 pt-1 text-light">
+                        <span>Total Kuantitas Tiket</span>
+                        <span class="fw-bold">{{ $totalItems }} Tiket</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4 pb-4 border-bottom border-light border-opacity-10 mt-2">
+                        <span class="fs-5 text-white">Subtotal Total</span>
                         <span class="fs-5 fw-bold text-warning">Rp {{ number_format($total, 0, ',', '.') }}</span>
                     </div>
                     <a href="{{ route('user.checkout') }}" class="btn btn-premium w-100 mb-3">
@@ -114,6 +138,26 @@
                window.location.reload();
             }
         });
+    });
+
+    $(".btn-qty-minus").click(function(e) {
+        e.preventDefault();
+        var id = $(this).data("id");
+        var input = $(".qty-input-" + id);
+        var currentVal = parseInt(input.val());
+        if(currentVal > 1) {
+            input.val(currentVal - 1);
+            input.trigger("change");
+        }
+    });
+
+    $(".btn-qty-plus").click(function(e) {
+        e.preventDefault();
+        var id = $(this).data("id");
+        var input = $(".qty-input-" + id);
+        var currentVal = parseInt(input.val());
+        input.val(currentVal + 1);
+        input.trigger("change");
     });
 
     $(".remove-from-cart").click(function (e) {

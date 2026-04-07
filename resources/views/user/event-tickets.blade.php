@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="mt-3 mt-lg-0">
-                <img src="{{ $event->image ? asset('storage/'.$event->image) : asset('assets/img/easytix_login_bg.png') }}" alt="{{ $event->name }}" style="height: 120px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                <img src="{{ $event->banner ? asset('storage/'.$event->banner) : asset('assets/img/easytix_login_bg.png') }}" alt="{{ $event->name }}" style="height: 120px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
             </div>
         </div>
     </div>

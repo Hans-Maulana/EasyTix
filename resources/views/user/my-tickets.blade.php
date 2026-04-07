@@ -98,10 +98,10 @@
                                 <div class="col-4 text-center">
                                     <h6 class="text-muted small text-uppercase fw-bold mb-1">Bayar Via</h6>
                                     <h5 class="fw-bold text-white">
-                                        @if($order['payment_method'] === 'QRIS')
-                                            <i class="fas fa-qrcode text-warning me-1"></i> QRIS
+                                        @if(str_starts_with($order['payment_method'] ?? '', 'Virtual Account'))
+                                            <i class="fas fa-university text-warning me-1"></i> {{ $order['payment_method'] }}
                                         @else
-                                            <i class="fas fa-university text-warning me-1"></i> Virtual Account
+                                            <i class="fas fa-qrcode text-warning me-1"></i> QRIS
                                         @endif
                                     </h5>
                                 </div>
@@ -115,7 +115,8 @@
                     <div class="col-md-4 p-0">
                         <div class="qr-container h-100 d-flex flex-column justify-content-center">
                             <div class="qr-code mt-3 p-2">
-                                <img src="{{ asset('storage/' . $item['qr_code']) }}" width="130" height="130" alt="QR Code">
+                                @php $qrFilename = basename($item['qr_code']); @endphp
+                                <img src="{{ route('qrcode.serve', ['filename' => $qrFilename]) }}" width="130" height="130" alt="QR Code">
                             </div>
                             <h6 class="fw-bold text-white mb-1">Kode Tiket</h6>
                             <p class="text-muted small mb-2">{{ $item['qr_string'] ?? $item['qr_code'] }}</p>
@@ -144,7 +145,8 @@
                                 <p class="text-muted mb-4">{{ $item['type'] }} - Tiket {{ $item['ticket_index'] ?? 1 }} / {{ $item['total_qty'] ?? 1 }}</p>
                                 
                                 <div class="bg-light p-4 rounded-3 mb-4 d-inline-block border">
-                                    <img src="{{ asset('storage/' . $item['qr_code']) }}" width="200" height="200" alt="QR Code">
+                                    @php $qrFilename = basename($item['qr_code']); @endphp
+                                    <img src="{{ route('qrcode.serve', ['filename' => $qrFilename]) }}" width="200" height="200" alt="QR Code">
                                 </div>
                                 
                                 <h3 class="fw-bold text-white" style="letter-spacing: 2px;">{{ $item['qr_string'] ?? $item['qr_code'] }}</h3>
@@ -189,10 +191,10 @@
                                     <div class="col-6">
                                         <small class="text-muted d-block text-uppercase">Metode Pembayaran</small>
                                         <span class="fw-bold">
-                                            @if($order['payment_method'] === 'QRIS')
-                                                QRIS
+                                            @if(str_starts_with($order['payment_method'] ?? '', 'Virtual Account'))
+                                                <i class="fas fa-university text-warning me-1"></i> {{ $order['payment_method'] }}
                                             @else
-                                                Virtual Account
+                                                <i class="fas fa-qrcode text-warning me-1"></i> QRIS
                                             @endif
                                         </span>
                                     </div>
