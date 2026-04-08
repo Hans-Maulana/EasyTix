@@ -60,8 +60,12 @@
         @if(count($orderHistory) > 0)
             @foreach(array_reverse($orderHistory) as $order)
                 @foreach($order['items'] as $item)
-                @php $isUsed = ($item['status'] ?? 'valid') != 'valid'; @endphp
-                <div class="row ticket-item mx-0 {{ $isUsed ? 'status-used' : '' }}" data-aos="fade-up">
+                @php 
+                    $status = $item['status'] ?? 'valid';
+                    $isUsed = $status == 'used'; 
+                    $isCancelled = $status == 'cancelled';
+                @endphp
+                <div class="row ticket-item mx-0 {{ ($isUsed || $isCancelled) ? 'status-used' : '' }}" data-aos="fade-up">
                     <div class="col-md-8 p-0">
                         <div class="ticket-info">
                             <div class="d-flex justify-content-between mb-4 align-items-center">
@@ -69,17 +73,27 @@
                                     <span class="badge bg-dark-blue text-white px-3 py-2 rounded-pill shadow-sm me-2">
                                         <i class="fas fa-star me-2 text-warning "></i> <span class="text-white">{{ $order['id'] }}</span>
                                     </span>
-                                    <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm">
-                                        <i class="fas fa-check-circle me-1"></i> PAID
-                                    </span>
+                                    @if(($order['status'] ?? 'paid') == 'refunded')
+                                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm me-2">
+                                            <i class="fas fa-undo me-1"></i> REFUNDED
+                                        </span>
+                                    @else
+                                        <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm me-2">
+                                            <i class="fas fa-check-circle me-1"></i> PAID
+                                        </span>
+                                    @endif
 
                                     @if(($item['status'] ?? 'valid') == 'valid')
                                         <span class="badge bg-info text-white px-3 py-2 rounded-pill shadow-sm badge-status">
                                             <i class="fas fa-ticket-alt me-1"></i> TERSEDIA
                                         </span>
-                                    @else
+                                    @elseif(($item['status'] ?? 'valid') == 'cancelled')
                                         <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm badge-status">
-                                            <i class="fas fa-times-circle me-1"></i> TELAH DIGUNAKAN
+                                            <i class="fas fa-times-circle me-1"></i> CANCELLED
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary text-white px-3 py-2 rounded-pill shadow-sm badge-status">
+                                            <i class="fas fa-check me-1"></i> TELAH DIGUNAKAN
                                         </span>
                                     @endif
                                 </div>
@@ -123,10 +137,12 @@
                             <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ md5($item['qr_code']) }}">
                                 Lihat Detail
                             </button>
-                            @if($isUsed)
+                            @if($isCancelled)
+                                <p class="small text-danger fw-bold italic"><i class="fas fa-exclamation-triangle me-1"></i> Tiket dibatalkan (Event Refund)</p>
+                            @elseif($isUsed)
                                 <p class="small text-muted fw-bold italic"><i class="fas fa-info-circle me-1"></i> Tiket sudah discan oleh petugas</p>
                             @else
-                                <p class="small text-danger italic">*Tunjukkan kodenya saat masuk gate</p>
+                                <p class="small text-success fw-bold italic mb-0">*Tunjukkan kodenya saat masuk gate</p>
                             @endif
                         </div>
                     </div>

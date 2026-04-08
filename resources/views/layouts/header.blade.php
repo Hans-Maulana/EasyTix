@@ -3,7 +3,7 @@
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
               <a href="{{ url('/') }}" class="logo">
-                <img src="{{ asset('assets/img/logo_easytix_new.png') }}" alt="EasyTix" height="45" class="me-2">
+                <img src="{{ asset('assets/img/logo_easy_tix.jpeg') }}" alt="EasyTix" height="45" class="me-2" style="border-radius: 8px;">
               </a>
               <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">

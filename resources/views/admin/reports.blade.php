@@ -4,9 +4,10 @@
 <style>
     .card-report {
         border-radius: 1.5rem !important;
-        border: 1px solid rgba(0,0,0,0.05) !important;
-        background: #fff !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        background: rgba(20, 46, 94, 0.25) !important;
+        backdrop-filter: blur(16px) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
     }
     .chart-container {
         position: relative;
@@ -41,9 +42,9 @@
                 <h6 class="op-7 mb-2">Pantau performa penjualan dan tingkat kehadiran secara menyeluruh.</h6>
             </div>
             <div class="ms-md-auto py-2 py-md-0">
-                <button onclick="window.print()" class="btn btn-primary btn-round me-2">
-                    <i class="fas fa-print me-2"></i> Cetak Laporan
-                </button>
+                <a href="{{ route('admin.downloadMonthlyReport') }}" class="btn btn-danger btn-round">
+                    <i class="fas fa-file-pdf me-2"></i> Unduh PDF Laporan Bulanan
+                </a>
             </div>
         </div>
 
@@ -61,7 +62,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category stat-label">Tiket Terjual</p>
-                                    <h4 class="card-title stat-value">{{ $ticketStats->sum('total_sold') }}</h4>
+                                    <h4 class="card-title stat-value">{{ number_format($totalTicketsSold) }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -80,7 +81,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category stat-label">Total Pendapatan</p>
-                                    <h4 class="card-title stat-value">Rp {{ number_format($ticketStats->sum('total_revenue'), 0, ',', '.') }}</h4>
+                                    <h4 class="card-title stat-value">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +100,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category stat-label">Total Kehadiran</p>
-                                    <h4 class="card-title stat-value">{{ $attendanceStats->where('status', 'use')->first()->count ?? 0 }}</h4>
+                                    <h4 class="card-title stat-value">{{ $attendanceStats->where('status', 'used')->first()->count ?? 0 }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -118,12 +119,7 @@
                             <div class="col col-stats ms-3 ms-sm-0">
                                 <div class="numbers">
                                     <p class="card-category stat-label">Rate Kehadiran</p>
-                                    @php
-                                        $total = $attendanceStats->sum('count');
-                                        $used = $attendanceStats->where('status', 'use')->first()->count ?? 0;
-                                        $rate = $total > 0 ? round(($used / $total) * 100) : 0;
-                                    @endphp
-                                    <h4 class="card-title stat-value">{{ $rate }}%</h4>
+                                    <h4 class="card-title stat-value">{{ $attendanceRate }}%</h4>
                                 </div>
                             </div>
                         </div>
@@ -176,12 +172,12 @@
             <div class="col-md-6">
                 <div class="card card-report">
                     <div class="card-header bg-transparent border-0 pt-4 px-4">
-                        <div class="card-title fw-bold">Pendapatan per Kategori</div>
+                        <div class="card-title fw-bold">Penjualan per Tipe Tiket</div>
                         <p class="text-muted small">Distribusi nilai transaksi berdasarkan tipe tiket.</p>
                     </div>
                     <div class="card-body p-4">
                         <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
+                            <canvas id="ticketTypeChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -209,11 +205,75 @@
                                         <td class="fw-bold">{{ $quota->category_name }}</td>
                                         <td class="text-center">{{ number_format($quota->total_capacity) }}</td>
                                         <td class="text-center">
-                                            <span class="badge bg-soft-success text-success px-3">{{ number_format($ticketStats->firstWhere('category_name', $quota->category_name)->total_sold ?? 0) }}</span>
+                                            <span class="badge bg-soft-success text-success px-3">{{ number_format($ticketTypeStats->firstWhere('category_name', $quota->category_name)->total_sold ?? 0) }}</span>
                                         </td>
                                         <td class="text-center">
                                             <span class="badge {{ $quota->remaining < 10 ? 'bg-soft-danger text-danger' : 'bg-soft-primary text-primary' }} px-3">{{ number_format($quota->remaining) }}</span>
                                         </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Tren Penjualan Bulanan -->
+            <div class="col-md-12">
+                <div class="card card-report">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <div class="card-title fw-bold">Tren Penjualan Bulanan</div>
+                        <p class="text-muted small">Grafik pendapatan dari bulan ke bulan.</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="monthlySalesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Pendapatan per Kategori Event -->
+            <div class="col-md-6">
+                <div class="card card-report">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <div class="card-title fw-bold">Pendapatan per Kategori Event</div>
+                        <p class="text-muted small">Berdasarkan kategori utama event.</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="categoryRevenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Laporan Penjualan Perbulan -->
+            <div class="col-md-6">
+                <div class="card card-report">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <div class="card-title fw-bold">Laporan Penjualan Perbulan</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-premium">
+                                <thead>
+                                    <tr>
+                                        <th>Bulan</th>
+                                        <th class="text-center">Pesanan</th>
+                                        <th class="text-end">Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($monthlySales as $sale)
+                                    <tr>
+                                        <td class="fw-bold">{{ \Carbon\Carbon::parse($sale->month)->format('F Y') }}</td>
+                                        <td class="text-center">{{ $sale->order_count }}</td>
+                                        <td class="text-end fw-bold text-success">Rp {{ number_format($sale->revenue, 0, ',', '.') }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -230,9 +290,11 @@
 @section('ExtraJS')
 <script>
     // Data dari Controller
-    const ticketStats = @json($ticketStats);
+    const ticketTypeStats = @json($ticketTypeStats);
     const quotaStats = @json($quotaStats);
     const attendanceStats = @json($attendanceStats);
+    const categoryRevenue = @json($categoryRevenue);
+    const monthlySales = @json($monthlySales);
 
     // 1. Category Chart (Sold vs Remaining)
     const ctxCategory = document.getElementById('categoryChart').getContext('2d');
@@ -244,16 +306,16 @@
                 {
                     label: 'Terjual',
                     data: quotaStats.map(item => {
-                        const stat = ticketStats.find(s => s.category_name === item.category_name);
+                        const stat = ticketTypeStats.find(s => s.category_name === item.category_name);
                         return stat ? stat.total_sold : 0;
                     }),
-                    backgroundColor: 'rgba(0, 210, 255, 0.8)', // Glowing Cyan
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
                     borderRadius: 8,
                 },
                 {
                     label: 'Sisa Kuota',
                     data: quotaStats.map(item => item.remaining),
-                    backgroundColor: 'rgba(244, 208, 63, 0.9)', // Glowing Gold
+                    backgroundColor: 'rgba(226, 232, 240, 0.9)',
                     borderRadius: 8,
                 }
             ]
@@ -262,16 +324,16 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'top', labels: { color: '#E0E6ED' } }
+                legend: { position: 'top' }
             },
             scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#E0E6ED' } },
-                x: { grid: { display: false }, ticks: { color: '#E0E6ED' } }
+                y: { beginAtZero: true },
+                x: { grid: { display: false } }
             }
         }
     });
 
-    // 2. Attendance Chart (Pie/Doughnut)
+    // 2. Attendance Chart (Doughnut)
     const ctxAttendance = document.getElementById('attendanceChart').getContext('2d');
     new Chart(ctxAttendance, {
         type: 'doughnut',
@@ -280,14 +342,9 @@
             datasets: [{
                 data: attendanceStats.map(item => item.count),
                 backgroundColor: [
-                    'rgba(46, 204, 113, 0.85)',   // Green
-                    'rgba(241, 196, 15, 0.85)',   // Gold
-                    'rgba(231, 76, 60, 0.85)',    // Red
-                    'rgba(52, 152, 219, 0.85)'    // Blue
+                    '#10b981', '#f59e0b', '#ef4444', '#3b82f6'
                 ],
-                borderWidth: 2,
-                borderColor: 'rgba(255, 255, 255, 0.2)',
-                hoverOffset: 15
+                borderWidth: 0,
             }]
         },
         options: {
@@ -300,19 +357,75 @@
         }
     });
 
-    // 3. Revenue Chart
-    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctxRevenue, {
+    // 3. Ticket Type Chart
+    const ctxTicketType = document.getElementById('ticketTypeChart').getContext('2d');
+    new Chart(ctxTicketType, {
         type: 'bar',
         data: {
-            labels: ticketStats.map(item => item.category_name),
+            labels: ticketTypeStats.map(item => item.category_name),
             datasets: [{
                 label: 'Pendapatan (Rp)',
-                data: ticketStats.map(item => item.total_revenue),
-                backgroundColor: 'rgba(0, 210, 255, 0.7)',
-                borderColor: '#00d2ff',
-                borderWidth: 1,
-                borderRadius: 20,
+                data: ticketTypeStats.map(item => item.total_revenue),
+                backgroundColor: 'rgba(20, 46, 94, 0.7)',
+                borderRadius: 10,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    ticks: { callback: (v) => 'Rp ' + v.toLocaleString() }
+                }
+            }
+        }
+    });
+
+    // 4. Category Revenue Chart
+    const ctxCatRev = document.getElementById('categoryRevenueChart').getContext('2d');
+    new Chart(ctxCatRev, {
+        type: 'pie',
+        data: {
+            labels: categoryRevenue.map(item => item.category_name),
+            datasets: [{
+                data: categoryRevenue.map(item => item.revenue),
+                backgroundColor: [
+                    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'
+                ],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+    // 5. Monthly Sales Chart
+    const ctxMonthly = document.getElementById('monthlySalesChart').getContext('2d');
+    // Sinkronkan data agar urutannya benar (Aura - Desc ke Asc untuk grafik)
+    const chartMonthlyData = [...monthlySales].reverse();
+    
+    new Chart(ctxMonthly, {
+        type: 'line',
+        data: {
+            labels: chartMonthlyData.map(item => {
+                const date = new Date(item.month + '-01');
+                return date.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+            }),
+            datasets: [{
+                label: 'Pendapatan (Rp)',
+                data: chartMonthlyData.map(item => item.revenue),
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#3b82f6',
+                borderWidth: 3
             }]
         },
         options: {
@@ -324,18 +437,9 @@
             scales: {
                 y: { 
                     beginAtZero: true,
-                    grid: { color: 'rgba(255,255,255,0.05)' },
-                    ticks: {
-                        color: '#E0E6ED',
-                        callback: function(value) {
-                            return 'Rp ' + value.toLocaleString();
-                        }
-                    }
+                    ticks: { callback: (v) => 'Rp ' + v.toLocaleString() }
                 },
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { color: '#E0E6ED' } 
-                }
+                x: { grid: { display: false } }
             }
         }
     });

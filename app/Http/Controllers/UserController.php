@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\EventRequest;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
@@ -167,7 +168,21 @@ class UserController extends Controller
 
     public function adminReport()
     {
-        $ticketStats = DB::table('order_details')
+        // 1. Stat Cards
+        $totalRevenue = Order::sum('total_amount');
+        $totalTicketsSold = OrderDetail::count();
+        
+        $attendanceStats = DB::table('order_details')
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->get();
+            
+        $totalAttendance = $attendanceStats->sum('count');
+        $usedAttendance = $attendanceStats->where('status', 'used')->first()->count ?? 0;
+        $attendanceRate = $totalAttendance > 0 ? round(($usedAttendance / $totalAttendance) * 100) : 0;
+
+        // 2. Laporan penjualan tiket per tipe tiket
+        $ticketTypeStats = DB::table('order_details')
             ->join('tickets', 'order_details.tickets_id', '=', 'tickets.id')
             ->join('ticket_types', 'tickets.ticket_types_id', '=', 'ticket_types.id')
             ->select(
@@ -178,25 +193,65 @@ class UserController extends Controller
             ->groupBy('ticket_types.name')
             ->get();
 
+        // 3. Pendapatan per kategori event
+        $categoryRevenue = DB::table('orders')
+            ->join('events', 'orders.events_id', '=', 'events.id')
+            ->join('categories', 'events.category_id', '=', 'categories.id')
+            ->select('categories.name as category_name', DB::raw('sum(orders.total_amount) as revenue'))
+            ->groupBy('categories.name')
+            ->get();
+
+        // 4. Laporan penjualan perbulan
+        $monthlySales = DB::table('orders')
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+                DB::raw('sum(total_amount) as revenue'),
+                DB::raw('count(*) as order_count')
+            )
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
+            ->get();
+
         $capacityPerCategory = DB::table('tickets')
             ->join('ticket_types', 'tickets.ticket_types_id', '=', 'ticket_types.id')
             ->select('ticket_types.name as category_name', DB::raw('sum(capacity) as total_capacity'))
             ->groupBy('ticket_types.name')
             ->get();
 
-        $quotaStats = $capacityPerCategory->map(function($item) use ($ticketStats) {
-            $sold = $ticketStats->firstWhere('category_name', $item->category_name)->total_sold ?? 0;
+        $quotaStats = $capacityPerCategory->map(function($item) use ($ticketTypeStats) {
+            $sold = $ticketTypeStats->firstWhere('category_name', $item->category_name)->total_sold ?? 0;
             return (object) [
                 'category_name' => $item->category_name,
                 'total_capacity' => $item->total_capacity,
                 'remaining' => $item->total_capacity - $sold
             ];
         });
-        $attendanceStats = DB::table('order_details')
-            ->select('status', DB::raw('count(*) as count'))
-            ->groupBy('status')
+
+        return view('admin.reports', compact(
+            'totalRevenue', 
+            'totalTicketsSold', 
+            'attendanceRate',
+            'ticketTypeStats',
+            'categoryRevenue',
+            'monthlySales',
+            'quotaStats',
+            'attendanceStats'
+        ));
+    }
+
+    public function downloadMonthlyReport()
+    {
+        $monthlySales = DB::table('orders')
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+                DB::raw('sum(total_amount) as revenue'),
+                DB::raw('count(*) as order_count')
+            )
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
             ->get();
 
-        return view('admin.reports', compact('ticketStats', 'quotaStats', 'attendanceStats'));
+        $pdf = Pdf::loadView('admin.monthly-report-pdf', compact('monthlySales'));
+        return $pdf->download('laporan-penjualan-bulanan.pdf');
     }
 }

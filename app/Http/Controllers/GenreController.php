@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Genre;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GenreController extends Controller
 {
@@ -54,11 +56,20 @@ class GenreController extends Controller
     public function deleteGenre(Genre $genre)
     {
         try {
-            // Detach from performers instead of events
-            $genre->performers()->detach();
-            $genre->delete();
+            // Business logic check: If genre is still used by performers, don't allow delete
+            if ($genre->performers()->exists()) {
+                $performerCount = $genre->performers()->count();
+                return redirect()->route('admin.manageGenres')->with('error', "Gagal menghapus! Genre ini masih digunakan oleh $performerCount penampil/performer.");
+            }
+
+            DB::transaction(function() use ($genre) {
+                // Delete the genre record (detach is no longer needed if we prevent delete when in use)
+                $genre->delete();
+            });
+
             return redirect()->route('admin.manageGenres')->with('success', 'Genre berhasil dihapus!');
         } catch (\Exception $e) {
+            Log::error('Genre Deletion Error: ' . $e->getMessage());
             return redirect()->route('admin.manageGenres')->with('error', 'Gagal menghapus genre: ' . $e->getMessage());
         }
     }

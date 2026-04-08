@@ -92,7 +92,7 @@
                         <div class="row">
                             @foreach($event->event_schedule as $schedule)
                                 <div class="row">
-                                    <div class="p-3 border rounded bg-white shadow-sm h-100" style="border-top: 4px solid #1572e8 !important;">
+                                    <div class="p-3 border rounded shadow-sm h-100" style="border-top: 4px solid #1572e8 !important; background: rgba(255,255,255,0.02);">
                                         <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                                             <h6 class="fw-bold mb-0 text-primary">
                                                 <i class="fa fa-calendar-day me-2"></i>Sesi {{ $schedule->id }}
@@ -101,14 +101,14 @@
                                         </div>
                                         <div class="d-flex flex-wrap gap-2">
                                             @forelse($schedule->tickets as $ticket)
-                                                <div class="d-flex align-items-center bg-light p-2 border rounded" style="min-width: 140px; flex: 1;">
-                                                    <div class="p-1 px-2 bg-info rounded me-2 text-white" style="font-size: 12px;">
+                                                <div class="d-flex align-items-center p-2 border rounded" style="min-width: 140px; flex: 1; background: rgba(255,255,255,0.05);">
+                                                    <div class="p-2 bg-info rounded me-2 text-white" style="font-size: 14px;">
                                                         <i class="fa fa-tag"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bold text-dark" style="font-size: 0.7rem; line-height: 1.2;">{{ $ticket->ticket_type->name }}</div>
-                                                        <div class="text-success fw-bold" style="font-size: 0.75rem;">Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
-                                                        <div class="text-muted" style="font-size: 10px;">Stok: {{ $ticket->capacity }}</div>
+                                                        <div class="fw-bold text-white" style="font-size: 0.8rem; line-height: 1.2;">{{ $ticket->ticket_type->name }}</div>
+                                                        <div class="text-info fw-bold" style="font-size: 0.85rem;">Rp {{ number_format($ticket->price, 0, ',', '.') }}</div>
+                                                        <div class="text-light opacity-75" style="font-size: 11px;">Stok: {{ $ticket->capacity }}</div>
                                                     </div>
                                                 </div>
                                             @empty

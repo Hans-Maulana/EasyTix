@@ -82,7 +82,7 @@
                     <div class="card event-card-premium">
                         <div class="event-img-header">
                             <i class="fas fa-music"></i>
-                            <span class="status-badge-p">APPROVED</span>
+                            <span class="status-badge-p text-uppercase">{{ $request->status }}</span>
                         </div>
                         <div class="event-content-p">
                             <div class="d-flex flex-wrap gap-2 mb-3">

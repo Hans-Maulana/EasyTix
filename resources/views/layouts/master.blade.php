@@ -9,7 +9,7 @@
     />
     <link
       rel="icon"
-      href="{{ asset('assets/img/logo_easytix_new.png')}}"
+      href="{{ asset('assets/img/logo_easy_tix.jpeg')}}"
       type="image/x-icon"
     />
 

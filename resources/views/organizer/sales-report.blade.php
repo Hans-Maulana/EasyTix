@@ -74,8 +74,8 @@
             <div class="col-md-8 fade-in-up" style="animation-delay: 0.1s;">
                 <div class="card chart-container-premium h-100 border-0">
                     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-                        <h4 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-line text-primary me-2"></i> Tren Penjualan</h4>
-                        <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-bold border">Last 7 Days</span>
+                        <h4 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-line text-primary me-2"></i> Tren Penjualan Bulanan</h4>
+                        <span class="badge bg-light text-dark px-3 py-2 rounded-pill fw-bold border">Last 6 Months</span>
                     </div>
                     <div class="card-body">
                         <div style="height: 350px">
@@ -100,34 +100,84 @@
 
         <!-- Cards Row -->
         <div class="row mb-5">
-            <div class="col-md-4 fade-in-up" style="animation-delay: 0.3s;">
+            <div class="col-md-3 fade-in-up" style="animation-delay: 0.3s;">
                 <div class="card card-stats-premium p-4">
                     <div class="icon-box-premium bg-gradient-g">
                         <i class="fas fa-coins"></i>
                     </div>
                     <p class="text-muted small fw-bold text-uppercase mb-1">Total Revenue</p>
                     <h2 class="fw-bold text-dark mb-0">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h2>
-                    <small class="text-success fw-bold mt-2 d-block"><i class="fas fa-arrow-up me-1"></i> 15% Increase</small>
+                    <small class="text-success fw-bold mt-2 d-block">Lifetime Sales</small>
                 </div>
             </div>
-            <div class="col-md-4 fade-in-up" style="animation-delay: 0.4s;">
+            <div class="col-md-3 fade-in-up" style="animation-delay: 0.4s;">
                 <div class="card card-stats-premium p-4">
                     <div class="icon-box-premium bg-gradient-b">
                         <i class="fas fa-id-card"></i>
                     </div>
                     <p class="text-muted small fw-bold text-uppercase mb-1">Tickets Sold</p>
-                    <h2 class="fw-bold text-dark mb-0">{{ $totalTickets }} <span class="fs-6 opacity-50 fw-normal">Tickets</span></h2>
-                    <small class="text-info fw-bold mt-2 d-block"><i class="fas fa-check-circle me-1"></i> Global reach</small>
+                    <h2 class="fw-bold text-dark mb-0">{{ $totalTicketsSold }} <span class="fs-6 opacity-50 fw-normal">Tickets</span></h2>
+                    <small class="text-info fw-bold mt-2 d-block">Overall Volume</small>
                 </div>
             </div>
-            <div class="col-md-4 fade-in-up" style="animation-delay: 0.5s;">
+            <div class="col-md-3 fade-in-up" style="animation-delay: 0.5s;">
                 <div class="card card-stats-premium p-4 shadow">
                     <div class="icon-box-premium bg-gradient-p shadow">
-                        <i class="fas fa-shopping-bag"></i>
+                        <i class="fas fa-percent"></i>
                     </div>
-                    <p class="text-muted small fw-bold text-uppercase mb-1">Net Orders</p>
-                    <h2 class="fw-bold text-dark mb-0">{{ $orders->count() }} <span class="fs-6 opacity-50 fw-normal">Transactions</span></h2>
-                    <small class="text-muted fw-bold mt-2 d-block">Lifetime activity</small>
+                    <p class="text-muted small fw-bold text-uppercase mb-1">Attendance Rate</p>
+                    <h2 class="fw-bold text-dark mb-0">{{ $attendanceRate }}%</h2>
+                    <small class="text-warning fw-bold mt-2 d-block">Scan Efficiency</small>
+                </div>
+            </div>
+            <div class="col-md-3 fade-in-up" style="animation-delay: 0.6s;">
+                <div class="card card-stats-premium p-4 shadow">
+                    <div class="icon-box-premium bg-dark shadow">
+                        <i class="fas fa-check-double text-white"></i>
+                    </div>
+                    <p class="text-muted small fw-bold text-uppercase mb-1">Terpakai</p>
+                    <h2 class="fw-bold text-dark mb-0">{{ $attendanceStats->where('status', 'used')->first()->count ?? 0 }}</h2>
+                    <small class="text-muted fw-bold mt-2 d-block">Scanned Tickets</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail per Event -->
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <div class="card card-stats-premium p-4 border-0">
+                    <div class="card-header bg-transparent border-0 px-0 mb-4">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-list-alt text-warning me-2"></i> Performa Detail per Event</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="bg-dark">
+                                <tr>
+                                    <th>Event Name</th>
+                                    <th class="text-center">Tickets Sold</th>
+                                    <th class="text-center">Rate Kehadiran</th>
+                                    <th class="text-end">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($eventStats as $stat)
+                                <tr>
+                                    <td class="fw-bold">{{ $stat->name }}</td>
+                                    <td class="text-center">{{ number_format($stat->tickets_sold) }}</td>
+                                    <td class="text-center">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <div class="progress w-50 me-2" style="height: 6px;">
+                                                <div class="progress-bar bg-info" style="width: {{ $stat->attendance_rate }}%"></div>
+                                            </div>
+                                            <span>{{ $stat->attendance_rate }}%</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-end fw-bold text-success">Rp {{ number_format($stat->revenue, 0, ',', '.') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,10 +253,10 @@ $(document).ready(function() {
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: {!! json_encode($chartLabels) !!},
+            labels: {!! json_encode($monthlyLabels) !!},
             datasets: [{
                 label: 'Pendapatan',
-                data: {!! json_encode($chartData) !!},
+                data: {!! json_encode($monthlyRevenue) !!},
                 borderColor: '#00d2ff',
                 backgroundColor: gradient,
                 borderWidth: 4,
@@ -259,9 +309,9 @@ $(document).ready(function() {
     new Chart(ctxPie, {
         type: 'doughnut',
         data: {
-            labels: {!! json_encode(array_column($eventStats, 'name')) !!},
+            labels: {!! json_encode(collect($eventStats)->pluck('name')) !!},
             datasets: [{
-                data: {!! json_encode(array_column($eventStats, 'revenue')) !!},
+                data: {!! json_encode(collect($eventStats)->pluck('revenue')) !!},
                 backgroundColor: [
                     'rgba(244, 208, 63, 0.85)',   // Gold
                     'rgba(0, 210, 255, 0.85)',    // Cyan

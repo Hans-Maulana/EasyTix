@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 07, 2026 at 07:37 PM
+-- Generation Time: Apr 08, 2026 at 07:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -89,7 +89,7 @@ CREATE TABLE `events` (
   `name` varchar(50) NOT NULL,
   `location` varchar(100) NOT NULL,
   `image` varchar(255) DEFAULT NULL,
-  `status` enum('active','nonactive','pending') NOT NULL,
+  `status` enum('active','nonactive','pending','completed') NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `users_id` int(11) NOT NULL,
@@ -103,8 +103,7 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `name`, `location`, `image`, `status`, `created_at`, `updated_at`, `users_id`, `category_id`, `banner`, `description`) VALUES
-('EVT-2026-001', 'Dewa 19', 'GBK', NULL, 'active', '2026-04-03 22:48:56', '2026-04-03 22:48:56', 1, 1, 'events/banners/9IwVCRJqYqWV0oFPK4TdtUZsSQ69K2bXruEqVT1L.jpg', 'Konser'),
-('EVT-2026-002', 'Maranatha Fest', 'Universitas Kristen Maranatha', NULL, 'active', '2026-04-06 19:50:56', '2026-04-06 19:50:56', 1, 2, 'events/banners/81res4YJMvWsWHWw6vFuxNkj9kCgVbR7p7buyoTA.jpg', 'Mari Ramaikan Maranatha Festival !');
+('EVT-2026-001', 'Event Testing', 'Stadion Jalak Harupat', NULL, 'active', '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 1, 'events/banners/VMJCj7JVVEkX5ClFx8eLSxoIB31Y4juEFi7OHI9T.png', NULL);
 
 -- --------------------------------------------------------
 
@@ -125,8 +124,7 @@ CREATE TABLE `event_performer` (
 --
 
 INSERT INTO `event_performer` (`id`, `event_id`, `performer_id`, `created_at`, `updated_at`) VALUES
-(4, 'EVT-2026-001', 4, NULL, NULL),
-(5, 'EVT-2026-002', 4, NULL, NULL);
+(8, 'EVT-2026-001', 4, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -138,7 +136,7 @@ CREATE TABLE `event_requests` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `event_id` varchar(255) NOT NULL,
   `users_id` bigint(20) UNSIGNED NOT NULL,
-  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `status` enum('pending','approved','rejected','cancelled') NOT NULL DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -148,7 +146,7 @@ CREATE TABLE `event_requests` (
 --
 
 INSERT INTO `event_requests` (`id`, `event_id`, `users_id`, `status`, `created_at`, `updated_at`) VALUES
-(7, 'EVT-2026-001', 2, 'approved', '2026-04-03 22:49:18', '2026-04-03 22:51:06');
+(10, 'EVT-2026-001', 2, 'approved', '2026-04-08 04:57:48', '2026-04-08 04:58:06');
 
 -- --------------------------------------------------------
 
@@ -173,9 +171,8 @@ CREATE TABLE `event_schedules` (
 --
 
 INSERT INTO `event_schedules` (`id`, `start_time`, `end_time`, `status`, `event_date`, `description`, `created_at`, `updated_at`, `event_id`) VALUES
-('ES-2026-001', '14:00:00', '20:00:00', 'scheduled', '2026-04-11', NULL, '2026-04-03 22:48:56', '2026-04-03 22:48:56', 'EVT-2026-001'),
-('ES-2026-002', '10:00:00', '00:00:00', 'ongoing', '2026-04-07', 'Day 1', '2026-04-06 19:50:57', '2026-04-06 19:50:57', 'EVT-2026-002'),
-('ES-2026-003', '10:00:00', '00:00:00', 'ongoing', '2026-04-08', 'Day 2', '2026-04-06 19:50:57', '2026-04-06 19:50:57', 'EVT-2026-002');
+('ES-2026-001', '14:00:00', '20:00:00', 'scheduled', '2026-04-16', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001'),
+('ES-2026-002', '14:00:00', '20:00:00', 'scheduled', '2026-04-20', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001');
 
 -- --------------------------------------------------------
 
@@ -211,10 +208,7 @@ CREATE TABLE `genres` (
 --
 
 INSERT INTO `genres` (`id`, `name`, `created_at`, `updated_at`) VALUES
-(1, 'Rock', NULL, NULL),
 (2, 'Pop', NULL, NULL),
-(3, 'Hip-Hop', NULL, NULL),
-(4, 'R&B', NULL, NULL),
 (5, 'Jazz', NULL, NULL),
 (6, 'Blues', NULL, NULL),
 (7, 'Country', NULL, NULL),
@@ -247,7 +241,7 @@ INSERT INTO `genres` (`id`, `name`, `created_at`, `updated_at`) VALUES
 (34, 'Chinese Traditional', NULL, NULL),
 (35, 'Indian Classical', NULL, NULL),
 (36, 'Korean Traditional', NULL, NULL),
-(38, 'Hai test', '2026-03-24 01:07:47', '2026-03-24 01:07:47');
+(39, 'R & B', '2026-04-08 04:24:33', '2026-04-08 04:24:33');
 
 -- --------------------------------------------------------
 
@@ -305,7 +299,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2026_03_30_132519_create_performers_table', 2),
 (11, '2026_03_30_132520_modify_events_table_for_category_and_banner', 3),
 (12, '2026_03_30_132521_drop_banners_and_event_genre_tables', 4),
-(13, '2026_04_05_162253_add_payment_method_to_orders_table', 4);
+(13, '2026_04_05_162253_add_payment_method_to_orders_table', 4),
+(14, '2026_04_08_113611_add_status_to_orders_table', 5);
 
 -- --------------------------------------------------------
 
@@ -330,19 +325,7 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`, `is_read`, `created_at`, `updated_at`) VALUES
-(23, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-001 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-03 22:50:41', '2026-04-05 05:31:48'),
-(24, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-002 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-03 23:19:28', '2026-04-05 05:31:48'),
-(25, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-003 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-03 23:27:41', '2026-04-05 05:31:48'),
-(26, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-004 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-05 06:39:52', '2026-04-05 11:04:48'),
-(27, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-005-VA telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-05 08:48:23', '2026-04-05 11:04:48'),
-(28, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-006 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-05 11:02:56', '2026-04-05 11:04:48'),
-(29, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-007 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-07 03:44:41', '2026-04-07 08:39:30'),
-(30, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-008 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-07 03:53:17', '2026-04-07 08:39:30'),
-(31, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-009 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-07 04:01:38', '2026-04-07 08:39:30'),
-(32, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-010 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-07 04:04:06', '2026-04-07 08:39:30'),
-(33, 3, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-011 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-07 04:13:35', '2026-04-07 08:39:30'),
-(34, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-012 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-07 09:58:33', '2026-04-07 09:58:33'),
-(35, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-013 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-07 17:07:34', '2026-04-07 17:07:34');
+(69, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-001 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-08 05:00:26', '2026-04-08 05:00:26');
 
 -- --------------------------------------------------------
 
@@ -353,6 +336,7 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`
 CREATE TABLE `orders` (
   `id` varchar(35) NOT NULL,
   `total_amount` decimal(10,0) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'paid',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `users_id` int(11) NOT NULL,
@@ -364,20 +348,8 @@ CREATE TABLE `orders` (
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `total_amount`, `created_at`, `updated_at`, `users_id`, `events_id`, `payment_method`) VALUES
-('ORD-2026-001', 200000, '2026-04-03 22:50:38', '2026-04-03 22:50:38', 3, 'EVT-2026-001', NULL),
-('ORD-2026-002', 140000, '2026-04-03 23:19:28', '2026-04-03 23:19:28', 3, 'EVT-2026-001', NULL),
-('ORD-2026-003', 200000, '2026-04-03 23:27:41', '2026-04-03 23:27:41', 3, 'EVT-2026-001', NULL),
-('ORD-2026-004', 140000, '2026-04-05 06:39:51', '2026-04-05 06:39:51', 3, 'EVT-2026-001', NULL),
-('ORD-2026-005-VA', 100000, '2026-04-05 08:48:23', '2026-04-05 08:48:23', 3, 'EVT-2026-001', NULL),
-('ORD-2026-006', 100000, '2026-04-05 11:02:56', '2026-04-05 11:02:56', 3, 'EVT-2026-001', 'Virtual Account BCA'),
-('ORD-2026-007', 200000, '2026-04-07 03:44:41', '2026-04-07 03:44:41', 3, 'EVT-2026-002', 'QRIS'),
-('ORD-2026-008', 300000, '2026-04-07 03:53:17', '2026-04-07 03:53:17', 3, 'EVT-2026-002', 'Virtual Account BNI'),
-('ORD-2026-009', 200000, '2026-04-07 04:01:38', '2026-04-07 04:01:38', 3, 'EVT-2026-002', 'Virtual Account Mandiri'),
-('ORD-2026-010', 200000, '2026-04-07 04:04:06', '2026-04-07 04:04:06', 3, 'EVT-2026-002', 'QRIS'),
-('ORD-2026-011', 200000, '2026-04-07 04:13:35', '2026-04-07 04:13:35', 3, 'EVT-2026-002', 'QRIS'),
-('ORD-2026-012', 400000, '2026-04-07 09:58:32', '2026-04-07 09:58:32', 12, 'EVT-2026-002', 'QRIS'),
-('ORD-2026-013', 100000, '2026-04-07 17:07:34', '2026-04-07 17:07:34', 12, 'EVT-2026-002', 'Virtual Account BCA');
+INSERT INTO `orders` (`id`, `total_amount`, `status`, `created_at`, `updated_at`, `users_id`, `events_id`, `payment_method`) VALUES
+('ORD-2026-001', 700000, 'paid', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 12, 'EVT-2026-001', 'QRIS');
 
 -- --------------------------------------------------------
 
@@ -406,22 +378,10 @@ CREATE TABLE `order_details` (
 --
 
 INSERT INTO `order_details` (`id`, `owner_name`, `phone_number`, `email`, `gender`, `age`, `status`, `qr_code`, `ticket_code`, `created_at`, `updated_at`, `tickets_id`, `orders_id`) VALUES
-('DET-2026-015UTA', 'test1', '0961957195', 'test1@gmail.com', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775412176_0_DET-2026-015UTA.svg', 'VERIFY-DET-2026-015UTA', '2026-04-05 11:02:56', '2026-04-05 11:02:56', 'TKT-2026-002', 'ORD-2026-006'),
-('DET-2026-8DEBMT', 'Bryan', '089517492024', 'christianbryan849@gmail.com', 'Laki-laki', 20, 'valid', 'qrcodes/qr_1775559197_0_DET-2026-8DEBMT.svg', 'VERIFY-DET-2026-8DEBMT', '2026-04-07 03:53:17', '2026-04-07 03:53:17', 'TKT-2026-004', 'ORD-2026-008'),
-('DET-2026-AGU2RU', 'Ferdinand Brian', '123495', '2472021@gmail.com', 'Laki-laki', 23, 'valid', 'qrcodes/qr_1775281841_DET-2026-AGU2RU.svg', 'VERIFY-DET-2026-AGU2RU', '2026-04-03 22:50:41', '2026-04-03 22:50:41', 'TKT-2026-002', 'ORD-2026-001'),
-('DET-2026-APPR49', '2472022 Bryan Christian Miercoles', '0951957194', '2472022@maranatha.ac.id', 'Laki-laki', 20, 'valid', 'qrcodes/qr_1775396391_DET-2026-APPR49.svg', 'VERIFY-DET-2026-APPR49', '2026-04-05 06:39:52', '2026-04-05 06:39:52', 'TKT-2026-001', 'ORD-2026-004'),
-('DET-2026-DHN1IC', 'Hans', '123', '123@gmail.com', 'Laki-laki', 123, 'valid', 'qrcodes/qr_1775284061_DET-2026-DHN1IC.svg', 'VERIFY-DET-2026-DHN1IC', '2026-04-03 23:27:41', '2026-04-03 23:27:41', 'TKT-2026-003', 'ORD-2026-003'),
-('DET-2026-EOQ1XE', 'test2', '0895172838', 'testt@gmail.com', 'Laki-laki', 19, 'valid', 'qrcodes/qr_1775559698_0_DET-2026-EOQ1XE.png', 'VERIFY-DET-2026-EOQ1XE', '2026-04-07 04:01:38', '2026-04-07 04:01:38', 'TKT-2026-004', 'ORD-2026-009'),
-('DET-2026-ETTGDP', 'Bryan Christian', '12345', '2472022@gmail.com', 'Laki-laki', 23, 'valid', 'qrcodes/qr_1775281838_DET-2026-ETTGDP.svg', 'VERIFY-DET-2026-ETTGDP', '2026-04-03 22:50:41', '2026-04-03 22:50:41', 'TKT-2026-002', 'ORD-2026-001'),
-('DET-2026-G6Y6AD', 'test1', '089615401633', 'christianbryan849@gmail.com', 'Laki-laki', 20, 'valid', 'qrcodes/qr_1775558681_0_DET-2026-G6Y6AD.svg', 'VERIFY-DET-2026-G6Y6AD', '2026-04-07 03:44:41', '2026-04-07 03:44:41', 'TKT-2026-004', 'ORD-2026-007'),
-('DET-2026-H1LTHU', 'Bryan Christian', '0951241947', 'christianbryan849@gmail.com', 'Laki-laki', 20, 'valid', 'qrcodes/qr_1775581112_0_DET-2026-H1LTHU.png', 'VERIFY-DET-2026-H1LTHU', '2026-04-07 09:58:33', '2026-04-07 09:58:33', 'TKT-2026-004', 'ORD-2026-012'),
-('DET-2026-JEZXSG', 'Bryan Christian', '089512528393', 'christianbryan849@gmail.com', 'Laki-laki', 20, 'valid', 'qrcodes/qr_1775581654_0_DET-2026-JEZXSG.png', 'VERIFY-DET-2026-JEZXSG', '2026-04-07 17:07:34', '2026-04-07 17:07:34', 'TKT-2026-005', 'ORD-2026-013'),
-('DET-2026-KTXEYG', 'a', '123', '123@gmail.com', 'Laki-laki', 123, 'valid', 'qrcodes/qr_1775283568_DET-2026-KTXEYG.svg', 'VERIFY-DET-2026-KTXEYG', '2026-04-03 23:19:28', '2026-04-03 23:19:28', 'TKT-2026-001', 'ORD-2026-002'),
-('DET-2026-LQQUD4', 'test3', '089571248', 'testt2@gmail.com', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775559846_0_DET-2026-LQQUD4.jpg', 'VERIFY-DET-2026-LQQUD4', '2026-04-07 04:04:06', '2026-04-07 04:04:06', 'TKT-2026-004', 'ORD-2026-010'),
-('DET-2026-NEA2G1', 'test3', '0895147116', 'test3@gmail.com', 'Laki-laki', 24, 'valid', 'qrcodes/qr_1775560415_0_DET-2026-NEA2G1.png', 'VERIFY-DET-2026-NEA2G1', '2026-04-07 04:13:35', '2026-04-07 04:13:35', 'TKT-2026-004', 'ORD-2026-011'),
-('DET-2026-RWCZC1', 'hans', '08957121241', 'hans@gmail.com', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775581113_0_DET-2026-RWCZC1.png', 'VERIFY-DET-2026-RWCZC1', '2026-04-07 09:58:33', '2026-04-07 09:58:33', 'TKT-2026-006', 'ORD-2026-012'),
-('DET-2026-USFUBE', 'brian', '08951192515', 'brian@gmail.com', 'Laki-laki', 19, 'valid', 'qrcodes/qr_1775559197_0_DET-2026-USFUBE.svg', 'VERIFY-DET-2026-USFUBE', '2026-04-07 03:53:17', '2026-04-07 03:53:17', 'TKT-2026-005', 'ORD-2026-008'),
-('DET-2026-WFQSQK', '2472022 Bryan Christian Miercoles', '089567799', '2472022@maranatha.ac.id', 'Laki-laki', 20, 'valid', 'qrtiket/qr_1775404103_DET-2026-WFQSQK.svg', 'VERIFY-DET-2026-WFQSQK', '2026-04-05 08:48:23', '2026-04-05 08:48:23', 'TKT-2026-002', 'ORD-2026-005-VA');
+('DET-2026-CYQ38S', 'Ferdinand Brian Gondosupadmo', '123', '2472021@maranatha.ac.id', 'Laki-laki', 21, 'used', 'qrcodes/qr_1775624426_0_DET-2026-CYQ38S.png', 'VERIFY-DET-2026-CYQ38S', '2026-04-08 05:00:26', '2026-04-08 05:03:00', 'TKT-2026-003', 'ORD-2026-001'),
+('DET-2026-DIYKH3', 'Errvin Junius', '1234', '2472024@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_1_DET-2026-DIYKH3.png', 'VERIFY-DET-2026-DIYKH3', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-003', 'ORD-2026-001'),
+('DET-2026-JVE4CD', 'Hans Maulana Budiputra', '085380001432', '2472052@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_0_DET-2026-JVE4CD.png', 'VERIFY-DET-2026-JVE4CD', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-002', 'ORD-2026-001'),
+('DET-2026-KTHJJ1', 'Bryan Christian', '085380001432', '2472022@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_1_DET-2026-KTHJJ1.png', 'VERIFY-DET-2026-KTHJJ1', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-002', 'ORD-2026-001');
 
 -- --------------------------------------------------------
 
@@ -444,7 +404,7 @@ CREATE TABLE `password_reset_tokens` (
 CREATE TABLE `payments` (
   `id` varchar(35) NOT NULL,
   `method` enum('qris','transfer') NOT NULL,
-  `status` enum('pending','completed','cancelled') NOT NULL,
+  `status` enum('pending','completed','cancelled','refunded') NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `orders_id` varchar(35) NOT NULL
@@ -490,8 +450,7 @@ CREATE TABLE `performer_genre` (
 --
 
 INSERT INTO `performer_genre` (`id`, `performer_id`, `genre_id`, `created_at`, `updated_at`) VALUES
-(12, 4, 1, NULL, NULL),
-(13, 4, 4, NULL, NULL);
+(14, 4, 2, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -513,8 +472,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('2rYRnB1vXbR96hjVddsLZiCnTqwJkX9yWgG73RME', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRG5RTHVwc2FWejZoYzZma0lzUmRCYkUyT1gyTUpuNnk1dkowYm9HcCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9mb3Jnb3QtcGFzc3dvcmQiO3M6NToicm91dGUiO3M6MTY6InBhc3N3b3JkLnJlcXVlc3QiO319', 1775580947),
-('VOPmBDvgV2852JzwcMEtCaD1k6sgV762sm1Zyqwd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoickVjWGdZYjB2QnRDYU82eXRSM1UwQjV6RjN4cXcyaXFNTURKYkpVRiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9wcm9maWxlIjtzOjU6InJvdXRlIjtzOjEyOiJwcm9maWxlLmVkaXQiO31zOjM6InVybCI7YTowOnt9fQ==', 1775582797);
+('KVRkBNFs31lNmjxve6HYErJ9nHol3wKoLlPHMqu6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTUd0OFNSVmZjQ29lQnQ4dm1FNGZmeHN1c3FUUWJXOVJxSUFFTkxyZSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vcmdhbml6ZXIvdmVyaWZ5LXRpY2tldC9zY2hlZHVsZS9FUy0yMDI2LTAwMiI7czo1OiJyb3V0ZSI7czoyNDoib3JnYW5pemVyLnZlcmlmeVNjaGVkdWxlIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1775624581);
 
 -- --------------------------------------------------------
 
@@ -537,13 +495,10 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`id`, `capacity`, `price`, `created_at`, `updated_at`, `ticket_types_id`, `event_schedules_id`) VALUES
-('TKT-2026-001', 98, 140000, '2026-04-03 22:48:56', '2026-04-05 06:39:51', 1, 'ES-2026-001'),
-('TKT-2026-002', 496, 100000, '2026-04-03 22:48:56', '2026-04-05 11:02:56', 2, 'ES-2026-001'),
-('TKT-2026-003', 99, 200000, '2026-04-03 22:48:56', '2026-04-03 23:27:41', 4, 'ES-2026-001'),
-('TKT-2026-004', 24, 200000, '2026-04-06 19:50:57', '2026-04-07 09:58:32', 1, 'ES-2026-002'),
-('TKT-2026-005', 48, 100000, '2026-04-06 19:50:57', '2026-04-07 17:07:34', 2, 'ES-2026-002'),
-('TKT-2026-006', 29, 200000, '2026-04-06 19:50:57', '2026-04-07 09:58:33', 1, 'ES-2026-003'),
-('TKT-2026-007', 50, 100000, '2026-04-06 19:50:57', '2026-04-06 19:50:57', 2, 'ES-2026-003');
+('TKT-2026-001', 500, 150000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 2, 'ES-2026-001'),
+('TKT-2026-002', 198, 200000, '2026-04-08 04:57:18', '2026-04-08 05:00:26', 1, 'ES-2026-001'),
+('TKT-2026-003', 498, 150000, '2026-04-08 04:57:18', '2026-04-08 05:00:26', 2, 'ES-2026-002'),
+('TKT-2026-004', 200, 200000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 'ES-2026-002');
 
 -- --------------------------------------------------------
 
@@ -592,10 +547,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `phone_number`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin Utama', '2472021@maranatha.ac.id', '2026-04-07 04:48:06', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'svMUCmrwgZSrUXJw4HhmVPufQRpzAytG9n5lCUQV4xtnfe2hBLZSxef89Qh0', '2026-03-17 06:05:19', '2026-04-07 04:48:06'),
+(1, 'Admin Utama', '2472021@maranatha.ac.id', '2026-04-07 04:48:06', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'nltrhM43kDrHEICsS0HSuWbthanQI8niq7s6iusuwhRUlQ6Wiyrx0jrBVZwG', '2026-03-17 06:05:19', '2026-04-07 04:48:06'),
 (2, 'Organizer PK Entertainment', 'organizer@gmail.com', '2026-04-07 04:48:06', '$2y$12$rYbTsu0vPVNKmAUghFav5eucynaAikGOuNyL37AMokV3yg/wEbrZq', '081234567891', 'organizer', NULL, '2026-03-17 06:05:20', '2026-04-07 04:48:06'),
 (3, 'Bryan Christian', '2472022@maranatha.ac.id', '2026-04-07 04:48:06', '$2y$12$tThgtypmZrN56bS3vuFItO4bJqdwBpPZJCiHASdqZkPGNfYEXsln2', '089515401633', 'user', '3AlNcGSGlj4X6zttnQqmwqYLn64MYXWEyGPsILZ9sLRcnM4ik49LKUWwRZpR', '2026-03-17 06:05:20', '2026-04-07 09:25:38'),
-(8, 'Ferdinand Brian', 'admin@gmail.com', '2026-04-07 04:48:06', '$2y$12$68mWjg4qH9d7wYpWLb3VGu7h5LFcPnlC5/TS2Gy36gagfxwq1N30C', '0833234525626', 'admin', NULL, '2026-03-23 21:39:23', '2026-04-07 04:48:06'),
 (12, 'Bryan Christian', 'christianbryan849@gmail.com', '2026-04-07 09:48:18', '$2y$12$aBenX31XkZhTt.mlAI2QreTXFA7p.YItj1jLSvnlXSmidNonBOJ1.', '0952731927', 'user', NULL, '2026-04-07 09:27:44', '2026-04-07 17:12:14');
 
 -- --------------------------------------------------------
@@ -793,13 +747,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `event_performer`
 --
 ALTER TABLE `event_performer`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -811,7 +765,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `genres`
 --
 ALTER TABLE `genres`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -823,13 +777,13 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `performers`
@@ -841,7 +795,7 @@ ALTER TABLE `performers`
 -- AUTO_INCREMENT for table `performer_genre`
 --
 ALTER TABLE `performer_genre`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `ticket_types`

@@ -5,11 +5,11 @@
           <div class="logo-header" data-background-color="dark">
             <a href="{{ url('/') }}" class="logo">
               <img
-                src="{{ asset('assets/img/logo_easytix_new.png')}}"
+                src="{{ asset('assets/img/logo_easy_tix.jpeg')}}"
                 alt="EasyTix Logo"
                 class="navbar-brand"
                 height="45"
-                style="margin-left: 10px;"
+                style="margin-left: 10px; border-radius: 8px;"
               />
 
             </a>
@@ -165,6 +165,16 @@
                             <p>Laporan Penjualan</p>
                         </a>
                     </li>
+                    <!-- 7. Logout (biasanya di header, tapi ditambahkan sesuai request) -->
+                  <li class="nav-item mt-4">
+                      <a href="#" class="text-danger" data-confirm="Apakah Anda yakin ingin keluar dari akun ini?" data-submit-form="sidebar-logout-form">
+                          <i class="fas fa-sign-out-alt text-danger"></i>
+                          <p>Logout</p>
+                      </a>
+                      <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                          @csrf
+                      </form>
+                  </li>
 
               @else(Auth::check() && Auth::user()->role == 'user')
                   {{-- MENU user --}}
@@ -195,6 +205,16 @@
                           <i class="fas fa-ticket-alt"></i>
                           <p>Tiket Saya</p>
                       </a>
+                  </li>
+                  <!-- 7. Logout (biasanya di header, tapi ditambahkan sesuai request) -->
+                  <li class="nav-item mt-4">
+                      <a href="#" class="text-danger" data-confirm="Apakah Anda yakin ingin keluar dari akun ini?" data-submit-form="sidebar-logout-form">
+                          <i class="fas fa-sign-out-alt text-danger"></i>
+                          <p>Logout</p>
+                      </a>
+                      <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                          @csrf
+                      </form>
                   </li>
               @endif
             </ul>

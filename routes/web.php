@@ -23,18 +23,18 @@ Route::get('/', function () {
     return view('landing-page', compact('events'));
 });
 
-Route::middleware(['auth', 'verified', 'user'])->group(function () {
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        } elseif ($user->role === 'organizer') {
-            return redirect()->route('organizer.dashboard');
-        } else {
-            return redirect()->route('user.dashboard');
-        }
-    })->name('dashboard');
+Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
+    $user = auth()->user();
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'organizer') {
+        return redirect()->route('organizer.dashboard');
+    } else {
+        return redirect()->route('user.dashboard');
+    }
+})->name('dashboard');
 
+Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 });
 
@@ -111,6 +111,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Admin Report
     Route::get('/admin/reports', [UserController::class, 'adminReport'])->name('admin.reports');
+    Route::get('/admin/reports/download-monthly', [UserController::class, 'downloadMonthlyReport'])->name('admin.downloadMonthlyReport');
 });
 
 

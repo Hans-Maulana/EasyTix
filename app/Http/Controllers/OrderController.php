@@ -396,6 +396,7 @@ class OrderController extends Controller
 
             $orderHistory[] = [
                 'id'             => $order->id,
+                'status'         => $order->status ?? 'paid',
                 'payment_method' => $order->payment_method ?? 'QRIS',
                 'total_amount'   => $order->total_amount,
                 'created_at'     => $order->created_at->format('d M Y, H:i'),

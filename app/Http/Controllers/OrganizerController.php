@@ -8,6 +8,7 @@ use App\Models\EventSchedule;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrganizerController extends Controller
 {
@@ -25,9 +26,12 @@ class OrganizerController extends Controller
 
     public function myEvents()
     {
-        // Menampilkan event yang sudah disetujui (access granted)
+        // Menampilkan event yang sudah disetujui (access granted) dan status event masih active
         $approvedRequests = EventRequest::where('users_id', auth()->id())
                             ->where('status', 'approved')
+                            ->whereHas('event', function($query) {
+                                $query->where('status', 'active');
+                            })
                             ->with(['event.category', 'event.performers.genres'])
                             ->get();
         return view('organizer.my-events', compact('approvedRequests'));
@@ -36,8 +40,12 @@ class OrganizerController extends Controller
     public function selectEventVerification()
     {
         // View yang menampilkan daftar event untuk dipilih mana yang mau diverifikasi
+        // Hanya tampilkan event yang statusnya aktif
         $approvedRequests = EventRequest::where('users_id', auth()->id())
                             ->where('status', 'approved')
+                            ->whereHas('event', function($query) {
+                                $query->where('status', 'active');
+                            })
                             ->with('event')
                             ->get();
         return view('organizer.verify-ticket', compact('approvedRequests'));
@@ -135,39 +143,68 @@ class OrganizerController extends Controller
                     ->get();
         
         $totalRevenue = $orders->sum('total_amount');
-        $totalTickets = OrderDetail::whereIn('orders_id', $orders->pluck('id'))->count();
+        $totalTicketsSold = OrderDetail::whereIn('orders_id', $orders->pluck('id'))->count();
         
+        // Attendance Stats for Organizer
+        $attendanceStats = OrderDetail::whereIn('orders_id', $orders->pluck('id'))
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->get();
+            
+        $totalAttendance = $attendanceStats->sum('count');
+        $usedAttendance = $attendanceStats->where('status', 'used')->first()->count ?? 0;
+        $attendanceRate = $totalAttendance > 0 ? round(($usedAttendance / $totalAttendance) * 100) : 0;
+        
+        // Detail per Event
         $eventStats = [];
-        foreach($eventIds as $id) {
-            $event = Event::find($id);
-            if(!$event) continue;
-            
-            $eventOrders = $orders->where('events_id', $id);
+        $events = Event::whereIn('id', $eventIds)->get();
+        foreach($events as $event) {
+            $eventOrders = $orders->where('events_id', $event->id);
             $revenue = $eventOrders->sum('total_amount');
-            $tickets = OrderDetail::whereIn('orders_id', $eventOrders->pluck('id'))->count();
             
-            $eventStats[] = [
-                'name'         => $event->name,
-                'revenue'      => $revenue,
-                'tickets'      => $tickets,
+            // Ambil ID detail pesanan untuk event ini
+            $orderDetailIds = OrderDetail::whereIn('orders_id', $eventOrders->pluck('id'))->pluck('id');
+            $ticketsCount = $orderDetailIds->count();
+            
+            $eventUsed = OrderDetail::whereIn('id', $orderDetailIds)
+                ->where('status', 'used')
+                ->count();
+            
+            $eventAttendanceRate = $ticketsCount > 0 ? round(($eventUsed / $ticketsCount) * 100) : 0;
+            
+            $eventStats[] = (object) [
+                'id' => $event->id,
+                'name' => $event->name,
+                'revenue' => $revenue,
+                'tickets_sold' => $ticketsCount,
+                'attendance_rate' => $eventAttendanceRate,
                 'orders_count' => $eventOrders->count()
             ];
         }
 
-        // Data untuk Chart (Penjualan 7 Hari Terakhir)
-        $chartLabels = [];
-        $chartData = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
-            $label = now()->subDays($i)->format('d M');
-            $revenue = $orders->filter(function($order) use ($date) {
-                return $order->created_at->format('Y-m-d') == $date;
+        // Monthly Trend (6 months)
+        $monthlyLabels = [];
+        $monthlyRevenue = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthDate = now()->subMonths($i);
+            $label = $monthDate->format('M Y');
+            $rev = $orders->filter(function($order) use ($monthDate) {
+                return $order->created_at->format('Y-m') == $monthDate->format('Y-m');
             })->sum('total_amount');
             
-            $chartLabels[] = $label;
-            $chartData[] = (float)$revenue;
+            $monthlyLabels[] = $label;
+            $monthlyRevenue[] = (float)$rev;
         }
 
-        return view('organizer.sales-report', compact('orders', 'totalRevenue', 'totalTickets', 'eventStats', 'chartLabels', 'chartData'));
+        return view('organizer.sales-report', compact(
+            'orders', 
+            'totalRevenue', 
+            'totalTicketsSold', 
+            'attendanceRate', 
+            'eventStats', 
+            'monthlyLabels', 
+            'monthlyRevenue',
+            'attendanceStats'
+        ));
     }
 }

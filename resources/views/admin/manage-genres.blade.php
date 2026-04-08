@@ -88,10 +88,20 @@
 
             // SweetAlert Flash Notifications
             @if(session('success'))
-                swal("Berhasil!", "{{ session('success') }}", "success");
+                swalPremium.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
             @endif
             @if(session('error'))
-                swal("Gagal!", "{{ session('error') }}", "error");
+                swalPremium.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}"
+                });
             @endif
 
             // SweetAlert Delete Confirmation - Using delegation for DataTable compatibility
@@ -99,23 +109,16 @@
                 e.preventDefault();
                 const form = $(this).closest('form');
                 
-                swal({
+                swalPremium.fire({
                     title: 'Hapus Genre?',
                     text: 'Data genre yang dihapus tidak bisa dikembalikan!',
                     icon: 'warning',
-                    buttons: {
-                        confirm: {
-                            text: "Ya, Hapus!",
-                            className: "btn btn-danger",
-                        },
-                        cancel: {
-                            visible: true,
-                            text: "Batal",
-                            className: "btn btn-secondary",
-                        },
-                    },
-                }).then((Delete) => {
-                    if (Delete) {
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         form.submit();
                     }
                 });

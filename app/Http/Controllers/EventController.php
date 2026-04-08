@@ -8,7 +8,14 @@ use App\Models\Performer;
 use App\Models\EventSchedule;
 use App\Models\Ticket;
 use App\Models\TicketType;
+use App\Models\OrderDetail;
+use App\Models\EventRequest;
+use App\Models\Order;
+use App\Models\Notification;
+use App\Mail\EventCancelledRefund;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -94,7 +101,7 @@ class EventController extends Controller
             return redirect()->route('admin.manageEvents')->with('success', 'Event berhasil ditambahkan!');
 
         } catch (\Exception $e) {
-            \Log::error($e);
+            Log::error($e);
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal menambahkan event: ' . $e->getMessage());
         }
@@ -204,10 +211,95 @@ class EventController extends Controller
     public function deleteEvent(Event $event)
     {
         try {
-            $event->delete();
-            return redirect()->route('admin.manageEvents')->with('success', 'Event berhasil dihapus!');
+            DB::beginTransaction();
+
+            // 1. Check if there are any orders for this event
+            $hasOrders = OrderDetail::whereHas('ticket.event_schedule', function ($query) use ($event) {
+                $query->where('event_id', $event->id);
+            })->exists();
+
+            // 2. Check if there are any organizers "holding" this event (approved requests)
+            $isHeldByOrganizer = EventRequest::where('event_id', $event->id)
+                ->where('status', 'approved')
+                ->exists();
+
+            if ($hasOrders || $isHeldByOrganizer) {
+                // Jika sudah ada order atau dipegang organizer, ubah status menjadi nonactive
+                $event->update(['status' => 'nonactive']);
+
+                // Update status EventRequest menjadi 'cancelled' dan beri notifikasi ke organizer
+                $approvedRequests = EventRequest::where('event_id', $event->id)
+                    ->where('status', 'approved')
+                    ->get();
+                
+                foreach ($approvedRequests as $request) {
+                    $request->update(['status' => 'cancelled']);
+                    
+                    Notification::create([
+                        'user_id' => $request->users_id,
+                        'type'    => 'event_cancelled',
+                        'title'   => 'Event Dibatalkan',
+                        'message' => "Event '{$event->name}' telah dibatalkan oleh Admin. Status kerjasama Anda kini dibatalkan.",
+                        'link'    => route('organizer.myEvents'),
+                    ]);
+                }
+
+                // Proses Refund dan Notifikasi ke User yang sudah membeli tiket
+                $orders = Order::with('user')->where('events_id', $event->id)->get();
+                foreach ($orders as $order) {
+                    // Update Status Order menjadi 'refunded'
+                    $order->update(['status' => 'refunded']);
+
+                    // Update SEMUA detail tiket menjadi 'cancelled' agar tidak muncul sebagai tiket valid
+                    OrderDetail::where('orders_id', $order->id)->update(['status' => 'cancelled']);
+
+                    if ($order->user) {
+                        // Buat Notifikasi di sistem
+                        Notification::create([
+                            'user_id' => $order->users_id,
+                            'type'    => 'refund',
+                            'title'   => 'Refund Tiket Event',
+                            'message' => "Event '{$event->name}' telah dibatalkan. Dana sebesar Rp " . number_format($order->total_amount, 0, ',', '.') . " akan direfund ke metode pembayaran Anda ({$order->payment_method}).",
+                            'link'    => route('user.myTickets'),
+                        ]);
+
+                        // Kirim Email Refund
+                        try {
+                            Mail::to($order->user->email)->send(new EventCancelledRefund($event, $order));
+                        } catch (\Exception $e) {
+                            Log::error("Gagal mengirim email refund ke {$order->user->email}: " . $e->getMessage());
+                        }
+                    }
+                }
+                
+                DB::commit();
+                return redirect()->route('admin.manageEvents')->with('success', 'Event tidak dapat dihapus karena sudah memiliki transaksi atau dipegang organizer. Status diubah menjadi Nonactive, refund dan notifikasi telah dikirim.');
+            } else {
+                // Jika belum ada order dan belum dipegang organizer, hapus event dan relasinya
+                
+                // Detach performers (pivot table)
+                $event->performers()->detach();
+                
+                // Hapus semua tiket yang terkait dengan schedule event ini
+                $scheduleIds = $event->event_schedule()->pluck('id');
+                Ticket::whereIn('event_schedules_id', $scheduleIds)->delete();
+                
+                // Hapus semua schedule event
+                $event->event_schedule()->delete();
+                
+                // Hapus semua request (jika ada yang masih pending/rejected/cancelled)
+                $event->requests()->delete();
+
+                // Hapus event itu sendiri
+                $event->delete();
+
+                DB::commit();
+                return redirect()->route('admin.manageEvents')->with('success', 'Event berhasil dihapus!');
+            }
         } catch (\Exception $e) {
-            return redirect()->route('admin.manageEvents')->with('error', 'Gagal menghapus event: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return redirect()->route('admin.manageEvents')->with('error', 'Gagal memproses penghapusan event: ' . $e->getMessage());
         }
     }
 }

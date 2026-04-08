@@ -4,10 +4,10 @@
 <style>
     .verification-card-premium {
         border-radius: 2.5rem !important;
-        border: none !important;
-        background: #fff;
+        background: rgba(20, 46, 94, 0.2) !important;
+        backdrop-filter: blur(10px);
         padding: 3rem;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.04) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         text-align: center;
         max-width: 600px;
         margin: 0 auto;
@@ -45,8 +45,9 @@
     }
     .history-card-premium {
         border-radius: 2rem !important;
-        border: none !important;
-        background: #fff;
+        background: rgba(7, 17, 32, 0.4) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
         overflow: hidden;
     }
     .badge-status-premium {
@@ -106,13 +107,13 @@
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table mb-0 align-middle">
-                                <thead class="bg-light">
-                                    <tr class="text-muted small fw-bold text-uppercase">
-                                        <th class="ps-4 py-4">Time</th>
-                                        <th>Ticket Code</th>
-                                        <th>Owner Name</th>
-                                        <th>Ticket Type</th>
-                                        <th class="text-end pe-4">Status</th>
+                                <thead style="background: rgba(0,0,0,0.3) !important;">
+                                    <tr class="small fw-bold text-uppercase">
+                                        <th class="ps-4 py-4" style="color: var(--premium-gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1);">Time</th>
+                                        <th style="color: var(--premium-gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1);">Ticket Code</th>
+                                        <th style="color: var(--premium-gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1);">Owner Name</th>
+                                        <th style="color: var(--premium-gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1);">Ticket Type</th>
+                                        <th class="text-end pe-4" style="color: var(--premium-gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1);">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>

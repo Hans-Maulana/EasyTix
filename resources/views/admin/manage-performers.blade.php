@@ -57,7 +57,7 @@
                                                 @if($performer->image)
                                                     <img src="{{ asset('storage/' . $performer->image) }}" class="rounded-circle" width="50" height="50" alt="Performer Photo">
                                                 @else
-                                                    <img src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png') }}" class="rounded-circle" width="50" height="50" alt="Default Performer Photo">
+                                                    <img src="{{ asset('assets/img/logo_easy_tix.jpeg') }}" class="rounded-circle" width="50" height="50" alt="Default Performer Photo">
                                                 @endif
                                             </td>
                                             <td>{{ $performer->name }}</td>

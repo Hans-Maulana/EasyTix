@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyTix</title>
-    <link rel="icon" href="{{ asset('assets/img/logo_easytix_new.png') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('assets/img/logo_easy_tix.jpeg') }}" type="image/x-icon" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -351,7 +351,7 @@
     <nav class="navbar navbar-expand-lg fixed-top navbar-custom" id="navbar">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url('/') }}">
-                <img src="{{ asset('assets/img/logo_easytix_new.png') }}" alt="EasyTix" height="50">
+                <img src="{{ asset('assets/img/logo_easy_tix.jpeg') }}" alt="EasyTix" height="50">
             </a>
             <button class="navbar-toggler shadow-none border-0 text-gold fs-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <i class="fa-solid fa-bars-staggered"></i>
@@ -361,7 +361,6 @@
                     <li class="nav-item"><a class="nav-link active" href="#home">Beranda</a></li>
                     <li class="nav-item"><a class="nav-link" href="#konser">Jadwal Konser</a></li>
                     <li class="nav-item"><a class="nav-link" href="#keunggulan">Keunggulan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#testimoni">Testimoni</a></li>
                 </ul>
                 <div class="d-flex gap-3 align-items-center mt-3 mt-lg-0">
                     @guest
@@ -400,11 +399,11 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-overlay"></div>
+        <!-- <div class="hero-bg"></div>
+        <div class="hero-overlay"></div> -->
 
         <!-- Decorative Floating Badges (Desktop Only) -->
-        <div class="floating-badge badge-1 d-none d-lg-flex">
+        <!-- <div class="floating-badge badge-1 d-none d-lg-flex">
             <div class="bg-gold text-dark rounded-circle d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
                 <i class="fa-solid fa-fire fs-4"></i>
             </div>
@@ -421,7 +420,7 @@
                 <h6 class="mb-0 fw-bold text-white">Transaksi Berhasil</h6>
                 <small class="text-light opacity-75">a/n Budi Santoso</small>
             </div>
-        </div>
+        </div> -->
 
         <div class="container hero-content">
             <div class="row">
@@ -625,7 +624,7 @@
             <div class="row g-4 mb-5">
                 <div class="col-lg-4 pe-lg-5">
                     <a class="navbar-brand d-flex align-items-center gap-2 mb-4 justify-content-center justify-content-lg-start" href="#">
-                        <img src="{{ asset('assets/img/kaiadmin/logo_EasyTix.png') }}" alt="EasyTix" height="40">
+                        <img src="{{ asset('assets/img/logo_easy_tix.jpeg') }}" alt="EasyTix" height="40">
                     </a>
                     <p class="text-light opacity-50 mb-4">Platform penyedia layanan tiket event dan konser terbaik. Keamanan, kecepatan, dan kenyamanan pengguna adalah prioritas utama kami.</p>
                     <div class="d-flex justify-content-center justify-content-lg-start">
