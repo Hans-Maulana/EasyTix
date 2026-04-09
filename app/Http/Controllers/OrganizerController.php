@@ -118,7 +118,19 @@ class OrganizerController extends Controller
             ->with(['ticket.ticket_type'])
             ->get();
 
-        return view('organizer.attendees', compact('schedule', 'attendees'));
+        $totalCount = $attendees->count();
+        $hadirCount = $attendees->where('status', 'used')->count();
+        $tidakHadirCount = $attendees->where('status', 'valid')->count();
+        $attendanceRate = $totalCount > 0 ? round(($hadirCount / $totalCount) * 100, 1) : 0;
+
+        return view('organizer.attendees', compact(
+            'schedule', 
+            'attendees', 
+            'totalCount', 
+            'hadirCount', 
+            'tidakHadirCount', 
+            'attendanceRate'
+        ));
     }
 
     public function salesReport()

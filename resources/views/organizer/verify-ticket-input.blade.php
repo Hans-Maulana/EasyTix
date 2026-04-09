@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('ExtraCSS')
+@section('ExtraCSS
     <style>
         .verification-card-premium {
             border-radius: 2.5rem !important;
