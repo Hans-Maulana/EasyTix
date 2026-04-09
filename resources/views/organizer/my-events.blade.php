@@ -5,9 +5,10 @@
     .event-card-premium {
         border-radius: 2rem !important;
         overflow: hidden !important;
-        background: #fff;
-        border: none !important;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.03) !important;
+        background: rgba(20, 46, 94, 0.4) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         height: 100%;
     }
@@ -81,7 +82,13 @@
                 <div class="col-md-6 col-lg-4 fade-in-up" style="animation-delay: {{ $loop->index * 0.1 }}s;">
                     <div class="card event-card-premium">
                         <div class="event-img-header">
-                            <i class="fas fa-music"></i>
+                            @if ($request->event->banner)
+                                <img src="{{ asset('storage/' . $request->event->banner) }}"
+                                     alt="{{ $request->event->name }}"
+                                     style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;">
+                            @else
+                                <i class="fas fa-music"></i>
+                            @endif
                             <span class="status-badge-p">APPROVED</span>
                         </div>
                         <div class="event-content-p">
