@@ -66,7 +66,14 @@
         transform: translateX(5px);
     }
 
-    .carousel-item img { max-height: 450px; }
+    .carousel-item { height: 450px; position: relative; }
+    .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
 </style>
 @endsection
 
@@ -103,9 +110,7 @@
                     <div class="carousel-inner bg-dark">
                         @foreach($mainBanners as $index => $banner)
                         <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                            <div class="d-flex align-items-center justify-content-center" style="height: 450px; background: #000;">
-                                <img src="{{ $banner->banner ? asset('storage/' . $banner->banner) : asset('assets/img/easytix_login_bg.png') }}" class="d-block mw-100 mh-100" alt="{{ $banner->name }}" style="object-fit: contain;">
-                            </div>
+                            <img src="{{ $banner->banner ? asset('storage/' . $banner->banner) : asset('assets/img/easytix_login_bg.png') }}" alt="{{ $banner->name }}">
                             <div class="carousel-caption d-none d-md-block text-start p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8)); left:0; right:0; bottom:0;">
                                 <h2 class="fw-bold">{{ $banner->name }}</h2>
                                 <a href="{{ route('user.eventTickets', $banner->id) }}" class="btn premium-btn btn-lg btn-round mt-2">
