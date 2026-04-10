@@ -49,7 +49,7 @@
         transition: all 0.3s ease;
     }
     .qris-modal {
-        background: rgba(15, 25, 45, 0.95); border-radius: 30px; padding: 40px;
+        background: rgba(15, 25, 45, 0.95); border-radius: 30px; padding: 30px;
         max-width: 600px; width: 95%; text-align: center;
         box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: all 0.3s ease;
         border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
@@ -57,8 +57,19 @@
     #qrisOverlay.active { display: flex; }
     #qrisOverlay.active .qris-modal { transform: scale(1); }
     .timer-badge {
-        background: #ad6c6c28; color: #000000; padding: 8px 20px;
-        border-radius: 50px; font-weight: 800; display: inline-block; margin-bottom: 20px;
+        background: rgba(244, 208, 63, 0.15); color: #F4D03F; padding: 6px 15px;
+        border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid rgba(244, 208, 63, 0.3); margin-bottom: 15px;
+        backdrop-filter: blur(10px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-size: 0.85rem;
+    }
+    .timer-badge.warning {
+        background: rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: rgba(231, 76, 60, 0.3);
+        animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
     }
 </style>
 @endsection
@@ -74,7 +85,13 @@
             @csrf
             <div class="row">
                 <div class="col-lg-7" data-aos="fade-right">
-                    <h5 class="fw-bold mb-4">Pilih Metode Pembayaran</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Pilih Metode Pembayaran</h5>
+                        <div class="timer-badge" id="mainTimerContainer">
+                            <i class="fas fa-clock"></i>
+                            <span id="mainTimer">03:00</span>
+                        </div>
+                    </div>
                     
                     <div class="payment-option" id="optQRIS" onclick="selectPayment('QRIS')">
                         <div class="check-mark"></div>
@@ -146,7 +163,7 @@
                         <button type="button" id="btnNext" class="btn btn-premium w-100 py-3 mb-2" disabled>
                             Lanjutkan <i class="fas fa-arrow-right ms-2 transition-icon"></i>
                         </button>
-                        <a href="{{ route('user.checkout') }}" class="btn btn-outline-dark w-100 rounded-pill py-2 mt-2">
+                        <a href="{{ route('user.checkout') }}" class="btn btn-outline-light w-100 rounded-pill py-2 mt-2" style="border-width: 2px; font-weight: 600;">
                             <i class="fas fa-arrow-left me-2"></i> Kembali
                         </a>
                         <p class="text-center text-muted small mt-3">
@@ -162,16 +179,16 @@
 <!-- QRIS Overlay -->
 <div id="qrisOverlay">
     <div class="qris-modal" data-aos="zoom-in">
-        <div class="timer-badge">
-            <i class="fas fa-clock me-2"></i> <span id="qrisTimer">02:00</span>
+        <div class="timer-badge warning">
+            <i class="fas fa-history me-2"></i> <span id="qrisTimer">03:00</span>
         </div>
         <h3 class="fw-bold mb-3">Scan QRIS</h3>
-        <div class="p-3 border rounded-4 mb-4 bg-white shadow-sm" style="display:inline-block; border: 2px solid #f0f0f0;">
-            <img src="{{ asset('assets/img/qr_payment.jpeg') }}" class="img-fluid" style="max-height: 450px; width: auto;" alt="QRIS Code">
+        <div class="p-3 border rounded-4 mb-3 bg-white shadow-sm" style="display:inline-block; border: 2px solid #f0f0f0;">
+            <img src="{{ asset('assets/img/qr_payment.jpeg') }}" class="img-fluid" style="max-height: 300px; width: auto;" alt="QRIS Code">
         </div>
         <div class="text-center mb-4">
             <h5 class="text-muted small mb-1">TOTAL BAYAR</h5>
-            <h3 class="fw-bold text-warning fs-1">Rp {{ number_format($total, 0, ',', '.') }}</h3>
+            <h3 class="fw-bold text-warning fs-2">Rp {{ number_format($total, 0, ',', '.') }}</h3>
         </div>
         <button type="button" onclick="finalizePayment()" class="btn btn-premium w-100 py-3 rounded-pill shadow mb-3">
             SELESAIKAN PEMBAYARAN <i class="fas fa-check-circle ms-2"></i>
@@ -186,7 +203,54 @@
 @section('ExtraJS')
 <script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 <script>
+    let timeLeft = 180; // 3 minutes in seconds
     let timerInterval;
+
+    function startGlobalTimer() {
+        const mainTimerDisplay = document.getElementById('mainTimer');
+        const mainTimerContainer = document.getElementById('mainTimerContainer');
+        const qrisTimerDisplay = document.getElementById('qrisTimer');
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                swal({
+                    title: "Waktu Habis!",
+                    text: "Waktu pembayaran Anda telah habis. Anda akan dialihkan kembali ke keranjang.",
+                    icon: "error",
+                    button: "Kembali ke Keranjang",
+                    closeOnClickOutside: false,
+                    closeOnEsc: false
+                }).then(() => {
+                    window.location.href = "{{ route('cart.view') }}";
+                });
+                
+                // Backup redirect if swal isn't clicked
+                setTimeout(() => {
+                    window.location.href = "{{ route('cart.view') }}";
+                }, 3000);
+            } else {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                let timeString = (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+                
+                mainTimerDisplay.innerText = timeString;
+                qrisTimerDisplay.innerText = timeString;
+
+                if(timeLeft <= 60) {
+                    mainTimerContainer.classList.add('warning');
+                }
+            }
+        }, 1000);
+    }
+
+    // Start timer immediately on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        startGlobalTimer();
+        AOS.init({ once: true, duration: 800 });
+    });
 
     function selectPayment(method) {
         document.querySelector(`input[name="payment_method"][value="${method}"]`).checked = true;
@@ -231,31 +295,9 @@
     function openQrisOverlay() {
         const overlay = document.getElementById('qrisOverlay');
         overlay.classList.add('active');
-        
-        let timeLeft = 120;
-        const timerDisplay = document.getElementById('qrisTimer');
-
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            if(timeLeft < 0) {
-                closeQrisOverlay();
-                swal({
-                    title: "Pembayaran Gagal!",
-                    text: "Waktu pembayaran Anda telah habis. Silakan pilih kembali.",
-                    icon: "error"
-                });
-            } else {
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                timerDisplay.innerText = 
-                    (minutes < 10 ? '0' : '') + minutes + ":" + 
-                    (seconds < 10 ? '0' : '') + seconds;
-            }
-        }, 1000);
     }
 
     function closeQrisOverlay() {
-        clearInterval(timerInterval);
         document.getElementById('qrisOverlay').classList.remove('active');
     }
 

@@ -167,6 +167,81 @@
             </div>
         </div>
 
+        <!-- NEW: Laporan Per-Event & Per-Jadwal -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-report">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4">
+                        <div class="card-title fw-bold">Laporan Detail Penjualan Per-Event</div>
+                        <p class="text-muted small">Breakdown performa penjualan untuk setiap jadwal event.</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            @foreach($eventReports as $eventId => $schedules)
+                                <div class="col-xl-6 mb-4">
+                                    <div class="p-4 rounded-4 h-100" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease;">
+                                        <div class="d-flex justify-content-between align-items-start mb-4">
+                                            <div>
+                                                <h5 class="fw-bold mb-1 text-warning">{{ $schedules->first()->event_name }}</h5>
+                                                <span class="badge bg-soft-primary text-primary small">ID: {{ $eventId }}</span>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="stat-label small">Total Pendapatan</div>
+                                                <div class="fw-bold text-success">Rp {{ number_format($schedules->sum('revenue') ?? 0, 0, ',', '.') }}</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-premium mb-0">
+                                                <thead style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                                    <tr>
+                                                        <th class="ps-0 py-2 small fw-bold text-muted">JADWAL</th>
+                                                        <th class="py-2 small fw-bold text-muted text-center">TERJUAL</th>
+                                                        <th class="pe-0 py-2 small fw-bold text-muted text-end">PENDAPATAN</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($schedules as $schedule)
+                                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                                            <td class="ps-0 py-3">
+                                                                @if($schedule->schedule_id)
+                                                                    <div class="d-flex flex-column">
+                                                                        <span class="fw-bold small">{{ \Carbon\Carbon::parse($schedule->event_date)->format('d M Y') }}</span>
+                                                                        <span class="small text-muted" style="font-size: 0.75rem;">{{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} WIB</span>
+                                                                    </div>
+                                                                @else
+                                                                    <span class="text-muted italic small">Tidak ada jadwal</span>
+                                                                @endif
+                                                            </td>
+                                                            <td class="py-3 text-center">
+                                                                <span class="badge bg-soft-info text-info px-2 py-1" style="font-size: 0.75rem;">{{ number_format($schedule->tickets_sold) }}</span>
+                                                            </td>
+                                                            <td class="pe-0 py-3 text-end fw-bold text-light small">
+                                                                Rp {{ number_format($schedule->revenue ?? 0, 0, ',', '.') }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td class="ps-0 pt-3 pb-0 border-0 fw-bold small text-muted text-uppercase">TOTAL</td>
+                                                        <td class="pt-3 pb-0 border-0 text-center fw-bold text-light">{{ number_format($schedules->sum('tickets_sold')) }}</td>
+                                                        <td class="pe-0 pt-3 pb-0 border-0 text-end fw-bold text-warning">
+                                                            Rp {{ number_format($schedules->sum('revenue') ?? 0, 0, ',', '.') }}
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <!-- Revenue per Kategori -->
             <div class="col-md-6">

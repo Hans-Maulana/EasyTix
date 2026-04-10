@@ -227,6 +227,24 @@ class UserController extends Controller
             ];
         });
 
+        // 5. Laporan Detail Per-Event dan Per-Jadwal
+        $eventReports = DB::table('events')
+            ->leftJoin('event_schedules', 'events.id', '=', 'event_schedules.event_id')
+            ->leftJoin('tickets', 'event_schedules.id', '=', 'tickets.event_schedules_id')
+            ->leftJoin('order_details', 'tickets.id', '=', 'order_details.tickets_id')
+            ->select(
+                'events.id as event_id',
+                'events.name as event_name',
+                'event_schedules.id as schedule_id',
+                'event_schedules.event_date',
+                'event_schedules.start_time',
+                DB::raw('COUNT(order_details.id) as tickets_sold'),
+                DB::raw('SUM(tickets.price) as revenue')
+            )
+            ->groupBy('events.id', 'events.name', 'event_schedules.id', 'event_schedules.event_date', 'event_schedules.start_time')
+            ->get()
+            ->groupBy('event_id');
+
         return view('admin.reports', compact(
             'totalRevenue', 
             'totalTicketsSold', 
@@ -235,7 +253,8 @@ class UserController extends Controller
             'categoryRevenue',
             'monthlySales',
             'quotaStats',
-            'attendanceStats'
+            'attendanceStats',
+            'eventReports'
         ));
     }
 
@@ -251,7 +270,25 @@ class UserController extends Controller
             ->orderBy('month', 'desc')
             ->get();
 
-        $pdf = Pdf::loadView('admin.monthly-report-pdf', compact('monthlySales'));
-        return $pdf->download('laporan-penjualan-bulanan.pdf');
+        // Tambahkan laporan per-event juga ke PDF
+        $eventReports = DB::table('events')
+            ->leftJoin('event_schedules', 'events.id', '=', 'event_schedules.event_id')
+            ->leftJoin('tickets', 'event_schedules.id', '=', 'tickets.event_schedules_id')
+            ->leftJoin('order_details', 'tickets.id', '=', 'order_details.tickets_id')
+            ->select(
+                'events.id as event_id',
+                'events.name as event_name',
+                'event_schedules.id as schedule_id',
+                'event_schedules.event_date',
+                'event_schedules.start_time',
+                DB::raw('COUNT(order_details.id) as tickets_sold'),
+                DB::raw('SUM(tickets.price) as revenue')
+            )
+            ->groupBy('events.id', 'events.name', 'event_schedules.id', 'event_schedules.event_date', 'event_schedules.start_time')
+            ->get()
+            ->groupBy('event_id');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.monthly-report-pdf', compact('monthlySales', 'eventReports'));
+        return $pdf->download('laporan-penjualan-lengkap.pdf');
     }
 }

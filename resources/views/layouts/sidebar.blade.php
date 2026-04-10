@@ -195,7 +195,7 @@
                           <i class="fas fa-shopping-cart"></i>
                           <p>Keranjang
                               @if(session('cart') && count(session('cart')) > 0)
-                                  <span class="badge badge-count bg-danger ms-2">{{ count(session('cart')) }}</span>
+                                  <span class="badge badge-count ms-2" style="background: #e74c3c; color: #fff; border: none; font-weight: 800; padding: 4px 8px;">{{ count(session('cart')) }}</span>
                               @endif
                           </p>
                       </a>

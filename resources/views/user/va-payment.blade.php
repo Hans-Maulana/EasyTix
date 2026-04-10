@@ -26,9 +26,9 @@
         padding: 30px; text-align: center;
     }
     .timer-circle {
-        border: 4px solid {{ $themeColor }}; width: 100px; height: 100px;
+        border: 3px solid {{ $themeColor }}; width: 80px; height: 80px;
         border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        margin: 0 auto 20px; font-weight: 800; font-size: 1.2rem; color: {{ $themeColor }};
+        margin: 0 auto 15px; font-weight: 700; font-size: 1rem; color: {{ $themeColor }};
     }
     .va-number-box {
         background: rgba(255,255,255,0.05); border: 2px dashed {{ $themeColor }};
@@ -66,8 +66,8 @@
                 </div>
                 
                 <div class="p-5 text-center">
-                    <div class="timer-circle">
-                        <span id="vaCountdown">02:00</span>
+                    <div class="timer-circle" id="timerContainer">
+                        <span id="vaCountdown">03:00</span>
                     </div>
                     <p class="text-muted small mb-4">Selesaikan pembayaran sebelum waktu habis</p>
 
@@ -106,7 +106,7 @@
                     </form>
 
                     <div class="mt-4">
-                        <a href="{{ route('user.payment') }}" class="text-muted small text-decoration-none">
+                        <a href="{{ route('user.payment') }}" class="text-light small text-decoration-none" style="opacity: 0.8;">
                             <i class="fas fa-arrow-left me-1"></i> Batal & Ganti Metode
                         </a>
                     </div>
@@ -133,24 +133,52 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        let timeLeft = 120; // 2 minutes
+        let timeLeft = 180; // 3 minutes
         const timerDisplay = document.getElementById('vaCountdown');
+        const timerContainer = document.getElementById('timerContainer');
 
         const timer = setInterval(() => {
             timeLeft--;
             if (timeLeft < 0) {
                 clearInterval(timer);
-                window.location.href = "{{ route('user.payment') }}?timeout=true";
+                swal({
+                    title: "Waktu Habis!",
+                    text: "Waktu pembayaran Anda telah habis. Anda akan dialihkan kembali ke keranjang.",
+                    icon: "error",
+                    button: "Kembali ke Keranjang",
+                    closeOnClickOutside: false,
+                    closeOnEsc: false
+                }).then(() => {
+                    window.location.href = "{{ route('cart.view') }}";
+                });
+                
+                // Backup redirect
+                setTimeout(() => {
+                    window.location.href = "{{ route('cart.view') }}";
+                }, 3000);
             } else {
                 let minutes = Math.floor(timeLeft / 60);
                 let seconds = timeLeft % 60;
                 timerDisplay.innerText = 
                     (minutes < 10 ? '0' : '') + minutes + ":" + 
                     (seconds < 10 ? '0' : '') + seconds;
+
+                if(timeLeft <= 60) {
+                    timerContainer.style.borderColor = '#e74c3c';
+                    timerContainer.style.color = '#e74c3c';
+                    timerContainer.style.animation = 'pulse 1s infinite';
+                }
             }
         }, 1000);
     });
 </script>
+<style>
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
