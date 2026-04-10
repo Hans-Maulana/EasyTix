@@ -51,17 +51,16 @@
         <div class="mb-5 d-flex align-items-center" data-aos="fade-down">
             <h2 class="fw-bold mb-0"><i class="fas fa-ticket-alt text-warning me-2"></i> Tiket <span class="text-warning">Saya</span></h2>
             @if(session('success'))
-                <div class="alert alert-success ms-auto mb-0 py-2 px-4 rounded-pill">
-                    {{ session('success') }}
+                <div class="alert alert-success ms-auto mb-0 py-2 px-4 rounded-pill shadow-lg border-0" style="background: rgba(40, 167, 69, 0.25); backdrop-filter: blur(10px); border: 1px solid rgba(40, 167, 69, 0.4) !important; color: #fff; font-weight: 600;">
+                    <i class="fas fa-check-circle me-2 text-success"></i> {{ session('success') }}
                 </div>
             @endif
         </div>
 
-        @if(count($orderHistory) > 0)
-            @foreach(array_reverse($orderHistory) as $order)
-                @foreach($order['items'] as $item)
+        @if(count($allTickets) > 0)
+            @foreach($allTickets as $ticket)
                 @php 
-                    $status = $item['status'] ?? 'valid';
+                    $status = $ticket['status'] ?? 'valid';
                     $isUsed = $status == 'used'; 
                     $isCancelled = $status == 'cancelled';
                 @endphp
@@ -71,9 +70,9 @@
                             <div class="d-flex justify-content-between mb-4 align-items-center">
                                 <div>
                                     <span class="badge bg-dark-blue text-white px-3 py-2 rounded-pill shadow-sm me-2">
-                                        <i class="fas fa-star me-2 text-warning "></i> <span class="text-white">{{ $order['id'] }}</span>
+                                        <i class="fas fa-star me-2 text-warning "></i> <span class="text-white">{{ $ticket['order_id'] }}</span>
                                     </span>
-                                    @if(($order['status'] ?? 'paid') == 'refunded')
+                                    @if(($ticket['order_status'] ?? 'paid') == 'refunded')
                                         <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm me-2">
                                             <i class="fas fa-undo me-1"></i> REFUNDED
                                         </span>
@@ -83,11 +82,11 @@
                                         </span>
                                     @endif
 
-                                    @if(($item['status'] ?? 'valid') == 'valid')
+                                    @if($status == 'valid')
                                         <span class="badge bg-info text-white px-3 py-2 rounded-pill shadow-sm badge-status">
                                             <i class="fas fa-ticket-alt me-1"></i> TERSEDIA
                                         </span>
-                                    @elseif(($item['status'] ?? 'valid') == 'cancelled')
+                                    @elseif($isCancelled)
                                         <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm badge-status">
                                             <i class="fas fa-times-circle me-1"></i> CANCELLED
                                         </span>
@@ -98,22 +97,22 @@
                                     @endif
                                 </div>
                                 <span class="text-muted small fw-bold">
-                                    <i class="far fa-calendar-alt me-1"></i> {{ $order['created_at'] }}
+                                    <i class="far fa-calendar-alt me-1"></i> {{ $ticket['created_at_fmt'] }}
                                 </span>
                             </div>
 
-                            <h3 class="fw-bold text-white mb-1">{{ $item['name'] }}</h3>
+                            <h3 class="fw-bold text-white mb-1">{{ $ticket['name'] }}</h3>
 
                             <div class="row mt-4">
                                 <div class="col-4">
                                     <h6 class="text-muted small text-uppercase fw-bold mb-1">Tipe Tiket</h6>
-                                    <h5 class="fw-bold text-white">{{ $item['type'] }} (Tiket {{ $item['ticket_index'] ?? 1 }}/{{ $item['total_qty'] ?? 1 }})</h5>
+                                    <h5 class="fw-bold text-white">{{ $ticket['type'] }} (Tiket {{ $ticket['ticket_index'] ?? 1 }}/{{ $ticket['total_qty'] ?? 1 }})</h5>
                                 </div>
                                 <div class="col-4 text-center">
                                     <h6 class="text-muted small text-uppercase fw-bold mb-1">Bayar Via</h6>
                                     <h5 class="fw-bold text-white">
-                                        @if(str_starts_with($order['payment_method'] ?? '', 'Virtual Account'))
-                                            <i class="fas fa-university text-warning me-1"></i> {{ $order['payment_method'] }}
+                                        @if(str_starts_with($ticket['payment_method'] ?? '', 'Virtual Account'))
+                                            <i class="fas fa-university text-warning me-1"></i> {{ $ticket['payment_method'] }}
                                         @else
                                             <i class="fas fa-qrcode text-warning me-1"></i> QRIS
                                         @endif
@@ -121,7 +120,7 @@
                                 </div>
                                 <div class="col-4 text-end">
                                     <h6 class="text-muted small text-uppercase fw-bold mb-1">Subtotal</h6>
-                                    <h5 class="fw-bold text-warning">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</h5>
+                                    <h5 class="fw-bold text-warning">Rp {{ number_format($ticket['subtotal'], 0, ',', '.') }}</h5>
                                 </div>
                             </div>
                         </div>
@@ -129,12 +128,12 @@
                     <div class="col-md-4 p-0">
                         <div class="qr-container h-100 d-flex flex-column justify-content-center">
                             <div class="qr-code mt-3 p-2">
-                                @php $qrFilename = basename($item['qr_code']); @endphp
+                                @php $qrFilename = basename($ticket['qr_code']); @endphp
                                 <img src="{{ route('qrcode.serve', ['filename' => $qrFilename]) }}" width="130" height="130" alt="QR Code">
                             </div>
                             <h6 class="fw-bold text-white mb-1">Kode Tiket</h6>
-                            <p class="text-muted small mb-2">{{ $item['qr_string'] ?? $item['qr_code'] }}</p>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ md5($item['qr_code']) }}">
+                            <p class="text-muted small mb-2">{{ $ticket['qr_string'] ?? $ticket['qr_code'] }}</p>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill mb-2 mx-auto px-4" data-bs-toggle="modal" data-bs-target="#detailModal{{ md5($ticket['qr_code']) }}">
                                 Lihat Detail
                             </button>
                             @if($isCancelled)
@@ -149,7 +148,7 @@
                 </div>
 
                 <!-- Modal Detail Tiket -->
-                <div class="modal fade" id="detailModal{{ md5($item['qr_code']) }}" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="detailModal{{ md5($ticket['qr_code']) }}" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content border-0" style="border-radius: 20px;">
                             <div class="modal-header border-0" style="border-radius: 20px 20px 0 0;">
@@ -157,15 +156,15 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4 text-center">
-                                <h4 class="fw-bold mb-1">{{ $item['name'] }}</h4>
-                                <p class="text-muted mb-4">{{ $item['type'] }} - Tiket {{ $item['ticket_index'] ?? 1 }} / {{ $item['total_qty'] ?? 1 }}</p>
+                                <h4 class="fw-bold mb-1">{{ $ticket['name'] }}</h4>
+                                <p class="text-muted mb-4">{{ $ticket['type'] }} - Tiket {{ $ticket['ticket_index'] ?? 1 }} / {{ $ticket['total_qty'] ?? 1 }}</p>
                                 
                                 <div class="bg-light p-4 rounded-3 mb-4 d-inline-block border">
-                                    @php $qrFilename = basename($item['qr_code']); @endphp
+                                    @php $qrFilename = basename($ticket['qr_code']); @endphp
                                     <img src="{{ route('qrcode.serve', ['filename' => $qrFilename]) }}" width="200" height="200" alt="QR Code">
                                 </div>
                                 
-                                <h3 class="fw-bold text-white" style="letter-spacing: 2px;">{{ $item['qr_string'] ?? $item['qr_code'] }}</h3>
+                                <h3 class="fw-bold text-white" style="letter-spacing: 2px;">{{ $ticket['qr_string'] ?? $ticket['qr_code'] }}</h3>
                                 <p class="text-muted small mb-0">Tunjukkan QR Code ini kepada petugas di pintu masuk.</p>
                                 
                                 <hr class="my-4 dashed" style="border-top: 1px dashed #ccc;">
@@ -176,39 +175,39 @@
                                         <div class="row">
                                             <div class="col-12 mb-2">
                                                 <small class="text-muted d-block text-uppercase small">Nama Pemilik</small>
-                                                <span class="fw-bold">{{ $item['owner_name'] }}</span>
+                                                <span class="fw-bold">{{ $ticket['owner_name'] }}</span>
                                             </div>
                                             <div class="col-6 mb-2">
                                                 <small class="text-muted d-block text-uppercase small">Telepon</small>
-                                                <span class="fw-bold">{{ $item['phone_number'] ?? '-' }}</span>
+                                                <span class="fw-bold">{{ $ticket['phone_number'] ?? '-' }}</span>
                                             </div>
                                             <div class="col-6 mb-2">
                                                 <small class="text-muted d-block text-uppercase small">Email</small>
-                                                <span class="fw-bold">{{ $item['email'] ?? '-' }}</span>
+                                                <span class="fw-bold">{{ $ticket['email'] ?? '-' }}</span>
                                             </div>
                                             <div class="col-6 mb-2">
                                                 <small class="text-muted d-block text-uppercase small">Jenis Kelamin</small>
-                                                <span class="fw-bold">{{ $item['gender'] ?? '-' }}</span>
+                                                <span class="fw-bold">{{ $ticket['gender'] ?? '-' }}</span>
                                             </div>
                                             <div class="col-6 mb-2">
                                                 <small class="text-muted d-block text-uppercase small">Umur</small>
-                                                <span class="fw-bold">{{ $item['age'] ?? '-' }} Thn</span>
+                                                <span class="fw-bold">{{ $ticket['age'] ?? '-' }} Thn</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-6 mb-3">
                                         <small class="text-muted d-block text-uppercase">Order ID</small>
-                                        <span class="fw-bold">{{ $order['id'] }}</span>
+                                        <span class="fw-bold">{{ $ticket['order_id'] }}</span>
                                     </div>
                                     <div class="col-6 mb-3">
                                         <small class="text-muted d-block text-uppercase">Tanggal Beli</small>
-                                        <span class="fw-bold">{{ $order['created_at'] }}</span>
+                                        <span class="fw-bold">{{ $ticket['created_at_fmt'] }}</span>
                                     </div>
                                     <div class="col-6">
                                         <small class="text-muted d-block text-uppercase">Metode Pembayaran</small>
                                         <span class="fw-bold">
-                                            @if(str_starts_with($order['payment_method'] ?? '', 'Virtual Account'))
-                                                <i class="fas fa-university text-warning me-1"></i> {{ $order['payment_method'] }}
+                                            @if(str_starts_with($ticket['payment_method'] ?? '', 'Virtual Account'))
+                                                <i class="fas fa-university text-warning me-1"></i> {{ $ticket['payment_method'] }}
                                             @else
                                                 <i class="fas fa-qrcode text-warning me-1"></i> QRIS
                                             @endif
@@ -216,7 +215,7 @@
                                     </div>
                                     <div class="col-6">
                                         <small class="text-muted d-block text-uppercase">Subtotal</small>
-                                        <span class="fw-bold text-warning">Rp {{ number_format($item['subtotal'], 0, ',', '.') }}</span>
+                                        <span class="fw-bold text-warning">Rp {{ number_format($ticket['subtotal'], 0, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -224,7 +223,6 @@
                     </div>
                 </div>
                 @endforeach
-            @endforeach
         @else
             <div class="text-center py-5" data-aos="fade-up">
                 <i class="fas fa-ticket-alt text-muted mb-4" style="font-size: 5rem; opacity: 0.3;"></i>

@@ -11,11 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TicketPurchased;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\RoundBlockSizeMode;
-use Endroid\QrCode\Writer\PngWriter;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 class OrderController extends Controller
@@ -53,7 +49,18 @@ class OrderController extends Controller
         $event = Event::with(['event_schedule.tickets.ticket_type'])
             ->findOrFail($id);
         
-        return view('user.event-tickets', compact('event'));
+        $userId = auth()->id();
+        $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
+            $q->where('users_id', $userId);
+        })->whereIn('status', ['valid', 'used'])->count();
+
+        $cart = session()->get('cart', []);
+        $cartCount = 0;
+        foreach($cart as $item) {
+            $cartCount += $item['quantity'];
+        }
+        
+        return view('user.event-tickets', compact('event', 'purchasedCount', 'cartCount'));
     }
 
     public function addToCart(Request $request)
@@ -62,6 +69,30 @@ class OrderController extends Controller
             'ticket_id' => 'required|exists:tickets,id',
             'quantity' => 'required|integer|min:1',
         ]);
+
+        $maxTickets = 10;
+        $userId = auth()->id();
+
+        // 1. Hitung tiket yang sudah dimiliki (valid/used)
+        $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
+            $q->where('users_id', $userId);
+        })->whereIn('status', ['valid', 'used'])->count();
+
+        // 2. Hitung tiket yang ada di cart saat ini
+        $cart = session()->get('cart', []);
+        $cartCount = 0;
+        foreach($cart as $item) {
+            $cartCount += $item['quantity'];
+        }
+
+        // 3. Cek apakah penambahan ini melebihi limit
+        if (($purchasedCount + $cartCount + $request->quantity) > $maxTickets) {
+            $remaining = $maxTickets - ($purchasedCount + $cartCount);
+            $errMsg = $remaining > 0 
+                ? "Batas pembelian maksimal adalah 10 tiket per akun. Anda saat ini memiliki $purchasedCount tiket dan $cartCount di keranjang. Anda hanya bisa menambah $remaining tiket lagi."
+                : "Batas pembelian maksimal adalah 10 tiket per akun. Anda sudah mencapai batas maksimal.";
+            return redirect()->back()->with('error', $errMsg);
+        }
 
         $ticket = Ticket::with(['ticket_type', 'event_schedule.event'])->findOrFail($request->ticket_id);
         $eventId = $ticket->event_schedule->event->id;
@@ -128,9 +159,34 @@ class OrderController extends Controller
     {
         if($request->id && $request->quantity){
             $cart = session()->get('cart');
+            $oldQty = $cart[$request->id]["quantity"];
+            $diff = $request->quantity - $oldQty;
+
+            if ($diff > 0) {
+                $maxTickets = 10;
+                $userId = auth()->id();
+                
+                $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
+                    $q->where('users_id', $userId);
+                })->whereIn('status', ['valid', 'used'])->count();
+
+                $cartCount = 0;
+                foreach($cart as $item) {
+                    $cartCount += $item['quantity'];
+                }
+
+                if (($purchasedCount + $cartCount + $diff) > $maxTickets) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Gagal memperbarui! Total tiket (beli + keranjang) melebihi batas 10 tiket.'
+                    ], 400);
+                }
+            }
+
             $cart[$request->id]["quantity"] = $request->quantity;
             session()->put('cart', $cart);
             session()->flash('success', 'Keranjang berhasil diperbarui!');
+            return response()->json(['status' => 'success']);
         }
     }
 
@@ -194,6 +250,22 @@ class OrderController extends Controller
         $ticketDetails = session()->get('ticket_details');
 
         if(!$cart || !$ticketDetails) return redirect()->route('user.buyTickets');
+
+        // FINAL CHECK: Re-verify 10 ticket limit before processing
+        $maxTickets = 10;
+        $userId = auth()->id();
+        $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
+            $q->where('users_id', $userId);
+        })->whereIn('status', ['valid', 'used'])->count();
+
+        $cartCount = 0;
+        foreach($cart as $item) {
+            $cartCount += $item['quantity'];
+        }
+
+        if (($purchasedCount + $cartCount) > $maxTickets) {
+            return redirect()->route('cart.view')->with('error', 'Pesanan gagal diproses karena jumlah tiket melebihi batas 10 tiket per akun.');
+        }
 
         $total = 0;
         $firstEventId = null;
@@ -268,7 +340,7 @@ class OrderController extends Controller
                 $orderDetailId = 'DET-' . date('Y') . '-' . strtoupper(Str::random(6));
 
                 $qrString = "VERIFY-" . $orderDetailId;
-                $fileName = 'qr_' . time() . '_' . $i . '_' . $orderDetailId . '.png';
+                $fileName = 'qr_' . time() . '_' . $i . '_' . $orderDetailId . '.svg';
                 $qrPath = 'qrcodes/' . $fileName;
 
                 // Simpan ke storage/app/qrcodes (bukan public)
@@ -277,17 +349,11 @@ class OrderController extends Controller
                     mkdir($qrDir, 0777, true);
                 }
 
-                $qrResult = Builder::create()
-                    ->writer(new PngWriter())
-                    ->data($qrString)
-                    ->encoding(new Encoding('UTF-8'))
-                    ->errorCorrectionLevel(ErrorCorrectionLevel::High)
+                QrCode::format('svg')
                     ->size(200)
-                    ->margin(10)
-                    ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
-                    ->build();
-
-                $qrResult->saveToFile($qrDir . '/' . $fileName);
+                    ->margin(1)
+                    ->errorCorrection('H')
+                    ->generate($qrString, $qrDir . '/' . $fileName);
 
 
                 $ticketData = $ticketDetails[$ticketId][$i] ?? [];
@@ -354,24 +420,27 @@ class OrderController extends Controller
     public function myTickets()
     {
         $orders = Order::where('users_id', auth()->id())->orderBy('created_at', 'desc')->get();
-        $orderHistory = [];
+        $allTickets = [];
 
         foreach ($orders as $order) {
             $orderDetails = OrderDetail::where('orders_id', $order->id)->get();
             if ($orderDetails->isEmpty()) continue;
 
-            $items = [];
             $groupedDetails = $orderDetails->groupBy('tickets_id');
 
             foreach ($groupedDetails as $ticketId => $detailsGroup) {
-                // Fetch ticket to get event name and ticket type
                 $ticket = Ticket::with(['ticket_type', 'event_schedule.event'])->find($ticketId);
                 if (!$ticket) continue;
                 
                 $totalQty = $detailsGroup->count();
                 $index = 1;
                 foreach ($detailsGroup as $detail) {
-                    $items[] = [
+                    $allTickets[] = [
+                        'order_id'       => $order->id,
+                        'order_status'   => $order->status ?? 'paid',
+                        'payment_method' => $order->payment_method ?? 'QRIS',
+                        'created_at'     => $order->created_at, // Keep as object for sorting
+                        'created_at_fmt' => $order->created_at->format('d M Y, H:i'),
                         'ticket_id'    => $ticketId,
                         'name'         => $ticket->event_schedule->event->name ?? 'Unknown Event',
                         'type'         => $ticket->ticket_type->name ?? 'Ticket',
@@ -385,26 +454,29 @@ class OrderController extends Controller
                         'email'        => $detail->email,
                         'gender'       => $detail->gender,
                         'age'          => $detail->age,
-                        'status'       => $detail->status,
+                        'status'       => $detail->status ?? 'valid',
                         'ticket_index' => $index++,
                         'total_qty'    => $totalQty
                     ];
                 }
             }
-
-            if (empty($items)) continue;
-
-            $orderHistory[] = [
-                'id'             => $order->id,
-                'status'         => $order->status ?? 'paid',
-                'payment_method' => $order->payment_method ?? 'QRIS',
-                'total_amount'   => $order->total_amount,
-                'created_at'     => $order->created_at->format('d M Y, H:i'),
-                'items'          => $items,
-            ];
         }
 
-        return view('user.my-tickets', compact('orderHistory'));
+        // Sort: Valid tickets first, then sort by newest date within those groups
+        usort($allTickets, function($a, $b) {
+            // Check status (valid = 1, others = 0)
+            $aValid = ($a['status'] === 'valid') ? 1 : 0;
+            $bValid = ($b['status'] === 'valid') ? 1 : 0;
+
+            if ($aValid !== $bValid) {
+                return $bValid - $aValid; // 1 comes before 0
+            }
+
+            // If same status, sort by date desc
+            return $b['created_at']->timestamp - $a['created_at']->timestamp;
+        });
+
+        return view('user.my-tickets', compact('allTickets'));
     }
 
     public function clearCart()
@@ -419,7 +491,8 @@ class OrderController extends Controller
         if (!file_exists($path)) {
             abort(404);
         }
-        return response()->file($path, ['Content-Type' => 'image/png']);
+        $mime = str_ends_with($filename, '.svg') ? 'image/svg+xml' : 'image/png';
+        return response()->file($path, ['Content-Type' => $mime]);
     }
 }
 

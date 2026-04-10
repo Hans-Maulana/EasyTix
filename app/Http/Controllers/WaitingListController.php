@@ -71,13 +71,16 @@ class WaitingListController extends Controller
                 'quantity' => $request->quantity
             ]);
             // Notify Admin
-            \App\Models\Notification::create([
-                'user_id' => 1, // Asumsi ID admin = 1
-                'type' => 'info',
-                'title' => 'Request Waiting List dari Organizer',
-                'message' => 'Ada request untuk membuka ' . $waitingList->quantity . ' slot tiket waiting list untuk ' . $waitingList->user->name . '.',
-                'link' => route('admin.requestsOrganizer')
-            ]);
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                \App\Models\Notification::create([
+                    'user_id' => $admin->id,
+                    'type' => 'info',
+                    'title' => 'Request Waiting List dari Organizer',
+                    'message' => 'Ada request untuk membuka ' . $waitingList->quantity . ' slot tiket waiting list untuk ' . $waitingList->user->name . '.',
+                    'link' => route('admin.requestsOrganizer')
+                ]);
+            }
             return redirect()->back()->with('success', 'Request penambahan kuota Waiting List sebanyak ' . $waitingList->quantity . ' telah dikirim ke Admin.');
         }
         return redirect()->back()->with('error', 'Status wating list tidak valid.');

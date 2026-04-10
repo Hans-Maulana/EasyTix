@@ -87,7 +87,9 @@
                                      alt="{{ $request->event->name }}"
                                      style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;">
                             @else
-                                <i class="fas fa-music"></i>
+                                <img src="{{ asset('assets/img/easytix_login_bg.png') }}"
+                                     alt="{{ $request->event->name }}"
+                                     style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; filter: brightness(0.7);">
                             @endif
                             <span class="status-badge-p">APPROVED</span>
                         </div>

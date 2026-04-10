@@ -34,6 +34,15 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     }
 })->name('dashboard');
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/notifications', [UserController::class, 'notifications'])->name('notifications.index');
+    
+    Route::get('/profile/view', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 });
@@ -120,11 +129,7 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/user/schedule', [UserController::class, 'schedule'])->name('user.schedule');
 
     // Profile Management
-    Route::get('/profile/view', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // Order & Booking System
     Route::get('/user/buy-tickets', [OrderController::class, 'index'])->name('user.buyTickets');
     Route::get('/user/event/{id}/tickets', [OrderController::class, 'showEventTickets'])->name('user.eventTickets');
@@ -139,7 +144,6 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     Route::get('/user/va-payment', [OrderController::class, 'vaPayment'])->name('user.vaPayment');
     Route::post('/user/process-order', [OrderController::class, 'processOrder'])->name('user.processOrder');
     Route::get('/user/my-tickets', [OrderController::class, 'myTickets'])->name('user.myTickets');
-    Route::get('/user/notifications', [UserController::class, 'notifications'])->name('user.notifications');
     Route::get('/cart/clear', [OrderController::class, 'clearCart'])->name('cart.clear');
     Route::get('/qrcodes/{filename}', [OrderController::class, 'serveQrCode'])->name('qrcode.serve');
 });

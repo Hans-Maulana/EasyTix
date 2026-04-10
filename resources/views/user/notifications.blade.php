@@ -1,5 +1,14 @@
 @extends('layouts.master')
 
+@php
+    $dashboardRoute = 'user.dashboard';
+    if(auth()->user()->role === 'admin') {
+        $dashboardRoute = 'admin.dashboard';
+    } elseif(auth()->user()->role === 'organizer') {
+        $dashboardRoute = 'organizer.dashboard';
+    }
+@endphp
+
 @section('content')
 <div class="container">
     <div class="page-inner">
@@ -7,7 +16,7 @@
             <h4 class="page-title">Pusat Notifikasi</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="{{ route('user.dashboard') }}">
+                    <a href="{{ route($dashboardRoute) }}">
                         <i class="flaticon-home"></i>
                     </a>
                 </li>
@@ -52,7 +61,7 @@
                                 </div>
                                 <h4 class="text-muted">Belum ada notifikasi untuk Anda</h4>
                                 <p class="text-muted small">Semua kabar terbaru tentang tiket dan promo akan muncul di sini.</p>
-                                <a href="{{ route('user.dashboard') }}" class="btn btn-primary btn-round mt-3">Kembali ke Beranda</a>
+                                <a href="{{ route($dashboardRoute) }}" class="btn btn-primary btn-round mt-3">Kembali ke Beranda</a>
                             </div>
                             @endforelse
                         </div>

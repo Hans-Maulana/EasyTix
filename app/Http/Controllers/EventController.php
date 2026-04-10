@@ -24,6 +24,14 @@ class EventController extends Controller
     public function manageEvents()
     {
         $events = Event::with(['category', 'performers'])->get();
+        
+        // Cek apakah tiap event sudah memiliki tiket yang dibeli
+        foreach ($events as $event) {
+            $event->has_orders = OrderDetail::whereHas('ticket.event_schedule', function ($query) use ($event) {
+                $query->where('event_id', $event->id);
+            })->exists();
+        }
+
         return view('admin.manage-events', compact('events'));
     }
     public function createEvent()

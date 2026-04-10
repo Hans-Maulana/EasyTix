@@ -90,7 +90,7 @@
                       </div>
                     </li>
                     <li>
-                      <a class="see-all" href="{{ route('user.notifications') }}">
+                      <a class="see-all" href="{{ route('notifications.index') }}">
                         Lihat semua notifikasi <i class="fa fa-angle-right"></i>
                       </a>
                     </li>
@@ -143,7 +143,7 @@
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ route('user.notifications') }}">Inbox</a>
+                        <a class="dropdown-item" href="{{ route('notifications.index') }}">Inbox</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('profile.edit') }}">Pengaturan Akun</a>
                         <div class="dropdown-divider"></div>

@@ -74,6 +74,36 @@
     </div>
 
     <div class="container mt-4">
+        <!-- Purchase Limit Notice -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-lg position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.03); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1) !important;">
+                    <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-warning rounded-pill p-3 me-4 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px; background: var(--premium-gold-grad) !important;">
+                                <i class="fas fa-info-circle text-dark fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-white mb-1">Batas Pembelian Tiket</h5>
+                                <p class="text-muted small mb-0">Setiap akun dibatasi maksimal 10 tiket (Termasuk yang sudah dibeli & di keranjang).</p>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="d-block text-muted small text-uppercase fw-bold mb-1">Kuota Akun Anda</span>
+                            @php 
+                                $totalUsed = ($purchasedCount ?? 0) + ($cartCount ?? 0);
+                                $isFull = $totalUsed >= 10;
+                            @endphp
+                            <h3 class="fw-bold {{ $isFull ? 'text-danger' : 'text-warning' }} mb-0">
+                                {{ $totalUsed }} / 10 <small class="fs-6 opacity-75">Tiket</small>
+                            </h3>
+                        </div>
+                    </div>
+                    <!-- Progress Bar style decoration at bottom -->
+                    <div style="position: absolute; bottom: 0; left: 0; height: 4px; width: {{ ($totalUsed / 10) * 100 }}%; background: var(--premium-gold-grad); transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+        </div>
         @php $dayIndex = 1; @endphp
         @foreach($event->event_schedule->sortBy('event_date') as $schedule)
         <div class="schedule-block">

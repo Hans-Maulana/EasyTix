@@ -32,6 +32,18 @@ class EventRequestController extends Controller
             'status' => 'pending',
         ]);
         
+        // Notifikasi ke Admin
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            \App\Models\Notification::create([
+                'user_id' => $admin->id,
+                'type' => 'info',
+                'title' => 'Request Event Baru',
+                'message' => auth()->user()->name . ' meminta akses untuk event: ' . $event->name,
+                'link' => route('admin.requestsOrganizer'),
+            ]);
+        }
+
         return back()->with('success', 'Permintaan akses ke event ' . $event->name . ' telah dikirim!');
     }
 
@@ -51,12 +63,32 @@ class EventRequestController extends Controller
     public function approveRequest(\App\Models\EventRequest $request)
     {
         $request->update(['status' => 'approved']);
+        
+        // Notifikasi ke Organizer
+        \App\Models\Notification::create([
+            'user_id' => $request->users_id,
+            'type' => 'success',
+            'title' => 'Request Akses Disetujui',
+            'message' => 'Admin telah menyetujui akses Anda untuk event: ' . $request->event->name,
+            'link' => route('organizer.myEvents'),
+        ]);
+
         return back()->with('success', 'Permintaan akses disetujui!');
     }
 
     public function rejectRequest(\App\Models\EventRequest $request)
     {
         $request->update(['status' => 'rejected']);
+        
+        // Notifikasi ke Organizer
+        \App\Models\Notification::create([
+            'user_id' => $request->users_id,
+            'type' => 'offer',
+            'title' => 'Request Akses Ditolak',
+            'message' => 'Maaf, permintaan akses Anda untuk event ' . $request->event->name . ' ditolak.',
+            'link' => route('organizer.events'),
+        ]);
+
         return back()->with('success', 'Permintaan akses ditolak!');
     }
 }

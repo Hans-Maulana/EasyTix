@@ -80,6 +80,7 @@
                                                     <a href="{{ route('admin.scheduleEvent', $event->id) }}" class="btn btn-link btn-success btn-lg" data-bs-toggle="tooltip" title="Detail Event">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
+                                                    @if (!$event->has_orders)
                                                     <form action="{{ route('admin.deleteEvent', $event->id) }}" method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
@@ -87,6 +88,7 @@
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
