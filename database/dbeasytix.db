@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2026 at 07:04 AM
+-- Generation Time: Apr 10, 2026 at 06:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -103,7 +103,9 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `name`, `location`, `image`, `status`, `created_at`, `updated_at`, `users_id`, `category_id`, `banner`, `description`) VALUES
-('EVT-2026-001', 'Event Testing', 'Stadion Jalak Harupat', NULL, 'active', '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 1, 'events/banners/VMJCj7JVVEkX5ClFx8eLSxoIB31Y4juEFi7OHI9T.png', NULL);
+('EVT-2026-001', 'Event Testing', 'Stadion Jalak Harupat', NULL, 'active', '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 1, 'events/banners/VMJCj7JVVEkX5ClFx8eLSxoIB31Y4juEFi7OHI9T.png', NULL),
+('EVT-2026-002', 'Testing', '1', NULL, 'active', '2026-04-10 03:21:51', '2026-04-10 03:21:51', 1, 1, NULL, NULL),
+('EVT-2026-003', 'Test 2', '2', NULL, 'active', '2026-04-10 03:26:22', '2026-04-10 03:26:22', 1, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -124,7 +126,9 @@ CREATE TABLE `event_performer` (
 --
 
 INSERT INTO `event_performer` (`id`, `event_id`, `performer_id`, `created_at`, `updated_at`) VALUES
-(8, 'EVT-2026-001', 4, NULL, NULL);
+(8, 'EVT-2026-001', 4, NULL, NULL),
+(9, 'EVT-2026-002', 4, NULL, NULL),
+(10, 'EVT-2026-003', 4, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -146,7 +150,9 @@ CREATE TABLE `event_requests` (
 --
 
 INSERT INTO `event_requests` (`id`, `event_id`, `users_id`, `status`, `created_at`, `updated_at`) VALUES
-(10, 'EVT-2026-001', 2, 'approved', '2026-04-08 04:57:48', '2026-04-08 04:58:06');
+(10, 'EVT-2026-001', 2, 'approved', '2026-04-08 04:57:48', '2026-04-08 04:58:06'),
+(11, 'EVT-2026-002', 2, 'approved', '2026-04-10 03:22:09', '2026-04-10 03:22:23'),
+(12, 'EVT-2026-003', 2, 'approved', '2026-04-10 03:26:29', '2026-04-10 03:26:41');
 
 -- --------------------------------------------------------
 
@@ -172,7 +178,9 @@ CREATE TABLE `event_schedules` (
 
 INSERT INTO `event_schedules` (`id`, `start_time`, `end_time`, `status`, `event_date`, `description`, `created_at`, `updated_at`, `event_id`) VALUES
 ('ES-2026-001', '14:00:00', '20:00:00', 'scheduled', '2026-04-16', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001'),
-('ES-2026-002', '14:00:00', '20:00:00', 'scheduled', '2026-04-20', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001');
+('ES-2026-002', '14:00:00', '20:00:00', 'scheduled', '2026-04-20', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001'),
+('ES-2026-003', '11:11:00', '12:22:00', 'scheduled', '2026-04-17', NULL, '2026-04-10 03:21:51', '2026-04-10 03:21:51', 'EVT-2026-002'),
+('ES-2026-004', '11:11:00', '22:22:00', 'scheduled', '2026-04-10', NULL, '2026-04-10 03:26:22', '2026-04-10 03:26:22', 'EVT-2026-003');
 
 -- --------------------------------------------------------
 
@@ -325,7 +333,10 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`, `is_read`, `created_at`, `updated_at`) VALUES
-(69, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-001 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-08 05:00:26', '2026-04-08 05:00:26');
+(69, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-001 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-08 05:00:26', '2026-04-10 03:21:03'),
+(70, 1, 'info', 'Request Event Baru', 'Organizer PK Entertainment meminta akses untuk event: Test 2', 'http://127.0.0.1:8000/admin/requests-organizer', 0, '2026-04-10 03:26:29', '2026-04-10 03:26:29'),
+(71, 2, 'success', 'Request Akses Disetujui', 'Admin telah menyetujui akses Anda untuk event: Test 2', 'http://127.0.0.1:8000/organizer/my-events', 0, '2026-04-10 03:26:41', '2026-04-10 03:26:41'),
+(72, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-004 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-10 03:34:41', '2026-04-10 03:34:41');
 
 -- --------------------------------------------------------
 
@@ -349,7 +360,10 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `total_amount`, `status`, `created_at`, `updated_at`, `users_id`, `events_id`, `payment_method`) VALUES
-('ORD-2026-001', 700000, 'paid', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 12, 'EVT-2026-001', 'QRIS');
+('ORD-2026-001', 700000, 'paid', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 12, 'EVT-2026-001', 'QRIS'),
+('ORD-2026-002', 100000, 'paid', '2026-04-10 03:31:39', '2026-04-10 03:31:39', 12, 'EVT-2026-002', 'QRIS'),
+('ORD-2026-003', 100000, 'paid', '2026-04-10 03:33:49', '2026-04-10 03:33:49', 12, 'EVT-2026-002', 'QRIS'),
+('ORD-2026-004', 100000, 'paid', '2026-04-10 03:34:40', '2026-04-10 03:34:40', 12, 'EVT-2026-002', 'QRIS');
 
 -- --------------------------------------------------------
 
@@ -380,6 +394,7 @@ CREATE TABLE `order_details` (
 INSERT INTO `order_details` (`id`, `owner_name`, `phone_number`, `email`, `gender`, `age`, `status`, `qr_code`, `ticket_code`, `created_at`, `updated_at`, `tickets_id`, `orders_id`) VALUES
 ('DET-2026-CYQ38S', 'Ferdinand Brian Gondosupadmo', '123', '2472021@maranatha.ac.id', 'Laki-laki', 21, 'used', 'qrcodes/qr_1775624426_0_DET-2026-CYQ38S.png', 'VERIFY-DET-2026-CYQ38S', '2026-04-08 05:00:26', '2026-04-08 05:03:00', 'TKT-2026-003', 'ORD-2026-001'),
 ('DET-2026-DIYKH3', 'Errvin Junius', '1234', '2472024@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_1_DET-2026-DIYKH3.png', 'VERIFY-DET-2026-DIYKH3', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-003', 'ORD-2026-001'),
+('DET-2026-IHZUNS', 'a', '1', 'a@gmail.com', 'Laki-laki', 12, 'valid', 'qrcodes/qr_1775792080_0_DET-2026-IHZUNS.svg', 'VERIFY-DET-2026-IHZUNS', '2026-04-10 03:34:41', '2026-04-10 03:34:41', 'TKT-2026-005', 'ORD-2026-004'),
 ('DET-2026-JVE4CD', 'Hans Maulana Budiputra', '085380001432', '2472052@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_0_DET-2026-JVE4CD.png', 'VERIFY-DET-2026-JVE4CD', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-002', 'ORD-2026-001'),
 ('DET-2026-KTHJJ1', 'Bryan Christian', '085380001432', '2472022@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_1_DET-2026-KTHJJ1.png', 'VERIFY-DET-2026-KTHJJ1', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-002', 'ORD-2026-001');
 
@@ -472,7 +487,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('KVRkBNFs31lNmjxve6HYErJ9nHol3wKoLlPHMqu6', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTUd0OFNSVmZjQ29lQnQ4dm1FNGZmeHN1c3FUUWJXOVJxSUFFTkxyZSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vcmdhbml6ZXIvdmVyaWZ5LXRpY2tldC9zY2hlZHVsZS9FUy0yMDI2LTAwMiI7czo1OiJyb3V0ZSI7czoyNDoib3JnYW5pemVyLnZlcmlmeVNjaGVkdWxlIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1775624581);
+('KA646NGtjdWpE0B8YkeL1uVUaLbY7ngi7EjLqWut', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoidjBsU2ZPSUdta0Z6SmYySEpoczJtVmg0ODdsT3hIN2dSSnFXRnM5dSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ldmVudHMiO3M6NToicm91dGUiO3M6MTg6ImFkbWluLm1hbmFnZUV2ZW50cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1775792026),
+('rjyQu3Baz0mC1YmeRgU0brwNjB8KPGkCjmBsQvqg', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibDF3VFIxcWxoRFJEaXhidEd0b3d3bkJDU3Z1eU1vVDhERXdURzRKeiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vcmdhbml6ZXIvbXktZXZlbnRzIjtzOjU6InJvdXRlIjtzOjE4OiJvcmdhbml6ZXIubXlFdmVudHMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1775792510),
+('vvQvb9iHGueti1srOeszTNRsBrJHIZV0Re2IK0eu', 12, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicjI5Z1ZOMjkzbXN3bGVwNW1FenpZSFMxR1NRRmF6UDFFVEpnQVcwUSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2V2ZW50L0VWVC0yMDI2LTAwMi90aWNrZXRzIjtzOjU6InJvdXRlIjtzOjE3OiJ1c2VyLmV2ZW50VGlja2V0cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjEyO30=', 1775794730);
 
 -- --------------------------------------------------------
 
@@ -498,7 +515,9 @@ INSERT INTO `tickets` (`id`, `capacity`, `price`, `created_at`, `updated_at`, `t
 ('TKT-2026-001', 500, 150000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 2, 'ES-2026-001'),
 ('TKT-2026-002', 198, 200000, '2026-04-08 04:57:18', '2026-04-08 05:00:26', 1, 'ES-2026-001'),
 ('TKT-2026-003', 498, 150000, '2026-04-08 04:57:18', '2026-04-08 05:00:26', 2, 'ES-2026-002'),
-('TKT-2026-004', 200, 200000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 'ES-2026-002');
+('TKT-2026-004', 200, 200000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 'ES-2026-002'),
+('TKT-2026-005', 0, 100000, '2026-04-10 03:21:51', '2026-04-10 03:33:49', 1, 'ES-2026-003'),
+('TKT-2026-006', 2, 200000, '2026-04-10 03:26:22', '2026-04-10 03:26:22', 1, 'ES-2026-004');
 
 -- --------------------------------------------------------
 
@@ -747,13 +766,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `event_performer`
 --
 ALTER TABLE `event_performer`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -783,7 +802,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `performers`
