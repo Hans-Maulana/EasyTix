@@ -32,14 +32,7 @@
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
                 @auth
                 @if(Auth::user()->role == 'user')
-                <li class="nav-item topbar-icon hidden-caret">
-                  <a class="nav-link" href="{{ route('cart.view') }}" title="Keranjang">
-                    <i class="fas fa-shopping-cart"></i>
-                    @if(session('cart') && count(session('cart')) > 0)
-                    <span class="notification">{{ count(session('cart')) }}</span>
-                    @endif
-                  </a>
-                </li>
+
                 @endif
                 @php
                     $unreadCount = Auth::user()->notifications()->where('is_read', false)->count();

@@ -510,13 +510,13 @@
                                     </p>
                                     <p class="text-light opacity-75 small mb-4"><i class="fa-solid fa-location-dot text-gold me-2"></i> {{ $event->location }}</p>
                                     
-                                    <div class="d-flex justify-content-between align-items-end pt-3 border-top border-secondary border-opacity-25">
-                                        <div>
-                                            <small class="text-light opacity-50 d-block">Harga mulai dari</small>
-                                            <span class="text-gold fw-bold fs-5">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
+                                        <div class="d-flex justify-content-between align-items-end pt-3 border-top border-secondary border-opacity-25">
+                                            <div>
+                                                <small class="text-light opacity-50 d-block">Harga mulai dari</small>
+                                                <span class="text-gold fw-bold fs-5">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
+                                            </div>
+                                            <a href="{{ route('user.eventTickets', $event->id) }}" class="btn btn-primary-custom btn-sm px-4 py-2 rounded-pill btn-buy-trigger">Beli</a>
                                         </div>
-                                        <a href="/login" class="btn btn-primary-custom btn-sm px-4 py-2 rounded-pill">Beli</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -531,7 +531,7 @@
             </div>
             
             <div class="text-center mt-5 pt-4" data-aos="fade-up">
-                <a href="#" class="btn btn-outline-light rounded-pill px-5 py-3 fw-bold">Lihat Semua Jadwal <i class="fa-solid fa-arrow-right ms-2"></i></a>
+                <a href="{{ route('user.buyTickets') }}" class="btn btn-outline-light rounded-pill px-5 py-3 fw-bold">Lihat Semua Jadwal <i class="fa-solid fa-arrow-right ms-2"></i></a>
             </div>
         </div>
     </section>

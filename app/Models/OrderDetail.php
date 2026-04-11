@@ -12,10 +12,6 @@ class OrderDetail extends Model
     protected $fillable = [
         'id',
         'owner_name',
-        'phone_number',
-        'email',
-        'gender',
-        'age',
         'status',
         'qr_code',
         'ticket_code',

@@ -67,14 +67,14 @@
                                                 @endforeach
                                             </td>
                                             <td>
-                                                <div class="form-button-action">
-                                                    <a href="{{ route('admin.editPerformer', $performer->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Performer">
+                                                <div class="form-button-action d-flex align-items-center gap-2">
+                                                    <a href="{{ route('admin.editPerformer', $performer->id) }}" class="btn btn-link btn-primary btn-md" data-bs-toggle="tooltip" title="Edit Performer">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                     <form action="{{ route('admin.deletePerformer', $performer->id) }}" method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Performer">
+                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm btn-md" title="Hapus Performer">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -101,30 +101,38 @@
             });
 
             @if(session('success'))
-                swal("Berhasil!", "{{ session('success') }}", "success");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#142E5E'
+                });
             @endif
 
-            $('.btn-delete-confirm').on('click', function (e) {
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Aksi Ditolak!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#142E5E'
+                });
+            @endif
+
+            $(document).on('click', '.btn-delete-confirm', function (e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 
-                swal({
+                Swal.fire({
                     title: 'Hapus Performer?',
-                    text: 'Data yang dikaitkan dengan performer ini akan kehilangan referensinya!',
-                    type: 'warning',
-                    buttons: {
-                        confirm: {
-                            text: "Ya, Hapus!",
-                            className: "btn btn-danger",
-                        },
-                        cancel: {
-                            visible: true,
-                            text: "Batal",
-                            className: "btn btn-secondary",
-                        },
-                    },
-                }).then((Delete) => {
-                    if (Delete) {
+                    text: 'Anda yakin ingin menghapus performer ini? Tindakan ini tidak dapat dibatalkan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         form.submit();
                     }
                 });

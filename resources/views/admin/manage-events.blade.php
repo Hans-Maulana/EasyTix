@@ -73,18 +73,18 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="form-button-action">
-                                                    <a href="{{ route('admin.editEvent', $event->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Event">
+                                                <div class="form-button-action d-flex align-items-center gap-2">
+                                                    <a href="{{ route('admin.editEvent', $event->id) }}" class="btn btn-primary btn-md" data-bs-toggle="tooltip" title="Edit Event">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <a href="{{ route('admin.scheduleEvent', $event->id) }}" class="btn btn-link btn-success btn-lg" data-bs-toggle="tooltip" title="Detail Event">
+                                                    <a href="{{ route('admin.scheduleEvent', $event->id) }}" class="btn btn-success btn-md" data-bs-toggle="tooltip" title="Detail Event">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
                                                     @if (!$event->has_orders)
-                                                    <form action="{{ route('admin.deleteEvent', $event->id) }}" method="POST" class="d-inline delete-form">
+                                                    <form action="{{ route('admin.deleteEvent', $event->id) }}" method="POST" class="d-inline delete-form m-0">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Event">
+                                                        <button type="button" class="btn btn-danger btn-md btn-delete-confirm" data-bs-toggle="tooltip" title="Hapus Event">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -129,8 +129,8 @@
                 });
             @endif
 
-            // SweetAlert Delete Confirmation
-            $('.btn-delete-confirm').on('click', function (e) {
+            // SweetAlert Delete Confirmation (Gunakan event delegation untuk DataTables)
+            $(document).on('click', '.btn-delete-confirm', function (e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 

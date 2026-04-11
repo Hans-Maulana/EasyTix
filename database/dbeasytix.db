@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 10, 2026 at 06:21 AM
+-- Generation Time: Apr 11, 2026 at 01:37 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,12 +38,8 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('laravel-cache-17ba0791499db908433b80f37c5fbc89b870084b', 'i:2;', 1775562681),
-('laravel-cache-17ba0791499db908433b80f37c5fbc89b870084b:timer', 'i:1775562681;', 1775562681),
-('laravel-cache-7b52009b64fd0a2a49e6d8a939753077792b0554', 'i:1;', 1775580769),
-('laravel-cache-7b52009b64fd0a2a49e6d8a939753077792b0554:timer', 'i:1775580769;', 1775580769),
-('laravel-cache-b1d5781111d84f7b3fe45a0852e59758cd7a87e5', 'i:1;', 1775562608),
-('laravel-cache-b1d5781111d84f7b3fe45a0852e59758cd7a87e5:timer', 'i:1775562608;', 1775562608);
+('laravel-cache-bd307a3ec329e10a2cff8fb87480823da114f8f4', 'i:1;', 1775900661),
+('laravel-cache-bd307a3ec329e10a2cff8fb87480823da114f8f4:timer', 'i:1775900661;', 1775900661);
 
 -- --------------------------------------------------------
 
@@ -102,10 +98,6 @@ CREATE TABLE `events` (
 -- Dumping data for table `events`
 --
 
-INSERT INTO `events` (`id`, `name`, `location`, `image`, `status`, `created_at`, `updated_at`, `users_id`, `category_id`, `banner`, `description`) VALUES
-('EVT-2026-001', 'Event Testing', 'Stadion Jalak Harupat', NULL, 'active', '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 1, 'events/banners/VMJCj7JVVEkX5ClFx8eLSxoIB31Y4juEFi7OHI9T.png', NULL),
-('EVT-2026-002', 'Testing', '1', NULL, 'active', '2026-04-10 03:21:51', '2026-04-10 03:21:51', 1, 1, NULL, NULL),
-('EVT-2026-003', 'Test 2', '2', NULL, 'active', '2026-04-10 03:26:22', '2026-04-10 03:26:22', 1, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -125,10 +117,7 @@ CREATE TABLE `event_performer` (
 -- Dumping data for table `event_performer`
 --
 
-INSERT INTO `event_performer` (`id`, `event_id`, `performer_id`, `created_at`, `updated_at`) VALUES
-(8, 'EVT-2026-001', 4, NULL, NULL),
-(9, 'EVT-2026-002', 4, NULL, NULL),
-(10, 'EVT-2026-003', 4, NULL, NULL);
+
 
 -- --------------------------------------------------------
 
@@ -149,10 +138,7 @@ CREATE TABLE `event_requests` (
 -- Dumping data for table `event_requests`
 --
 
-INSERT INTO `event_requests` (`id`, `event_id`, `users_id`, `status`, `created_at`, `updated_at`) VALUES
-(10, 'EVT-2026-001', 2, 'approved', '2026-04-08 04:57:48', '2026-04-08 04:58:06'),
-(11, 'EVT-2026-002', 2, 'approved', '2026-04-10 03:22:09', '2026-04-10 03:22:23'),
-(12, 'EVT-2026-003', 2, 'approved', '2026-04-10 03:26:29', '2026-04-10 03:26:41');
+
 
 -- --------------------------------------------------------
 
@@ -175,12 +161,6 @@ CREATE TABLE `event_schedules` (
 --
 -- Dumping data for table `event_schedules`
 --
-
-INSERT INTO `event_schedules` (`id`, `start_time`, `end_time`, `status`, `event_date`, `description`, `created_at`, `updated_at`, `event_id`) VALUES
-('ES-2026-001', '14:00:00', '20:00:00', 'scheduled', '2026-04-16', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001'),
-('ES-2026-002', '14:00:00', '20:00:00', 'scheduled', '2026-04-20', NULL, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 'EVT-2026-001'),
-('ES-2026-003', '11:11:00', '12:22:00', 'scheduled', '2026-04-17', NULL, '2026-04-10 03:21:51', '2026-04-10 03:21:51', 'EVT-2026-002'),
-('ES-2026-004', '11:11:00', '22:22:00', 'scheduled', '2026-04-10', NULL, '2026-04-10 03:26:22', '2026-04-10 03:26:22', 'EVT-2026-003');
 
 -- --------------------------------------------------------
 
@@ -308,7 +288,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (11, '2026_03_30_132520_modify_events_table_for_category_and_banner', 3),
 (12, '2026_03_30_132521_drop_banners_and_event_genre_tables', 4),
 (13, '2026_04_05_162253_add_payment_method_to_orders_table', 4),
-(14, '2026_04_08_113611_add_status_to_orders_table', 5);
+(14, '2026_04_08_113611_add_status_to_orders_table', 5),
+(15, '2026_04_11_070400_add_contact_to_orders_table', 6),
+(16, '2026_04_11_100100_change_waiting_lists_status_to_string', 7);
 
 -- --------------------------------------------------------
 
@@ -332,11 +314,7 @@ CREATE TABLE `notifications` (
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`, `is_read`, `created_at`, `updated_at`) VALUES
-(69, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-001 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 1, '2026-04-08 05:00:26', '2026-04-10 03:21:03'),
-(70, 1, 'info', 'Request Event Baru', 'Organizer PK Entertainment meminta akses untuk event: Test 2', 'http://127.0.0.1:8000/admin/requests-organizer', 0, '2026-04-10 03:26:29', '2026-04-10 03:26:29'),
-(71, 2, 'success', 'Request Akses Disetujui', 'Admin telah menyetujui akses Anda untuk event: Test 2', 'http://127.0.0.1:8000/organizer/my-events', 0, '2026-04-10 03:26:41', '2026-04-10 03:26:41'),
-(72, 12, 'success', 'Pembayaran Berhasil! 🎫', 'Tiket untuk pesanan #ORD-2026-004 telah diterbitkan. Silakan cek di menu Tiket Saya.', 'http://127.0.0.1:8000/user/my-tickets', 0, '2026-04-10 03:34:41', '2026-04-10 03:34:41');
+
 
 -- --------------------------------------------------------
 
@@ -347,23 +325,19 @@ INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `link`
 CREATE TABLE `orders` (
   `id` varchar(35) NOT NULL,
   `total_amount` decimal(10,0) NOT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'paid',
+  `status` enum('paid') NOT NULL DEFAULT 'paid',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `users_id` int(11) NOT NULL,
   `events_id` varchar(35) NOT NULL,
-  `payment_method` varchar(100) DEFAULT NULL
+  `payment_method` varchar(100) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `total_amount`, `status`, `created_at`, `updated_at`, `users_id`, `events_id`, `payment_method`) VALUES
-('ORD-2026-001', 700000, 'paid', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 12, 'EVT-2026-001', 'QRIS'),
-('ORD-2026-002', 100000, 'paid', '2026-04-10 03:31:39', '2026-04-10 03:31:39', 12, 'EVT-2026-002', 'QRIS'),
-('ORD-2026-003', 100000, 'paid', '2026-04-10 03:33:49', '2026-04-10 03:33:49', 12, 'EVT-2026-002', 'QRIS'),
-('ORD-2026-004', 100000, 'paid', '2026-04-10 03:34:40', '2026-04-10 03:34:40', 12, 'EVT-2026-002', 'QRIS');
 
 -- --------------------------------------------------------
 
@@ -374,10 +348,7 @@ INSERT INTO `orders` (`id`, `total_amount`, `status`, `created_at`, `updated_at`
 CREATE TABLE `order_details` (
   `id` varchar(35) NOT NULL,
   `owner_name` varchar(100) NOT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `gender` varchar(255) DEFAULT NULL,
-  `age` int(11) DEFAULT NULL,
   `status` enum('valid','invalid','used','expired','cancelled') NOT NULL,
   `qr_code` varchar(200) NOT NULL,
   `ticket_code` varchar(255) DEFAULT NULL,
@@ -391,12 +362,24 @@ CREATE TABLE `order_details` (
 -- Dumping data for table `order_details`
 --
 
-INSERT INTO `order_details` (`id`, `owner_name`, `phone_number`, `email`, `gender`, `age`, `status`, `qr_code`, `ticket_code`, `created_at`, `updated_at`, `tickets_id`, `orders_id`) VALUES
-('DET-2026-CYQ38S', 'Ferdinand Brian Gondosupadmo', '123', '2472021@maranatha.ac.id', 'Laki-laki', 21, 'used', 'qrcodes/qr_1775624426_0_DET-2026-CYQ38S.png', 'VERIFY-DET-2026-CYQ38S', '2026-04-08 05:00:26', '2026-04-08 05:03:00', 'TKT-2026-003', 'ORD-2026-001'),
-('DET-2026-DIYKH3', 'Errvin Junius', '1234', '2472024@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_1_DET-2026-DIYKH3.png', 'VERIFY-DET-2026-DIYKH3', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-003', 'ORD-2026-001'),
-('DET-2026-IHZUNS', 'a', '1', 'a@gmail.com', 'Laki-laki', 12, 'valid', 'qrcodes/qr_1775792080_0_DET-2026-IHZUNS.svg', 'VERIFY-DET-2026-IHZUNS', '2026-04-10 03:34:41', '2026-04-10 03:34:41', 'TKT-2026-005', 'ORD-2026-004'),
-('DET-2026-JVE4CD', 'Hans Maulana Budiputra', '085380001432', '2472052@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_0_DET-2026-JVE4CD.png', 'VERIFY-DET-2026-JVE4CD', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-002', 'ORD-2026-001'),
-('DET-2026-KTHJJ1', 'Bryan Christian', '085380001432', '2472022@maranatha.ac.id', 'Laki-laki', 21, 'valid', 'qrcodes/qr_1775624426_1_DET-2026-KTHJJ1.png', 'VERIFY-DET-2026-KTHJJ1', '2026-04-08 05:00:26', '2026-04-08 05:00:26', 'TKT-2026-002', 'ORD-2026-001');
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `organizer_slot_requests`
+--
+
+CREATE TABLE `organizer_slot_requests` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `waiting_list_id` bigint(20) UNSIGNED NOT NULL,
+  `organizer_id` bigint(20) UNSIGNED NOT NULL,
+  `requested_quantity` int(11) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `admin_note` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -443,8 +426,6 @@ CREATE TABLE `performers` (
 -- Dumping data for table `performers`
 --
 
-INSERT INTO `performers` (`id`, `name`, `image`, `created_at`, `updated_at`) VALUES
-(4, 'Ferdinand Brian', 'performers/01heash2EhagOSObrJlAHWpRl2Eo9Al2Bg19L1yK.jpg', '2026-04-03 22:26:51', '2026-04-03 22:26:51');
 
 -- --------------------------------------------------------
 
@@ -464,8 +445,7 @@ CREATE TABLE `performer_genre` (
 -- Dumping data for table `performer_genre`
 --
 
-INSERT INTO `performer_genre` (`id`, `performer_id`, `genre_id`, `created_at`, `updated_at`) VALUES
-(14, 4, 2, NULL, NULL);
+
 
 -- --------------------------------------------------------
 
@@ -487,9 +467,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('KA646NGtjdWpE0B8YkeL1uVUaLbY7ngi7EjLqWut', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoidjBsU2ZPSUdta0Z6SmYySEpoczJtVmg0ODdsT3hIN2dSSnFXRnM5dSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ldmVudHMiO3M6NToicm91dGUiO3M6MTg6ImFkbWluLm1hbmFnZUV2ZW50cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1775792026),
-('rjyQu3Baz0mC1YmeRgU0brwNjB8KPGkCjmBsQvqg', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibDF3VFIxcWxoRFJEaXhidEd0b3d3bkJDU3Z1eU1vVDhERXdURzRKeiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vcmdhbml6ZXIvbXktZXZlbnRzIjtzOjU6InJvdXRlIjtzOjE4OiJvcmdhbml6ZXIubXlFdmVudHMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1775792510),
-('vvQvb9iHGueti1srOeszTNRsBrJHIZV0Re2IK0eu', 12, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicjI5Z1ZOMjkzbXN3bGVwNW1FenpZSFMxR1NRRmF6UDFFVEpnQVcwUSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2V2ZW50L0VWVC0yMDI2LTAwMi90aWNrZXRzIjtzOjU6InJvdXRlIjtzOjE3OiJ1c2VyLmV2ZW50VGlja2V0cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjEyO30=', 1775794730);
+('DbQCbnjJBtAnZNvZi3PzGLISon1fKpNBezIiPVlb', 12, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibjRSSmtzd3g3ZFZLVXo3OXdTbmRwbzRHcTdvbjB6SDJscXhYQXlNSyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzg6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VyL2J1eS10aWNrZXRzIjtzOjU6InJvdXRlIjtzOjE1OiJ1c2VyLmJ1eVRpY2tldHMiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxMjt9', 1775907428),
+('rkd1g8YsHuDupUoeUnidaa2AzUG3V4P1sDwh6KyX', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiakhadmIwRE0xeWpvMElEWDZ6U0FlSWVtMGJhcEJlVFM0bE9RM3pzNSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9ldmVudHMiO3M6NToicm91dGUiO3M6MTg6ImFkbWluLm1hbmFnZUV2ZW50cyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1775907357),
+('x3jzCvRMn7hwPQ7PZDFweu62HlxdUInZ48NcfXsz', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVTVxV2lvM1B2NU9IdWZtTEJGT3puMk05SUNnYk5rRVk0WHFtZlY3TCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9vcmdhbml6ZXIvZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjE5OiJvcmdhbml6ZXIuZGFzaGJvYXJkIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjM6InVybCI7YTowOnt9fQ==', 1775907331);
 
 -- --------------------------------------------------------
 
@@ -511,13 +491,7 @@ CREATE TABLE `tickets` (
 -- Dumping data for table `tickets`
 --
 
-INSERT INTO `tickets` (`id`, `capacity`, `price`, `created_at`, `updated_at`, `ticket_types_id`, `event_schedules_id`) VALUES
-('TKT-2026-001', 500, 150000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 2, 'ES-2026-001'),
-('TKT-2026-002', 198, 200000, '2026-04-08 04:57:18', '2026-04-08 05:00:26', 1, 'ES-2026-001'),
-('TKT-2026-003', 498, 150000, '2026-04-08 04:57:18', '2026-04-08 05:00:26', 2, 'ES-2026-002'),
-('TKT-2026-004', 200, 200000, '2026-04-08 04:57:18', '2026-04-08 04:57:18', 1, 'ES-2026-002'),
-('TKT-2026-005', 0, 100000, '2026-04-10 03:21:51', '2026-04-10 03:33:49', 1, 'ES-2026-003'),
-('TKT-2026-006', 2, 200000, '2026-04-10 03:26:22', '2026-04-10 03:26:22', 1, 'ES-2026-004');
+
 
 -- --------------------------------------------------------
 
@@ -567,9 +541,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `phone_number`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Admin Utama', '2472021@maranatha.ac.id', '2026-04-07 04:48:06', '$2y$12$EnIHHiKhdx9RHFzrKc16Ne4v65xk.yO856xiZoxyQZNPn8B3Iuau6', '081234567890', 'admin', 'nltrhM43kDrHEICsS0HSuWbthanQI8niq7s6iusuwhRUlQ6Wiyrx0jrBVZwG', '2026-03-17 06:05:19', '2026-04-07 04:48:06'),
-(2, 'Organizer PK Entertainment', 'organizer@gmail.com', '2026-04-07 04:48:06', '$2y$12$rYbTsu0vPVNKmAUghFav5eucynaAikGOuNyL37AMokV3yg/wEbrZq', '081234567891', 'organizer', NULL, '2026-03-17 06:05:20', '2026-04-07 04:48:06'),
-(3, 'Bryan Christian', '2472022@maranatha.ac.id', '2026-04-07 04:48:06', '$2y$12$tThgtypmZrN56bS3vuFItO4bJqdwBpPZJCiHASdqZkPGNfYEXsln2', '089515401633', 'user', '3AlNcGSGlj4X6zttnQqmwqYLn64MYXWEyGPsILZ9sLRcnM4ik49LKUWwRZpR', '2026-03-17 06:05:20', '2026-04-07 09:25:38'),
-(12, 'Bryan Christian', 'christianbryan849@gmail.com', '2026-04-07 09:48:18', '$2y$12$aBenX31XkZhTt.mlAI2QreTXFA7p.YItj1jLSvnlXSmidNonBOJ1.', '0952731927', 'user', NULL, '2026-04-07 09:27:44', '2026-04-07 17:12:14');
+(2, 'Organizer PK Entertainment', 'organizer@gmail.com', '2026-04-06 21:48:06', '$2y$12$rYbTsu0vPVNKmAUghFav5eucynaAikGOuNyL37AMokV3yg/wEbrZq', '081234567891', 'organizer', NULL, '2026-03-16 23:05:20', '2026-04-06 21:48:06'),
+(12, 'Bryan Christian', 'christianbryan849@gmail.com', '2026-04-07 09:48:18', '$2y$12$aBenX31XkZhTt.mlAI2QreTXFA7p.YItj1jLSvnlXSmidNonBOJ1.', '0952731927', 'user', NULL, '2026-04-07 09:27:44', '2026-04-07 17:12:14'),
+(13, 'Hans Maulana', '2472052@maranatha.ac.id', '2026-04-11 09:43:21', '$2y$12$CTIwA1r4xBGI7NwOhvMq.uKvljYCz4HmHaG2Wx5OW31PYuYttdVFm', '085269916226', 'user', NULL, '2026-04-11 09:37:35', '2026-04-11 09:43:21');
 
 -- --------------------------------------------------------
 
@@ -582,10 +556,18 @@ CREATE TABLE `waiting_lists` (
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `ticket_id` varchar(255) NOT NULL,
   `quantity` int(11) NOT NULL DEFAULT 1,
-  `status` enum('pending','requested','approved','rejected') NOT NULL DEFAULT 'pending',
+  `priority` int(11) NOT NULL DEFAULT 0,
+  `requested_quantity` int(11) DEFAULT NULL,
+  `status` varchar(20) DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `waiting_lists`
+--
+
+
 
 --
 -- Indexes for dumped tables
@@ -693,6 +675,13 @@ ALTER TABLE `order_details`
   ADD KEY `fk_order_details_orders1_idx` (`orders_id`);
 
 --
+-- Indexes for table `organizer_slot_requests`
+--
+ALTER TABLE `organizer_slot_requests`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `organizer_slot_requests_waiting_list_id_foreign` (`waiting_list_id`);
+
+--
 -- Indexes for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
@@ -766,13 +755,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `event_performer`
 --
 ALTER TABLE `event_performer`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `event_requests`
 --
 ALTER TABLE `event_requests`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -796,25 +785,31 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+
+--
+-- AUTO_INCREMENT for table `organizer_slot_requests`
+--
+ALTER TABLE `organizer_slot_requests`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `performers`
 --
 ALTER TABLE `performers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `performer_genre`
 --
 ALTER TABLE `performer_genre`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `ticket_types`
@@ -826,13 +821,13 @@ ALTER TABLE `ticket_types`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `waiting_lists`
 --
 ALTER TABLE `waiting_lists`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -864,6 +859,12 @@ ALTER TABLE `orders`
 ALTER TABLE `order_details`
   ADD CONSTRAINT `fk_order_details_orders1` FOREIGN KEY (`orders_id`) REFERENCES `orders` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_order_details_tickets1` FOREIGN KEY (`tickets_id`) REFERENCES `tickets` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `organizer_slot_requests`
+--
+ALTER TABLE `organizer_slot_requests`
+  ADD CONSTRAINT `organizer_slot_requests_waiting_list_id_foreign` FOREIGN KEY (`waiting_list_id`) REFERENCES `waiting_lists` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `payments`

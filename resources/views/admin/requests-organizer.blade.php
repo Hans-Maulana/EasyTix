@@ -109,7 +109,7 @@
                                                 </td>
                                                 <td><span class="badge badge-primary">{{ $wl->ticket->ticket_type->name ?? '-' }}</span></td>
                                                 <td>{{ $wl->user->name ?? '-' }}</td>
-                                                <td>{{ $wl->quantity }}</td>
+                                                <td>{{ $wl->requested_quantity }}</td>
                                                 <td>
                                                     @if($wl->status == 'requested')
                                                         <span class="badge badge-info">Diajukan Organizer</span>
@@ -121,14 +121,16 @@
                                                 </td>
                                                 <td>
                                                     @if($wl->status == 'requested')
-                                                        <form action="{{ route('admin.approveWaitingList', $wl->id) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button class="btn btn-success btn-sm" onclick="confirmAction(event, 'Yakin menyetujui penambahan kuota tiket ke sistem?')"><i class="fas fa-check"></i> Terima</button>
-                                                        </form>
-                                                        <form action="{{ route('admin.rejectWaitingList', $wl->id) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button class="btn btn-danger btn-sm" onclick="confirmAction(event, 'Tolak permohonan penambahan tiket ini?')"><i class="fas fa-times"></i> Tolak</button>
-                                                        </form>
+                                                        <div class="d-flex gap-2">
+                                                            <form action="{{ route('admin.approveWaitingList', $wl->id) }}" method="POST">
+                                                                @csrf
+                                                                <button class="btn btn-success btn-sm" onclick="confirmAction(event, 'Yakin menyetujui penambahan kuota tiket ke sistem?')"><i class="fas fa-check"></i> Terima</button>
+                                                            </form>
+                                                            <form action="{{ route('admin.rejectWaitingList', $wl->id) }}" method="POST">
+                                                                @csrf
+                                                                <button class="btn btn-danger btn-sm" onclick="confirmAction(event, 'Tolak permohonan penambahan tiket ini?')"><i class="fas fa-times"></i> Tolak</button>
+                                                            </form>
+                                                        </div>
                                                     @endif
                                                 </td>
                                             </tr>

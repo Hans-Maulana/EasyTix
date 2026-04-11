@@ -149,9 +149,21 @@ class UserController extends Controller
         if(auth()->user()->id == $user->id){
             return redirect()->route('admin.manageUsers')->with('error', 'Anda tidak bisa menghapus diri sendiri!');
         }
+
+        // Lakukan pengecekan manual untuk mencegah terhapusnya record krusial akibat cascading
+        $hasEventRequests = \App\Models\EventRequest::where('users_id', $user->id)->exists();
+        $hasOrders = \App\Models\Order::where('users_id', $user->id)->exists();
+        $hasWaitingLists = \App\Models\WaitingList::where('user_id', $user->id)->exists();
+
+        if ($hasEventRequests || $hasOrders || $hasWaitingLists) {
+            return redirect()->route('admin.manageUsers')->with('error', 'Aksi Ditolak: User atau Organizer ini tidak bisa dihapus karena id-nya sudah terhubung memegang data Event/Transaksi di sistem!');
+        }
+
         try {
             $user->delete();
             return redirect()->route('admin.manageUsers')->with('success', 'User berhasil dihapus!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->route('admin.manageUsers')->with('error', 'Gagal menghapus user: ID User sudah terhubung dengan data di table lain! ');
         } catch (\Exception $e) {
             return redirect()->route('admin.manageUsers')->with('error', 'Gagal menghapus user: ' . $e->getMessage());
         }

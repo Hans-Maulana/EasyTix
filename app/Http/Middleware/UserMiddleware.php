@@ -10,15 +10,7 @@ class UserMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check() && auth()->user()->role !== 'user') {
-            // Redirect admin to admin dashboard, organizer to organizer dashboard
-            if (auth()->user()->role === 'admin') {
-                return redirect()->route('admin.dashboard')
-                    ->with('error', 'Halaman ini hanya untuk pengguna biasa.');
-            }
-            if (auth()->user()->role === 'organizer') {
-                return redirect()->route('organizer.dashboard')
-                    ->with('error', 'Halaman ini hanya untuk pengguna biasa.');
-            }
+            abort(403, 'Unauthorized');
         }
         return $next($request);
     }

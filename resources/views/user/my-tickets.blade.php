@@ -72,9 +72,9 @@
                                     <span class="badge bg-dark-blue text-white px-3 py-2 rounded-pill shadow-sm me-2">
                                         <i class="fas fa-star me-2 text-warning "></i> <span class="text-white">{{ $ticket['order_id'] }}</span>
                                     </span>
-                                    @if(($ticket['order_status'] ?? 'paid') == 'refunded')
+                                    @if(($ticket['order_status'] ?? 'paid') == 'cancelled')
                                         <span class="badge bg-danger text-white px-3 py-2 rounded-pill shadow-sm me-2">
-                                            <i class="fas fa-undo me-1"></i> REFUNDED
+                                            <i class="fas fa-times-circle me-1"></i> CANCELLED
                                         </span>
                                     @else
                                         <span class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm me-2">
@@ -137,7 +137,7 @@
                                 Lihat Detail
                             </button>
                             @if($isCancelled)
-                                <p class="small text-danger fw-bold italic"><i class="fas fa-exclamation-triangle me-1"></i> Tiket dibatalkan (Event Refund)</p>
+                                <p class="small text-danger fw-bold italic"><i class="fas fa-exclamation-triangle me-1"></i> Tiket dibatalkan (Event Dibatalkan)</p>
                             @elseif($isUsed)
                                 <p class="small text-muted fw-bold italic"><i class="fas fa-info-circle me-1"></i> Tiket sudah discan oleh petugas</p>
                             @else
@@ -176,22 +176,6 @@
                                             <div class="col-12 mb-2">
                                                 <small class="text-muted d-block text-uppercase small">Nama Pemilik</small>
                                                 <span class="fw-bold">{{ $ticket['owner_name'] }}</span>
-                                            </div>
-                                            <div class="col-6 mb-2">
-                                                <small class="text-muted d-block text-uppercase small">Telepon</small>
-                                                <span class="fw-bold">{{ $ticket['phone_number'] ?? '-' }}</span>
-                                            </div>
-                                            <div class="col-6 mb-2">
-                                                <small class="text-muted d-block text-uppercase small">Email</small>
-                                                <span class="fw-bold">{{ $ticket['email'] ?? '-' }}</span>
-                                            </div>
-                                            <div class="col-6 mb-2">
-                                                <small class="text-muted d-block text-uppercase small">Jenis Kelamin</small>
-                                                <span class="fw-bold">{{ $ticket['gender'] ?? '-' }}</span>
-                                            </div>
-                                            <div class="col-6 mb-2">
-                                                <small class="text-muted d-block text-uppercase small">Umur</small>
-                                                <span class="fw-bold">{{ $ticket['age'] ?? '-' }} Thn</span>
                                             </div>
                                         </div>
                                     </div>

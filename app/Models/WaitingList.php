@@ -10,6 +10,7 @@ class WaitingList extends Model
         'user_id',
         'ticket_id',
         'quantity',
+        'requested_quantity',
         'status'
     ];
 

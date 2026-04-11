@@ -190,16 +190,13 @@
                           <p>Beli Tiket</p>
                       </a>
                   </li>
-                  <li class="nav-item {{ request()->routeIs('cart.view') ? 'active' : '' }}">
-                      <a href="{{ route('cart.view') }}">
-                          <i class="fas fa-shopping-cart"></i>
-                          <p>Keranjang
-                              @if(session('cart') && count(session('cart')) > 0)
-                                  <span class="badge badge-count ms-2" style="background: #e74c3c; color: #fff; border: none; font-weight: 800; padding: 4px 8px;">{{ count(session('cart')) }}</span>
-                              @endif
-                          </p>
+                  <li class="nav-item {{ request()->routeIs('user.waitingList') ? 'active' : '' }}">
+                      <a href="{{ route('user.waitingList') }}">
+                          <i class="fas fa-clock"></i>
+                          <p>Waiting List</p>
                       </a>
                   </li>
+
                   <li class="nav-item {{ request()->routeIs('user.myTickets') ? 'active' : '' }}">
                       <a href="{{ route('user.myTickets') }}">
                           <i class="fas fa-ticket-alt"></i>

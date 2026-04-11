@@ -52,107 +52,162 @@ class OrderController extends Controller
         $userId = auth()->id();
         $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
             $q->where('users_id', $userId);
+        })->whereHas('ticket.event_schedule', function($q) use ($id) {
+            $q->where('event_id', $id);
         })->whereIn('status', ['valid', 'used'])->count();
+
+        $pendingWLCount = \App\Models\WaitingList::where('user_id', $userId)
+            ->whereHas('ticket.event_schedule', function($q) use ($id) {
+                $q->where('event_id', $id);
+            })
+            ->whereIn('status', ['pending', 'requested'])
+            ->sum('quantity');
+
+        $approvedWLCount = \App\Models\WaitingList::where('user_id', $userId)
+            ->whereHas('ticket.event_schedule', function($q) use ($id) {
+                $q->where('event_id', $id);
+            })
+            ->where('status', 'approved')
+            ->sum('quantity');
+
+        // Untuk tampilan badge dan limit dasar JS
+        // Kita hitung yang PASIF (sudah lunas + sedang antri). 
+        // Yang approved akan dihitung oleh input UI.
+        $totalUsedCount = $purchasedCount + $pendingWLCount + $approvedWLCount;
+        $baseLimitCount = $purchasedCount + $pendingWLCount;
 
         $cart = session()->get('cart', []);
         $cartCount = 0;
         foreach($cart as $item) {
-            $cartCount += $item['quantity'];
+            if (isset($item['events_id']) && $item['events_id'] == $id) {
+                $cartCount += $item['quantity'];
+            }
         }
+        $activeWaitingLists = \App\Models\WaitingList::where('user_id', $userId)
+            ->whereIn('status', ['pending', 'requested', 'approved'])
+            ->get()
+            ->keyBy('ticket_id');
         
-        return view('user.event-tickets', compact('event', 'purchasedCount', 'cartCount'));
+        return view('user.event-tickets', compact('event', 'purchasedCount', 'pendingWLCount', 'approvedWLCount', 'totalUsedCount', 'baseLimitCount', 'cartCount', 'activeWaitingLists'));
     }
 
-    public function addToCart(Request $request)
+    public function bulkAddToCart(Request $request)
     {
         $request->validate([
-            'ticket_id' => 'required|exists:tickets,id',
-            'quantity' => 'required|integer|min:1',
+            'event_id' => 'required',
+            'tickets' => 'required|array',
+            'tickets.*' => 'integer|min:0',
         ]);
 
         $maxTickets = 10;
         $userId = auth()->id();
+        $eventId = $request->event_id;
 
-        // 1. Hitung tiket yang sudah dimiliki (valid/used)
+        // 1. Hitung tiket yang sudah dimiliki (valid/used) UNTUK EVENT INI
         $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
             $q->where('users_id', $userId);
+        })->whereHas('ticket.event_schedule', function($q) use ($eventId) {
+            $q->where('event_id', $eventId);
         })->whereIn('status', ['valid', 'used'])->count();
 
-        // 2. Hitung tiket yang ada di cart saat ini
-        $cart = session()->get('cart', []);
-        $cartCount = 0;
-        foreach($cart as $item) {
-            $cartCount += $item['quantity'];
+        // Count active waiting list entries
+        $waitingListCount = \App\Models\WaitingList::where('user_id', $userId)
+            ->whereHas('ticket.event_schedule', function($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            })
+            ->whereIn('status', ['pending', 'approved'])
+            ->sum('quantity');
+
+        $totalUsedCount = $purchasedCount + $waitingListCount;
+
+        // 2. Hitung total tiket yang akan ditambahkan
+        $addingCount = array_sum($request->tickets);
+        
+        if ($addingCount <= 0) {
+            return redirect()->back()->with('error', 'Silakan masukkan jumlah tiket terlebih dahulu.');
         }
 
         // 3. Cek apakah penambahan ini melebihi limit
-        if (($purchasedCount + $cartCount + $request->quantity) > $maxTickets) {
-            $remaining = $maxTickets - ($purchasedCount + $cartCount);
+        if (($totalUsedCount + $addingCount) > $maxTickets) {
+            $remaining = $maxTickets - $totalUsedCount;
+            $msgPart = $waitingListCount > 0 ? " ($purchasedCount terbayar + $waitingListCount di antrian)" : "";
             $errMsg = $remaining > 0 
-                ? "Batas pembelian maksimal adalah 10 tiket per akun. Anda saat ini memiliki $purchasedCount tiket dan $cartCount di keranjang. Anda hanya bisa menambah $remaining tiket lagi."
-                : "Batas pembelian maksimal adalah 10 tiket per akun. Anda sudah mencapai batas maksimal.";
+                ? "Batas pembelian maksimal adalah 10 tiket per event. Anda saat ini memiliki $totalUsedCount tiket$msgPart untuk event ini. Anda hanya bisa membeli $remaining tiket lagi."
+                : "Batas pembelian maksimal adalah 10 tiket per event. Anda sudah mencapai batas maksimal (termasuk tiket di antrian) untuk event ini.";
             return redirect()->back()->with('error', $errMsg);
         }
 
-        $ticket = Ticket::with(['ticket_type', 'event_schedule.event'])->findOrFail($request->ticket_id);
-        $eventId = $ticket->event_schedule->event->id;
-        $eventName = $ticket->event_schedule->event->name;
-        
-        $cart = session()->get('cart', []);
-        if (!empty($cart)) {
-            $firstItem = reset($cart);
-            if ($firstItem['events_id'] != $eventId) {
-                $cart = [];
-                session()->flash('info', "Keranjang dibersihkan karena Anda memilih event baru: $eventName");
+        // Clear existing cart before processing bulk add
+        session()->forget('cart');
+        session()->forget('ticket_details');
+        $cart = [];
+
+        // Pre-fetch all approved/purchased waiting lists for this event
+        $allWLs = \App\Models\WaitingList::whereHas('ticket.event_schedule', function($q) use ($eventId) {
+            $q->where('event_id', $eventId);
+        })->whereIn('status', ['approved', 'purchased'])->get();
+
+        foreach ($request->tickets as $ticketId => $qty) {
+            if ($qty <= 0) continue;
+
+            $ticketModel = Ticket::with(['ticket_type', 'event_schedule.event'])->find($ticketId);
+            if (!$ticketModel) continue;
+
+            // 1. Calculate Reserved Slots for this specific ticket (Approved but not yet purchased)
+            $totalReserved = $allWLs->where('ticket_id', $ticketId)->where('status', 'approved')->sum('quantity');
+            $userWL = $allWLs->where('ticket_id', $ticketId)->where('user_id', $userId)->where('status', 'approved')->first();
+            $userReservedQty = $userWL ? $userWL->quantity : 0;
+
+            // Public Availability = Total Capacity - All Reserved
+            $availableForPublic = $ticketModel->capacity - $totalReserved;
+
+            // Limit for THIS specific user = Public Pool + Their specific reservation
+            $limitForThisUser = $availableForPublic + $userReservedQty;
+
+            if ($qty > $limitForThisUser) {
+                $reason = $userReservedQty > 0 
+                    ? "Anda tidak dapat memesan lebih dari ({$userReservedQty} + {$availableForPublic}) tiket."
+                    : "Maaf, sisa tiket yang tersedia untuk umum saat ini hanyalah {$availableForPublic} tiket.";
+                
+                return redirect()->back()->with('error', "Gagal menambah tiket '{$ticketModel->ticket_type->name}': " . $reason);
             }
-        }
 
-        if(isset($cart[$request->ticket_id])) {
-            $newQuantity = $cart[$request->ticket_id]['quantity'] + $request->quantity;
-        } else {
-            $newQuantity = $request->quantity;
-        }
+            // Force WL user to buy AT LEAST their reserved amount
+            if ($userReservedQty > 0 && $qty < $userReservedQty) {
+                return redirect()->back()->with('error', "Anda memiliki jatah prioritas {$userReservedQty} tiket untuk '{$ticketModel->ticket_type->name}'. Anda harus mengambil minimal jumlah tersebut.");
+            }
 
-        if ($newQuantity > $ticket->capacity) {
-            return redirect()->back()->with('waiting_list_prompt', [
-                'ticket_id' => $request->ticket_id,
-                'quantity' => $request->quantity,
-                'message' => 'Stok tiket tidak mencukupi atau sudah habis (Sisa: ' . $ticket->capacity . '). Apakah Anda ingin masuk ke Waiting List untuk mendapatkan informasi jika kuota bertambah?'
-            ]);
-        }
-
-        if(isset($cart[$request->ticket_id])) {
-            $cart[$request->ticket_id]['quantity'] = $newQuantity;
-        } else {
+            // Prepare cart item
+            $eventName = $ticketModel->event_schedule->event->name;
+            $typeName = $ticketModel->ticket_type->name;
             $totalSchedules = \App\Models\EventSchedule::where('event_id', $eventId)->count();
-            $scheduleDate = \Carbon\Carbon::parse($ticket->event_schedule->event_date)->translatedFormat('d M Y');
-            $typeName = $ticket->ticket_type->name;
-            
             if ($totalSchedules > 1) {
                 $schedules = \App\Models\EventSchedule::where('event_id', $eventId)->orderBy('event_date', 'asc')->pluck('id')->toArray();
-                $dayIndex = array_search($ticket->event_schedule->id, $schedules) + 1;
-                $typeName .= " - Day $dayIndex ($scheduleDate)";
+                $dayIndex = array_search($ticketModel->event_schedule->id, $schedules) + 1;
+                $typeName .= " - Day $dayIndex (" . \Carbon\Carbon::parse($ticketModel->event_schedule->event_date)->translatedFormat('d M Y') . ")";
             }
 
-            $cart[$request->ticket_id] = [
+            $cart[$ticketId] = [
                 "name"       => $eventName,
                 "events_id"  => $eventId,
                 "type"       => $typeName,
-                "quantity"   => $newQuantity,
-                "price"      => $ticket->price,
+                "quantity"   => $qty,
+                "price"      => $ticketModel->price,
                 "image"      => asset('assets/img/easytix_login_bg.png')
             ];
         }
 
+
+
         session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Tiket berhasil ditambahkan ke keranjang!');
+        return redirect()->route('user.checkout')->with('success', 'Tiket berhasil dipilih! Selesaikan detail pemesanan.');
     }
 
 
 
     public function viewCart()
     {
-        return view('user.cart');
+        return redirect()->route('user.buyTickets');
     }
 
     public function updateCart(Request $request)
@@ -165,21 +220,29 @@ class OrderController extends Controller
             if ($diff > 0) {
                 $maxTickets = 10;
                 $userId = auth()->id();
-                
-                $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
-                    $q->where('users_id', $userId);
-                })->whereIn('status', ['valid', 'used'])->count();
+                $ticket = Ticket::with('event_schedule')->find($request->id);
+                $eventId = $ticket ? $ticket->event_schedule->event_id : null;
 
-                $cartCount = 0;
-                foreach($cart as $item) {
-                    $cartCount += $item['quantity'];
-                }
+                if ($eventId) {
+                    $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
+                        $q->where('users_id', $userId);
+                    })->whereHas('ticket.event_schedule', function($q) use ($eventId) {
+                        $q->where('event_id', $eventId);
+                    })->whereIn('status', ['valid', 'used'])->count();
 
-                if (($purchasedCount + $cartCount + $diff) > $maxTickets) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Gagal memperbarui! Total tiket (beli + keranjang) melebihi batas 10 tiket.'
-                    ], 400);
+                    $cartCount = 0;
+                    foreach($cart as $item) {
+                        if (isset($item['events_id']) && $item['events_id'] == $eventId) {
+                            $cartCount += $item['quantity'];
+                        }
+                    }
+
+                    if (($purchasedCount + $cartCount + $diff) > $maxTickets) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Gagal memperbarui! Total tiket (beli + keranjang) untuk event ini melebihi batas 10 tiket.'
+                        ], 400);
+                    }
                 }
             }
 
@@ -219,6 +282,7 @@ class OrderController extends Controller
 
         // Simpan data tiket ke session agar bisa dipakai di step selanjutnya
         session()->put('ticket_details', $request->tickets);
+        session()->put('global_email', $request->global_email);
 
         return redirect()->route('user.payment');
     }
@@ -251,20 +315,29 @@ class OrderController extends Controller
 
         if(!$cart || !$ticketDetails) return redirect()->route('user.buyTickets');
 
-        // FINAL CHECK: Re-verify 10 ticket limit before processing
+        // FINAL CHECK: Re-verify 10 ticket limit per event before processing
         $maxTickets = 10;
         $userId = auth()->id();
-        $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
-            $q->where('users_id', $userId);
-        })->whereIn('status', ['valid', 'used'])->count();
-
-        $cartCount = 0;
+        
+        // Group cart by event_id for validation
+        $cartByEvent = [];
         foreach($cart as $item) {
-            $cartCount += $item['quantity'];
+            $eid = $item['events_id'] ?? null;
+            if ($eid) {
+                $cartByEvent[$eid] = ($cartByEvent[$eid] ?? 0) + $item['quantity'];
+            }
         }
 
-        if (($purchasedCount + $cartCount) > $maxTickets) {
-            return redirect()->route('cart.view')->with('error', 'Pesanan gagal diproses karena jumlah tiket melebihi batas 10 tiket per akun.');
+        foreach ($cartByEvent as $eid => $qtyInCart) {
+            $purchasedCount = OrderDetail::whereHas('order', function($q) use ($userId) {
+                $q->where('users_id', $userId);
+            })->whereHas('ticket.event_schedule', function($q) use ($eid) {
+                $q->where('event_id', $eid);
+            })->whereIn('status', ['valid', 'used'])->count();
+
+            if (($purchasedCount + $qtyInCart) > $maxTickets) {
+                return redirect()->route('user.buyTickets')->with('error', "Pesanan gagal diproses karena jumlah tiket untuk salah satu event melebihi batas 10 tiket.");
+            }
         }
 
         $total = 0;
@@ -325,7 +398,16 @@ class OrderController extends Controller
             'events_id'      => $firstEventId,
             'total_amount'   => $total,
             'payment_method' => $paymentMethod,
+            'email'          => session()->get('global_email'),
         ]);
+
+        // Mark Waiting List as PURCHASED
+        foreach ($cart as $ticketId => $details) {
+            \App\Models\WaitingList::where('user_id', auth()->id())
+                ->where('ticket_id', $ticketId)
+                ->where('status', 'approved')
+                ->update(['status' => 'purchased']);
+        }
 
         foreach($cart as $ticketId => $details) {
             // Kurangi stok (capacity) tiket yang dibeli
@@ -361,15 +443,11 @@ class OrderController extends Controller
                 $orderDetail = OrderDetail::create([
                     'id'           => $orderDetailId,
                     'owner_name'   => $ticketData['name'] ?? (auth()->user()->name ?? 'Guest'),
-                    'phone_number' => $ticketData['phone'] ?? null,
-                    'email'        => $ticketData['email'] ?? null,
-                    'gender'       => $ticketData['gender'] ?? null,
-                    'age'          => $ticketData['age'] ?? null,
                     'status'       => 'valid',
                     'tickets_id'   => $ticketId,
                     'orders_id'    => $order->id,
                     'qr_code'      => $qrPath,
-                    'ticket_code'  => $qrString, // Store the verification string
+                    'ticket_code'  => $qrString,
                 ]);
             }
         }
@@ -399,9 +477,10 @@ class OrderController extends Controller
             ];
         }
 
-        // Kirim email dengan QR code ke user yang login
+        // Kirim email dengan QR code ke email yang diinput saat checkout (fallback ke email login)
         try {
-            Mail::to(auth()->user()->email)->send(
+            $targetEmail = $order->email ?: auth()->user()->email;
+            Mail::to($targetEmail)->send(
                 new TicketPurchased($order, $emailOrderItems, auth()->user()->name)
             );
         } catch (\Exception $e) {

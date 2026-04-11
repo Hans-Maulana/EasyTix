@@ -97,10 +97,10 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('user.processOrder') }}" method="POST">
+                    <form id="finishOrderForm" action="{{ route('user.processOrder') }}" method="POST">
                         @csrf
                         <input type="hidden" name="payment_method" value="Virtual Account {{ $bank }}">
-                        <button type="submit" class="btn btn-va-finish shadow-sm">
+                        <button type="button" onclick="finishPayment()" class="btn btn-va-finish shadow-sm">
                             SELESAIKAN PEMBAYARAN <i class="fas fa-check-circle ms-2"></i>
                         </button>
                     </form>
@@ -118,7 +118,6 @@
 @endsection
 
 @section('ExtraJS')
-<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 <script>
     function copyVA() {
         const vaNum = document.getElementById('vaNumber').innerText;
@@ -132,57 +131,44 @@
         });
     }
 
+    function finishPayment() {
+        localStorage.removeItem('payment_expiry');
+        document.getElementById('finishOrderForm').submit();
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
-        let timeLeft = 180; // 3 minutes
+        let expiryTime = localStorage.getItem('payment_expiry');
+        if (!expiryTime) {
+            expiryTime = new Date().getTime() + (3 * 60 * 1000);
+            localStorage.setItem('payment_expiry', expiryTime);
+        }
+
         const timerDisplay = document.getElementById('vaCountdown');
         const timerContainer = document.getElementById('timerContainer');
 
         const timer = setInterval(() => {
-            timeLeft--;
-            if (timeLeft < 0) {
-                clearInterval(timer);
-                swal({
-                    title: "Waktu Habis!",
-                    text: "Waktu pembayaran Anda telah habis. Anda akan dialihkan kembali ke keranjang.",
-                    icon: "error",
-                    button: "Kembali ke Keranjang",
-                    closeOnClickOutside: false,
-                    closeOnEsc: false
-                }).then(() => {
-                    window.location.href = "{{ route('cart.view') }}";
-                });
-                
-                // Backup redirect
-                setTimeout(() => {
-                    window.location.href = "{{ route('cart.view') }}";
-                }, 3000);
-            } else {
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                timerDisplay.innerText = 
-                    (minutes < 10 ? '0' : '') + minutes + ":" + 
-                    (seconds < 10 ? '0' : '') + seconds;
+            const now = new Date().getTime();
+            const diff = expiryTime - now;
 
-                if(timeLeft <= 60) {
+            if (diff <= 0) {
+                clearInterval(timer);
+                localStorage.removeItem('payment_expiry');
+                window.location.href = "{{ route('user.buyTickets') }}?payment_failed=true";
+            } else {
+                let m = Math.floor(diff / 60000);
+                let s = Math.floor((diff % 60000) / 1000);
+                timerDisplay.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+                if(diff <= 60000) {
                     timerContainer.style.borderColor = '#e74c3c';
                     timerContainer.style.color = '#e74c3c';
                     timerContainer.style.animation = 'pulse 1s infinite';
                 }
             }
         }, 1000);
-    });
-</script>
-<style>
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-</style>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
+
         AOS.init({ once: true, duration: 800 });
     });
 </script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 @endsection

@@ -56,6 +56,8 @@ class TicketTypeController extends Controller
         try {
             $ticketType->delete();
             return redirect()->route('admin.manageTicketTypes')->with('success', 'Tipe tiket berhasil dihapus!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->route('admin.manageTicketTypes')->with('error', 'Gagal menghapus: Tipe tiket ini sudah digunakan pada event/tiket.');
         } catch (\Exception $e) {
             return redirect()->route('admin.manageTicketTypes')->with('error', 'Gagal menghapus tipe tiket: ' . $e->getMessage());
         }

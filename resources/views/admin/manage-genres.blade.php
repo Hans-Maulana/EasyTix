@@ -53,14 +53,14 @@
                                             <td>{{ $genre->id }}</td>
                                             <td>{{ $genre->name }}</td>
                                             <td>
-                                                <div class="form-button-action">
-                                                    <a href="{{ route('admin.editGenre', $genre->id) }}" class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip" title="Edit Genre">
+                                                <div class="form-button-action d-flex align-items-center gap-2">
+                                                    <a href="{{ route('admin.editGenre', $genre->id) }}" class="btn btn-link btn-primary btn-md" data-bs-toggle="tooltip" title="Edit Genre">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                     <form action="{{ route('admin.deleteGenre', $genre->id) }}" method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm" title="Hapus Genre">
+                                                        <button type="button" class="btn btn-link btn-danger btn-delete-confirm btn-md" title="Hapus Genre">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>

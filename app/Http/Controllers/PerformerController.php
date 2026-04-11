@@ -75,6 +75,10 @@ class PerformerController extends Controller
 
     public function deletePerformer(Performer $performer)
     {
+        if ($performer->events()->exists()) {
+            return redirect()->route('admin.managePerformers')->with('error', 'Performer tidak dapat dihapus karena sedang digunakan dalam event.');
+        }
+
         if ($performer->image) {
             Storage::disk('public')->delete($performer->image);
         }

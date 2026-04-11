@@ -65,9 +65,9 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <div class="form-button-action">
+                                                    <div class="form-button-action d-flex align-items-center gap-2">
                                                         <a href="{{ route('admin.editUser', $user->id) }}"
-                                                            class="btn btn-link btn-primary btn-lg" data-bs-toggle="tooltip"
+                                                            class="btn btn-link btn-primary btn-md" data-bs-toggle="tooltip"
                                                             title="Edit User">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
@@ -76,7 +76,7 @@
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="button"
-                                                                class="btn btn-link btn-danger btn-delete-confirm"
+                                                                class="btn btn-link btn-danger btn-delete-confirm btn-md"
                                                                 title="Hapus User">
                                                                 <i class="fa fa-times"></i>
                                                             </button>
@@ -121,8 +121,8 @@
                 });
             @endif
 
-            // SweetAlert Delete Confirmation
-            $('.btn-delete-confirm').on('click', function (e) {
+            // SweetAlert Delete Confirmation (Guna event delegation)
+            $(document).on('click', '.btn-delete-confirm', function (e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 

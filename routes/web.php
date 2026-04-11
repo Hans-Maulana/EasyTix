@@ -133,8 +133,10 @@ Route::middleware(['auth', 'verified', 'user'])->group(function () {
     // Order & Booking System
     Route::get('/user/buy-tickets', [OrderController::class, 'index'])->name('user.buyTickets');
     Route::get('/user/event/{id}/tickets', [OrderController::class, 'showEventTickets'])->name('user.eventTickets');
-    Route::post('/cart/add', [OrderController::class, 'addToCart'])->name('cart.add');
-    Route::post('/cart/waitlist', [WaitingListController::class, 'joinWaitingList'])->name('cart.waitlist');
+    Route::post('/cart/add', [OrderController::class, 'bulkAddToCart'])->name('cart.add');
+    Route::get('/user/waiting-list', [WaitingListController::class, 'userIndex'])->name('user.waitingList');
+    Route::post('/user/waiting-list/join', [WaitingListController::class, 'joinWaitingList'])->name('user.waitingList.join');
+    Route::delete('/user/waiting-list/{waitingList}/cancel', [WaitingListController::class, 'cancel'])->name('user.waitingList.cancel');
     Route::get('/user/cart', [OrderController::class, 'viewCart'])->name('cart.view');
     Route::patch('/cart/update', [OrderController::class, 'updateCart'])->name('cart.update');
     Route::delete('/cart/remove', [OrderController::class, 'removeFromCart'])->name('cart.remove');

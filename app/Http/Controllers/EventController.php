@@ -183,6 +183,10 @@ class EventController extends Controller
                     $submittedTicketIds = [];
                     if (isset($scheduleData['tickets'])) {
                         foreach ($scheduleData['tickets'] as $ticketData) {
+                            // Capture old capacity for waiting list logic
+                            $oldTicket = Ticket::find($ticketData['id'] ?? null);
+                            $oldCapacity = $oldTicket ? $oldTicket->capacity : 0;
+
                             $ticket = Ticket::updateOrCreate(
                                 ['id' => $ticketData['id'] ?? null],
                                 [
@@ -193,6 +197,32 @@ class EventController extends Controller
                                 ]
                             );
                             $submittedTicketIds[] = $ticket->id;
+
+                            // Waiting List Auto-Fulfillment Logic (FIFO)
+                            $newCapacity = $ticket->capacity;
+                            if ($newCapacity > $oldCapacity) {
+                                $addedPool = $newCapacity - $oldCapacity;
+
+                                $waitingEntries = \App\Models\WaitingList::where('ticket_id', $ticket->id)
+                                    ->where('status', 'pending')
+                                    ->orderBy('created_at', 'asc')
+                                    ->get();
+
+                                foreach ($waitingEntries as $wl) {
+                                    if ($addedPool >= $wl->quantity) {
+                                        $wl->update(['status' => 'approved']);
+                                        $addedPool -= $wl->quantity;
+
+                                        \App\Models\Notification::create([
+                                            'user_id' => $wl->user_id,
+                                            'type'    => 'success',
+                                            'title'   => 'Antrian Waiting List Anda Tersedia!',
+                                            'message' => "Tiket '{$ticket->ticket_type->name}' untuk event '{$event->name}' sudah tersedia sebanyak {$wl->quantity} tiket sesuai request Anda. Silakan checkout segera!",
+                                            'link'    => route('user.buyTickets'),
+                                        ]);
+                                    }
+                                }
+                            }
                         }
                     }
                     // Delete tickets not in the submitted list for this schedule
@@ -231,62 +261,28 @@ class EventController extends Controller
                 ->where('status', 'approved')
                 ->exists();
 
-            if ($hasOrders || $isHeldByOrganizer) {
-                // Jika sudah ada order atau dipegang organizer, ubah status menjadi nonactive
+            if ($hasOrders) {
+                return redirect()->route('admin.manageEvents')->with('error', 'Event tidak boleh dihapus atau dibatalkan karena sudah ada tiket yang terjual. Pastikan semua transaksi selesai terlebih dahulu.');
+            }
+
+            if ($isHeldByOrganizer) {
+                // Jika hanya dipegang organizer tapi belum ada order, ubah status menjadi nonactive
                 $event->update(['status' => 'nonactive']);
 
-                // Update status EventRequest menjadi 'cancelled' dan beri notifikasi ke organizer
-                $approvedRequests = EventRequest::where('event_id', $event->id)
+                // Update status EventRequest menjadi 'cancelled'
+                EventRequest::where('event_id', $event->id)
                     ->where('status', 'approved')
-                    ->get();
-                
-                foreach ($approvedRequests as $request) {
-                    $request->update(['status' => 'cancelled']);
-                    
-                    Notification::create([
-                        'user_id' => $request->users_id,
-                        'type'    => 'event_cancelled',
-                        'title'   => 'Event Dibatalkan',
-                        'message' => "Event '{$event->name}' telah dibatalkan oleh Admin. Status kerjasama Anda kini dibatalkan.",
-                        'link'    => route('organizer.myEvents'),
-                    ]);
-                }
+                    ->update(['status' => 'cancelled']);
 
-                // Proses Refund dan Notifikasi ke User yang sudah membeli tiket
-                $orders = Order::with('user')->where('events_id', $event->id)->get();
-                foreach ($orders as $order) {
-                    // Update Status Order menjadi 'refunded'
-                    $order->update(['status' => 'refunded']);
-
-                    // Update SEMUA detail tiket menjadi 'cancelled' agar tidak muncul sebagai tiket valid
-                    OrderDetail::where('orders_id', $order->id)->update(['status' => 'cancelled']);
-
-                    if ($order->user) {
-                        // Buat Notifikasi di sistem
-                        Notification::create([
-                            'user_id' => $order->users_id,
-                            'type'    => 'refund',
-                            'title'   => 'Refund Tiket Event',
-                            'message' => "Event '{$event->name}' telah dibatalkan. Dana sebesar Rp " . number_format($order->total_amount, 0, ',', '.') . " akan direfund ke metode pembayaran Anda ({$order->payment_method}).",
-                            'link'    => route('user.myTickets'),
-                        ]);
-
-                        // Kirim Email Refund
-                        try {
-                            Mail::to($order->user->email)->send(new EventCancelledRefund($event, $order));
-                        } catch (\Exception $e) {
-                            Log::error("Gagal mengirim email refund ke {$order->user->email}: " . $e->getMessage());
-                        }
-                    }
-                }
-                
                 DB::commit();
-                return redirect()->route('admin.manageEvents')->with('success', 'Event tidak dapat dihapus karena sudah memiliki transaksi atau dipegang organizer. Status diubah menjadi Nonactive, refund dan notifikasi telah dikirim.');
-            } else {
-                // Jika belum ada order dan belum dipegang organizer, hapus event dan relasinya
-                
-                // Detach performers (pivot table)
-                $event->performers()->detach();
+                return redirect()->route('admin.manageEvents')->with('warning', 'Event diubah menjadi Nonactive karena sedang dipegang oleh Organizer.');
+            }
+
+            // Jika belum ada order dan belum dipegang organizer, hapus event dan relasinya
+            // Hapus duplikat DB::beginTransaction() yang menyebabkan bug transaksi mengambang
+
+            // Detach performers (pivot table)
+            $event->performers()->detach();
                 
                 // Hapus semua tiket yang terkait dengan schedule event ini
                 $scheduleIds = $event->event_schedule()->pluck('id');
@@ -303,7 +299,6 @@ class EventController extends Controller
 
                 DB::commit();
                 return redirect()->route('admin.manageEvents')->with('success', 'Event berhasil dihapus!');
-            }
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage());

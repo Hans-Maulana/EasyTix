@@ -87,7 +87,7 @@
                             <span class="price-label">Mulai dari</span>
                             <span class="price-value">Rp {{ number_format($event->min_price, 0, ',', '.') }}</span>
                         </div>
-                        <a href="{{ route('user.eventTickets', $event->id) }}" class="btn-pesan">
+                        <a href="{{ route('user.eventTickets', $event->id) }}" class="btn-pesan btn-buy-trigger">
                             Pesan Tiket &rarr;
                         </a>
                     </div>
@@ -103,4 +103,26 @@
 
     </div>
 </div>
+@endsection
+
+@section('ExtraJS')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Check URL parameters for payment_failed
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('payment_failed')) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Pembayaran Gagal',
+                text: 'Waktu pembayaran telah habis. Silakan coba memesan kembali.',
+                confirmButtonColor: '#ef4444',
+                background: '#071120',
+                color: '#fff'
+            });
+            // Clean up the URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+</script>
 @endsection

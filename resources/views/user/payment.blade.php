@@ -21,7 +21,6 @@
     .payment-option.active .check-mark { background: #F4D03F; border-color: #F4D03F; color: #000; }
     .payment-option.active .check-mark::after { content: '\f00c'; font-family: 'Font Awesome 5 Free'; font-weight: 900; font-size: 12px; }
 
-    /* Bank Card Selector */
     .bank-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
     .bank-card {
         border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 15px; padding: 15px; text-align: center;
@@ -31,8 +30,6 @@
     .bank-card.active { border-color: #F4D03F; background: rgba(244, 208, 63, 0.15); box-shadow: 0 5px 15px rgba(244, 208, 63, 0.2); }
     .bank-card img { height: 45px; width: 100%; object-fit: contain; transition: all 0.3s; filter: brightness(0.9); }
     .bank-card.active img { transform: scale(1.1); filter: brightness(1); }
-    .bank-card .small-label { font-size: 0.75rem; font-weight: 700; color: #cbd5e1; display: block; }
-    .bank-card.active .small-label { color: #fff; }
 
     .btn-premium {
         background: linear-gradient(135deg, #F4D03F 0%, #E67E22 100%);
@@ -41,7 +38,6 @@
     }
     .btn-premium:disabled { background: #ccc !important; color: #666 !important; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-    /* QRIS Overlay Styles */
     #qrisOverlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
@@ -120,7 +116,6 @@
                             <input type="radio" name="payment_method" value="Virtual Account" class="ms-auto" style="display:none;">
                         </div>
                         
-                        <!-- Bank Selector Cards -->
                         <div id="bankSelection" class="mt-4 animate__animated animate__fadeIn" style="display:none;">
                             <label class="small fw-bold text-muted mb-3">PILIH BANK TUJUAN:</label>
                             <div class="bank-grid">
@@ -166,9 +161,6 @@
                         <a href="{{ route('user.checkout') }}" class="btn btn-outline-light w-100 rounded-pill py-2 mt-2" style="border-width: 2px; font-weight: 600;">
                             <i class="fas fa-arrow-left me-2"></i> Kembali
                         </a>
-                        <p class="text-center text-muted small mt-3">
-                            <i class="fas fa-lock me-1"></i> Pembayaran Aman & Terenkripsi
-                        </p>
                     </div>
                 </div>
             </div>
@@ -201,54 +193,42 @@
 @endsection
 
 @section('ExtraJS')
-<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    let timeLeft = 180; // 3 minutes in seconds
-    let timerInterval;
-
-    function startGlobalTimer() {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize timer if not already set
+        let expiryTime = localStorage.getItem('payment_expiry');
+        if (!expiryTime) {
+            expiryTime = new Date().getTime() + (3 * 60 * 1000);
+            localStorage.setItem('payment_expiry', expiryTime);
+        }
+        
         const mainTimerDisplay = document.getElementById('mainTimer');
         const mainTimerContainer = document.getElementById('mainTimerContainer');
         const qrisTimerDisplay = document.getElementById('qrisTimer');
 
-        timerInterval = setInterval(() => {
-            timeLeft--;
+        const timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const diff = expiryTime - now;
             
-            if(timeLeft <= 0) {
+            if(diff <= 0) {
                 clearInterval(timerInterval);
-                swal({
-                    title: "Waktu Habis!",
-                    text: "Waktu pembayaran Anda telah habis. Anda akan dialihkan kembali ke keranjang.",
-                    icon: "error",
-                    button: "Kembali ke Keranjang",
-                    closeOnClickOutside: false,
-                    closeOnEsc: false
-                }).then(() => {
-                    window.location.href = "{{ route('cart.view') }}";
-                });
-                
-                // Backup redirect if swal isn't clicked
-                setTimeout(() => {
-                    window.location.href = "{{ route('cart.view') }}";
-                }, 3000);
+                localStorage.removeItem('payment_expiry');
+                window.location.href = "{{ route('user.buyTickets') }}?payment_failed=true";
             } else {
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                let timeString = (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+                let m = Math.floor(diff / 60000);
+                let s = Math.floor((diff % 60000) / 1000);
+                let timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
                 
                 mainTimerDisplay.innerText = timeString;
                 qrisTimerDisplay.innerText = timeString;
 
-                if(timeLeft <= 60) {
+                if(diff <= 60000) {
                     mainTimerContainer.classList.add('warning');
                 }
             }
         }, 1000);
-    }
 
-    // Start timer immediately on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        startGlobalTimer();
         AOS.init({ once: true, duration: 800 });
     });
 
@@ -277,7 +257,17 @@
 
     document.getElementById('btnNext').addEventListener('click', function() {
         const methodSelection = document.querySelector('input[name="payment_method"]:checked');
-        if(!methodSelection) return;
+        if(!methodSelection) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Metode Pembayaran',
+                text: 'Silakan pilih metode pembayaran terlebih dahulu.',
+                confirmButtonColor: '#F4D03F',
+                background: '#071120',
+                color: '#fff'
+            });
+            return;
+        }
 
         const method = methodSelection.value;
         if(method === 'QRIS') {
@@ -285,7 +275,14 @@
         } else {
             const bank = document.getElementById('selectedBank').value;
             if(!bank) {
-                swal("Pilih Bank", "Silakan pilih bank terlebih dahulu!", "warning");
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Pilih Bank',
+                    text: 'Silakan pilih salah satu bank untuk pembayaran Virtual Account.',
+                    confirmButtonColor: '#F4D03F',
+                    background: '#071120',
+                    color: '#fff'
+                });
                 return;
             }
             window.location.href = "{{ route('user.vaPayment') }}?bank=" + bank;
@@ -293,8 +290,7 @@
     });
 
     function openQrisOverlay() {
-        const overlay = document.getElementById('qrisOverlay');
-        overlay.classList.add('active');
+        document.getElementById('qrisOverlay').classList.add('active');
     }
 
     function closeQrisOverlay() {
@@ -302,14 +298,9 @@
     }
 
     function finalizePayment() {
-        clearInterval(timerInterval);
+        localStorage.removeItem('payment_expiry');
         document.getElementById('paymentForm').submit();
     }
 </script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        AOS.init({ once: true, duration: 800 });
-    });
-</script>
 @endsection
