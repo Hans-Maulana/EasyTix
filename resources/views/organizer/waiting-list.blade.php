@@ -74,8 +74,8 @@
                                     @foreach($waitingLists as $wl)
                                     <tr>
                                         <td>
-                                            <span class="badge" style="background: linear-gradient(135deg, #F4D03F, #D4AC0D); color: #000; font-weight: 800;">
-                                                #{{ $wl->priority }}
+                                            <span class="badge" style="background: linear-gradient(135deg, #c7ad45ff, #9b821dff); color: #000; font-weight: 800;">
+                                                #{{ $loop->iteration }}
                                             </span>
                                         </td>
                                         <td>{{ $wl->user->name }}</td>

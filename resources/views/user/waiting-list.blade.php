@@ -46,8 +46,9 @@
 @endsection
 
 @section('content')
-<div class="wl-body pt-5">
-    <div class="container">
+<div class="container">
+    <div class="page-inner">
+        <div class="wl-body pt-5 pb-5">
         <div class="d-flex align-items-center mb-5">
             <div class="bg-warning rounded-pill p-3 me-3 d-flex align-items-center justify-content-center shadow-lg" style="width: 60px; height: 60px; background: var(--premium-gold-grad) !important;">
                 <i class="fas fa-clock text-dark fs-3"></i>
@@ -123,6 +124,7 @@
                 @endforeach
             </div>
         @endif
+        </div>
     </div>
 </div>
 

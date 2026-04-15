@@ -6,13 +6,13 @@
     .profile-wrapper { font-family: 'Outfit', sans-serif; }
     .profile-card {
         border-radius: 25px;
-        background: #fff;
+        background: #071120;
         border: none;
         box-shadow: 0 15px 35px rgba(0,0,0,0.08);
         overflow: hidden;
     }
     .profile-header {
-        background: linear-gradient(135deg, #071120 0%, #1a2a44 100%);
+        background: linear-gradient(135deg, #0b1a30ff 0%, #112544ff 100%);
         padding: 60px 20px;
         text-align: center;
         position: relative;
@@ -40,7 +40,7 @@
         margin-bottom: 5px;
     }
     .info-value {
-        color: #071120;
+        color: #cbd5e1;
         font-size: 1.1rem;
         font-weight: 600;
         margin-bottom: 20px;
@@ -72,58 +72,63 @@
         display: inline-block;
         margin-bottom: 15px;
     }
+    /* Push footer to bottom when content is short */
+    .profile-wrapper {
+        min-height: calc(100vh - 200px);
+    }
 </style>
 @endsection
 
 @section('content')
-<div class="container profile-wrapper py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="profile-card">
-                <div class="profile-header">
-                </div>
-                <div class="text-center">
-                    <div class="profile-avatar-container">
-                        <img src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('assets/img/profile.jpg') }}" alt="User Avatar" class="profile-avatar">
-                    </div>
-                </div>
-                
-                <div class="p-5">
-                    <div class="text-center mb-5">
-                        <div class="account-badge text-uppercase">{{ $user->role ?? 'Member' }}</div>
-                        <h2 class="fw-bold mb-1">{{ $user->name }}</h2>
-                        <p class="text-muted">{{ $user->email }}</p>
-                    </div>
-                    
-                    <hr class="opacity-10 mb-5">
-                    
-                    <div class="row px-md-4">
-                        <div class="col-md-6">
-                            <div class="info-label">Nama Lengkap</div>
-                            <div class="info-value">{{ $user->name }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-label">Alamat Email</div>
-                            <div class="info-value">{{ $user->email }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-label">Nomor Telepon</div>
-                            <div class="info-value">{{ $user->phone_number ?? '-' }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-label">Tanggal Dibuat</div>
-                            <div class="info-value">{{ $user->created_at->format('d M Y') }}</div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-label">Terakhir Diperbarui</div>
-                            <div class="info-value">{{ $user->updated_at->diffForHumans() }}</div>
+<div class="container profile-wrapper">
+    <div class="page-inner py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="profile-card">
+                    <div class="profile-header"></div>
+                    <div class="text-center">
+                        <div class="profile-avatar-container">
+                            <img src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('assets/img/profile.jpg') }}" alt="User Avatar" class="profile-avatar">
                         </div>
                     </div>
-                    
-                    <div class="text-center mt-5">
-                        <a href="{{ route('profile.edit') }}" class="btn-edit-profile">
-                            <i class="fas fa-user-edit me-2"></i>Edit Profile Saya
-                        </a>
+
+                    <div class="p-5">
+                        <div class="text-center mb-5">
+                            <div class="account-badge text-uppercase">{{ $user->role ?? 'Member' }}</div>
+                            <h2 class="fw-bold mb-1">{{ $user->name }}</h2>
+                            <p class="text-muted">{{ $user->email }}</p>
+                        </div>
+
+                        <hr class="opacity-10 mb-5">
+
+                        <div class="row px-md-4">
+                            <div class="col-md-6">
+                                <div class="info-label">Nama Lengkap</div>
+                                <div class="info-value">{{ $user->name }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-label">Alamat Email</div>
+                                <div class="info-value">{{ $user->email }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-label">Nomor Telepon</div>
+                                <div class="info-value">{{ $user->phone_number ?? '-' }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-label">Tanggal Dibuat</div>
+                                <div class="info-value">{{ $user->created_at->format('d M Y') }}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-label">Terakhir Diperbarui</div>
+                                <div class="info-value">{{ $user->updated_at->diffForHumans() }}</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-5 pb-3">
+                            <a href="{{ route('profile.edit') }}" class="btn-edit-profile">
+                                <i class="fas fa-user-edit me-2"></i>Edit Profile Saya
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

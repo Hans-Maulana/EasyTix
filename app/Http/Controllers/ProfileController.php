@@ -60,13 +60,29 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // Cek apakah user memiliki data yang berafiliasi (Pemesanan atau Waiting List)
+        $hasOrders = \App\Models\Order::where('users_id', $user->id)->exists();
+        $hasWaitingList = \App\Models\WaitingList::where('user_id', $user->id)->exists();
+
         Auth::logout();
 
-        $user->delete();
+        if ($hasOrders || $hasWaitingList) {
+            // Jika ada data penting, jangan hapus barisnya (biar tidak error FK)
+            // Cukup nonaktifkan dan ganti email agar email aslinya bisa buat daftar lagi
+            $oldEmail = $user->email;
+            $user->update([
+                'is_active' => false,
+                'email' => 'deleted_' . $user->id . '_' . time() . '_' . $oldEmail,
+                'phone_number' => '0000000000', // Reset nomor telepon agar tidak konflik jika ada unik
+            ]);
+        } else {
+            // Jika benar-benar bersih, hapus total
+            $user->delete();
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect::to('/')->with('success', 'Akun Anda telah berhasil dihapus/dinonaktifkan.');
     }
 }

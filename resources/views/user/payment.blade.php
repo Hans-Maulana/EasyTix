@@ -135,7 +135,7 @@
 
                     <div class="mt-4 p-3 rounded-4 border-start border-warning border-4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
                         <small class="text-white d-block mb-1"><i class="fas fa-info-circle me-1"></i> Informasi:</small>
-                        <p class="small mb-0 text-light">Tiket elektronik Anda akan langsung dikirim ke menu <strong>Tiket Saya</strong> setelah pembayaran dikonfirmasi oleh sistem.</p>
+                        <p class="small mb-0 text-light">Tiket elektronik Anda akan langsung dikirim ke menu <strong>Tiket Saya</strong> dan email setelah pembayaran dikonfirmasi oleh sistem.</p>
                     </div>
                 </div>
 

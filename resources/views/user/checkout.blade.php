@@ -79,7 +79,7 @@
             </div>
             <div class="d-flex align-items-center gap-3">
                 <div class="timer-badge p-2 px-3 rounded-pill" style="background: rgba(244, 208, 63, 0.1); border: 1px solid rgba(244, 208, 63, 0.3); color: #F4D03F;">
-                   <i class="fas fa-clock me-2"></i> <span id="checkout-timer" style="font-weight: 800; font-size: 1.1rem;">03:00</span>
+                   <i class="fas fa-clock me-2"></i> <span id="checkout-timer" style="font-weight: 800; font-size: 1.1rem;">05:00</span>
                 </div>
             </div>
         </div>
@@ -211,7 +211,7 @@
         // Initialize or update timer
         let expiryTime = localStorage.getItem('payment_expiry');
         if (!expiryTime) {
-            expiryTime = new Date().getTime() + (3 * 60 * 1000);
+            expiryTime = new Date().getTime() + (5 * 60 * 1000);
             localStorage.setItem('payment_expiry', expiryTime);
         }
 
