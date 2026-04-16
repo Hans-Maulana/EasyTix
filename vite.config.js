@@ -8,4 +8,10 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: true,
+        hmr: {
+            host: '10.212.132.150',
+        },
+    },
 });

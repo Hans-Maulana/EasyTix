@@ -74,6 +74,20 @@
         object-position: center;
         display: block;
     }
+
+    @media (max-width: 768px) {
+        .carousel-item { height: 300px; }
+        .welcome-card::after { font-size: 8rem; right: -10px; bottom: -10px; }
+        .welcome-card { padding: 30px 20px !important; text-align: center; }
+        .welcome-card .d-flex { justify-content: center; flex-direction: column; }
+        .carousel-caption { 
+            display: block !important; 
+            padding: 15px !important;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9)) !important;
+        }
+        .carousel-caption h2 { font-size: 1.2rem; margin-bottom: 5px; }
+        .carousel-caption .btn { padding: 6px 15px; font-size: 0.8rem; }
+    }
 </style>
 @endsection
 

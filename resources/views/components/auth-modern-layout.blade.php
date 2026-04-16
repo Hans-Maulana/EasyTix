@@ -286,6 +286,21 @@
                     }
                 });
             @endif
+
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pendaftaran Berhasil!',
+                    text: "{{ session('success') }}",
+                    background: '#0f172a',
+                    color: '#ffffff',
+                    confirmButtonText: 'Login Sekarang',
+                    confirmButtonColor: '#3b82f6',
+                    customClass: {
+                        popup: 'border border-light rounded-4 shadow-lg'
+                    }
+                });
+            @endif
         });
     </script>
 </body>

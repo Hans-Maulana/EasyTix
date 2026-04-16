@@ -332,16 +332,29 @@
         }
 
         @media (max-width: 991px) {
-            .hero-title { font-size: 3rem; }
-            .hero-overlay { background: linear-gradient(0deg, var(--dark-blue) 0%, rgba(7, 17, 32, 0.8) 100%); }
+            .hero { height: auto; min-height: 100vh; padding-top: 120px; padding-bottom: 60px; }
+            .hero-title { font-size: 2.8rem; }
+            .hero-overlay { background: linear-gradient(180deg, var(--dark-blue) 0%, rgba(7, 17, 32, 0.8) 100%); }
             .navbar-collapse {
-                background: rgba(7, 17, 32, 0.95);
+                background: rgba(7, 17, 32, 0.98);
                 backdrop-filter: blur(15px);
                 padding: 20px;
                 border-radius: 15px;
                 margin-top: 15px;
+                border: 1px solid rgba(255,255,255,0.1);
             }
             .floating-badge { display: none; }
+            .stat-number { font-size: 2.5rem; }
+            .feature-item { padding: 30px 20px; }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title { font-size: 2.2rem; }
+            .btn-custom { width: 100%; margin-bottom: 10px; }
+            .hero-content { text-align: center; }
+            .hero-content .d-flex { flex-direction: column; width: 100%; }
+            .concert-img-wrapper { height: 220px; }
+            .display-5 { font-size: 1.8rem; }
         }
     </style>
 </head>
