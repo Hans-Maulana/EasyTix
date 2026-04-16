@@ -40,8 +40,17 @@ class ProfileController extends Controller
         $user = $request->user();
         $user->fill($request->validated());
 
-        if ($user->isDirty('email') && $user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail) {
+        if ($user->isDirty('email')) {
             $user->email_verified_at = null;
+            $user->save();
+
+            $user->sendEmailVerificationNotification();
+
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return Redirect::to('/login')->with('status', 'Email Anda telah diperbarui. Silakan verifikasi email baru Anda melalui tautan yang kami kirimkan, lalu login kembali.');
         }
 
         $user->save();
