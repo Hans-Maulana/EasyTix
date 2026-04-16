@@ -200,7 +200,7 @@ class OrderController extends Controller
 
 
         session()->put('cart', $cart);
-        return redirect()->route('user.checkout')->with('success', 'Tiket berhasil dipilih! Selesaikan & lengkapi detail pemesanan.');
+        return redirect()->route('user.checkout')->with('success', 'Tiket berhasil dipilih! Selesaikan dan lengkapi detail pemesanan.');
     }
 
 

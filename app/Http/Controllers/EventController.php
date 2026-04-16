@@ -266,6 +266,21 @@ class EventController extends Controller
             }
 
             if ($isHeldByOrganizer) {
+                // Notifikasi ke Organizer bahwa Event dinonaktifkan
+                $approvedRequests = EventRequest::where('event_id', $event->id)
+                    ->where('status', 'approved')
+                    ->get();
+
+                foreach ($approvedRequests as $req) {
+                    \App\Models\Notification::create([
+                        'user_id' => $req->users_id,
+                        'type' => 'danger',
+                        'title' => 'Event Dinonaktifkan Admin',
+                        'message' => 'Mohon maaf, event ' . $event->name . ' telah dinonaktifkan oleh Admin dan akses Anda ditarik.',
+                        'link' => route('organizer.events')
+                    ]);
+                }
+
                 // Jika hanya dipegang organizer tapi belum ada order, ubah status menjadi nonactive
                 $event->update(['status' => 'nonactive']);
 

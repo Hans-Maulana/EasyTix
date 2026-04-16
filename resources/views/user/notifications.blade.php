@@ -49,7 +49,17 @@
                                         </div>
                                         <p class="text-muted mb-2">{{ $notif->message }}</p>
                                         @if($notif->link)
-                                        <a href="{{ $notif->link }}" class="btn btn-sm btn-outline-primary btn-round">Lihat Detail</a>
+                                        @php
+                                            $finalLink = '#';
+                                            if ($notif->link) {
+                                                $parsedUrl = parse_url($notif->link);
+                                                $path = $parsedUrl['path'] ?? '';
+                                                $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+                                                $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+                                                $finalLink = url($path) . $query . $fragment;
+                                            }
+                                        @endphp
+                                        <a href="{{ $finalLink }}" class="btn btn-sm btn-outline-primary btn-round">Lihat Detail</a>
                                         @endif
                                     </div>
                                 </div>
